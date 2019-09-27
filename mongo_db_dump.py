@@ -20,7 +20,6 @@
             variable.)
         -M => Run the mongodump program.
         -A => Run the Sync/Copy dump program.
-            NOTE:  -A and -M are XOR required arguments.
         -z => Compress database dump.  Only for -M option.
         -l => Oplog option added to mongodump.  Only for -M option and
             database must also be part of a replica set.
@@ -31,7 +30,8 @@
         -q => Turn quiet mode on.  By default, displays out log of dump.
         -v => Display version of this program.
         -h => Help and usage message.
-            NOTE:  -v or -h overrides the other options.
+            NOTE 1:  -v or -h overrides the other options.
+            NOTE 2:  -A and -M are XOR required arguments.
 
     Notes:
         Mongo configuration file format (mongo.py).  The configuration
@@ -39,7 +39,6 @@
             a database.  There are two ways to connect:  single or replica set.
 
             1.)  Single database connection:
-
             # Single Configuration file for Mongo Database Server.
             user = "root"
             passwd = "ROOT_PASSWORD"
@@ -50,8 +49,7 @@
             auth = True
 
             2.)  Replica Set connection:  Same format as above, but with these
-                additional entries at the end of the configuration file:
-
+                    additional entries at the end of the configuration file:
             repset = "REPLICA_SET_NAME"
             repset_hosts = "HOST1:PORT, HOST2:PORT, HOST3:PORT, [...]"
             db_auth = "AUTHENTICATION_DATABASE"
@@ -107,8 +105,6 @@ def sync_cp_dump(SERVER, args_array, **kwargs):
     Arguments:
         (input) SERVER -> Database server instance.
         (input) args_array -> Array of command line options and values.
-        (input) **kwargs:
-            None
         (output) err_flag -> True|False - if an error has occurred.
         (output) err_msg -> Error message.
 
