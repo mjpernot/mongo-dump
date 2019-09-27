@@ -69,6 +69,8 @@ import sys
 import shutil
 import datetime
 
+# Third-party
+
 # Local
 import lib.gen_libs as gen_libs
 import lib.arg_parser as arg_parser
@@ -77,7 +79,6 @@ import mongo_lib.mongo_class as mongo_class
 import mongo_lib.mongo_libs as mongo_libs
 import version
 
-# Version
 __version__ = version.__version__
 
 
