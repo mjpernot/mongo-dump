@@ -130,7 +130,7 @@ class UnitTest(unittest.TestCase):
         """
 
         self.server = Server()
-        self.args_array = {"-o": "DirectoryPath", "-p":  "DirectoryPath2"}
+        self.args_array = {"-o": "DirectoryPath", "-p": "DirectoryPath2"}
 
     @mock.patch("mongo_db_dump.cmds_gen.run_prog")
     @mock.patch("mongo_db_dump.mongo_libs.create_cmd")
