@@ -22,6 +22,7 @@ pipeline {
                 pip2 install mock==2.0.0 --user
                 pip2 install pymongo==3.2.0 --user
                 ./test/unit/mongo_db_dump/help_message.py
+                ./test/unit/mongo_db_dump/main.py
                 ./test/unit/mongo_db_dump/mongo_dump.py
                 ./test/unit/mongo_db_dump/run_program.py
                 ./test/unit/mongo_db_dump/sync_cp_dump.py
