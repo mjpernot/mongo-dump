@@ -111,6 +111,7 @@ def sync_cp_dump(server, args_array, **kwargs):
 
     """
 
+    args_array = dict(args_array)
     err_flag = False
     err_msg = None
 

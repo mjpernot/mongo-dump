@@ -6,6 +6,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 
 ## [3.0.2] - 2019-09-30
 ### Fixed
+- sync_cp_dump:  Fixed problem with mutable default arguments issue.
 - mongo_dump:  Fixed problem with mutable default arguments issue.
 - run_program:  Fixed problem with mutable default arguments issue.
 
