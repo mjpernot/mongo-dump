@@ -142,14 +142,14 @@ def sync_cp_dump(SERVER, args_array, **kwargs):
     return err_flag, err_msg
 
 
-def mongo_dump(SERVER, args_array, **kwargs):
+def mongo_dump(server, args_array, **kwargs):
 
     """Function:  mongo_dump
 
     Description:  Create the dump command and execute it.
 
     Arguments:
-        (input) SERVER -> Database server instance.
+        (input) server -> Database server instance.
         (input) args_array -> Array of command line options and values.
         (input) **kwargs:
             opt_arg -> Dictionary of additional options to add.
@@ -158,7 +158,7 @@ def mongo_dump(SERVER, args_array, **kwargs):
 
     """
 
-    dump_cmd = mongo_libs.create_cmd(SERVER, args_array, "mongodump",
+    dump_cmd = mongo_libs.create_cmd(server, args_array, "mongodump",
                                      arg_parser.arg_set_path(args_array, "-p"),
                                      **kwargs)
     cmds_gen.run_prog(dump_cmd)
