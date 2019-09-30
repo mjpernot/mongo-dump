@@ -179,6 +179,8 @@ def run_program(args_array, func_dict, **kwargs):
 
     """
 
+    args_array = dict(args_array)
+    func_dict = dict(func_dict)
     server = mongo_libs.create_instance(args_array["-c"], args_array["-d"],
                                         mongo_class.Server)
     server.connect()
