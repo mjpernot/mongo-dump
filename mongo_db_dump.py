@@ -157,6 +157,7 @@ def mongo_dump(server, args_array, **kwargs):
 
     """
 
+    args_array = dict(args_array)
     dump_cmd = mongo_libs.create_cmd(server, args_array, "mongodump",
                                      arg_parser.arg_set_path(args_array, "-p"),
                                      **kwargs)
