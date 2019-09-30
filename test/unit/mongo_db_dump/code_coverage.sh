@@ -9,6 +9,7 @@ coverage erase
 echo ""
 echo "Running unit test modules in conjunction with coverage"
 coverage run -a --source=mongo_db_dump test/unit/mongo_db_dump/help_message.py
+coverage run -a --source=mongo_db_dump test/unit/mongo_db_dump/mongo_dump.py
 coverage run -a --source=mongo_db_dump test/unit/mongo_db_dump/sync_cp_dump.py
 
 echo ""
