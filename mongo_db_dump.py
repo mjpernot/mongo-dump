@@ -96,7 +96,7 @@ def help_message():
     print(__doc__)
 
 
-def sync_cp_dump(SERVER, args_array, **kwargs):
+def sync_cp_dump(server, args_array, **kwargs):
 
     """Function:  sync_cp_dump
 
@@ -104,7 +104,7 @@ def sync_cp_dump(SERVER, args_array, **kwargs):
         destination directory.
 
     Arguments:
-        (input) SERVER -> Database server instance.
+        (input) server -> Database server instance.
         (input) args_array -> Array of command line options and values.
         (output) err_flag -> True|False - if an error has occurred.
         (output) err_msg -> Error message.
@@ -114,20 +114,20 @@ def sync_cp_dump(SERVER, args_array, **kwargs):
     err_flag = False
     err_msg = None
 
-    if not (SERVER.is_locked()):
-        SERVER.lock_db(lock=True)
+    if not (server.is_locked()):
+        server.lock_db(lock=True)
 
-        if (SERVER.is_locked()):
+        if (server.is_locked()):
             dmp_dir = args_array["-o"] + "/cp_dump_" \
                 + datetime.datetime.strftime(datetime.datetime.now(),
                                              "%Y%m%d_%H%M")
 
             # Backup database.
-            shutil.copytree(SERVER.db_path, dmp_dir)
+            shutil.copytree(server.db_path, dmp_dir)
 
-            SERVER.unlock_db()
+            server.unlock_db()
 
-            if (SERVER.is_locked()):
+            if (server.is_locked()):
                 err_flag = True
                 err_msg = "Warning:  Database still locked after dump."
 

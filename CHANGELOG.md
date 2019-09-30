@@ -6,6 +6,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 
 ## [3.0.2] - 2019-09-27
 ### Changed
+- sync_cp_dump:  Changed variable to standard naming convention.
 - mongo_dump:  Changed variable to standard naming convention.
 - run_program:  Changed variable to standard naming convention.
 - Documentation changes.
