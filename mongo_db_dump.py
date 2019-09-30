@@ -180,19 +180,19 @@ def run_program(args_array, func_dict, **kwargs):
 
     """
 
-    SERVER = mongo_libs.create_instance(args_array["-c"], args_array["-d"],
+    server = mongo_libs.create_instance(args_array["-c"], args_array["-d"],
                                         mongo_class.Server)
-    SERVER.connect()
+    server.connect()
 
     # Intersect args_array and func_dict to determine which functions to call.
     for x in set(args_array.keys()) & set(func_dict.keys()):
-        err_flag, err_msg = func_dict[x](SERVER, args_array, **kwargs)
+        err_flag, err_msg = func_dict[x](server, args_array, **kwargs)
 
         if err_flag:
             print(err_msg)
             break
 
-    cmds_gen.disconnect([SERVER])
+    cmds_gen.disconnect([server])
 
 
 def main():
