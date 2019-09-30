@@ -106,7 +106,7 @@ def sync_cp_dump(server, args_array, **kwargs):
     Arguments:
         (input) server -> Database server instance.
         (input) args_array -> Array of command line options and values.
-        (output) err_flag -> True|False - if an error has occurred.
+        (output) err_flag -> True|False - If an error has occurred.
         (output) err_msg -> Error message.
 
     """
@@ -124,7 +124,6 @@ def sync_cp_dump(server, args_array, **kwargs):
 
             # Backup database.
             shutil.copytree(server.db_path, dmp_dir)
-
             server.unlock_db()
 
             if (server.is_locked()):
@@ -153,8 +152,8 @@ def mongo_dump(server, args_array, **kwargs):
         (input) args_array -> Array of command line options and values.
         (input) **kwargs:
             opt_arg -> Dictionary of additional options to add.
-        (output) True|False -> if an error has occurred.
-        (output) -> Error message.
+        (output) False -> If an error has occurred.
+        (output) None -> Error message.
 
     """
 
