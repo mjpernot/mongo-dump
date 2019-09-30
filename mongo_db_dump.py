@@ -20,7 +20,6 @@
             variable.)
         -M => Run the mongodump program.
         -A => Run the Sync/Copy dump program.
-            NOTE:  -A and -M are XOR required arguments.
         -z => Compress database dump.  Only for -M option.
         -l => Oplog option added to mongodump.  Only for -M option and
             database must also be part of a replica set.
@@ -31,7 +30,8 @@
         -q => Turn quiet mode on.  By default, displays out log of dump.
         -v => Display version of this program.
         -h => Help and usage message.
-            NOTE:  -v or -h overrides the other options.
+            NOTE 1:  -v or -h overrides the other options.
+            NOTE 2:  -A and -M are XOR required arguments.
 
     Notes:
         Mongo configuration file format (mongo.py).  The configuration
@@ -39,7 +39,6 @@
             a database.  There are two ways to connect:  single or replica set.
 
             1.)  Single database connection:
-
             # Single Configuration file for Mongo Database Server.
             user = "root"
             passwd = "ROOT_PASSWORD"
@@ -50,8 +49,7 @@
             auth = True
 
             2.)  Replica Set connection:  Same format as above, but with these
-                additional entries at the end of the configuration file:
-
+                    additional entries at the end of the configuration file:
             repset = "REPLICA_SET_NAME"
             repset_hosts = "HOST1:PORT, HOST2:PORT, HOST3:PORT, [...]"
             db_auth = "AUTHENTICATION_DATABASE"
@@ -71,6 +69,8 @@ import sys
 import shutil
 import datetime
 
+# Third-party
+
 # Local
 import lib.gen_libs as gen_libs
 import lib.arg_parser as arg_parser
@@ -79,7 +79,6 @@ import mongo_lib.mongo_class as mongo_class
 import mongo_lib.mongo_libs as mongo_libs
 import version
 
-# Version
 __version__ = version.__version__
 
 
@@ -97,7 +96,7 @@ def help_message():
     print(__doc__)
 
 
-def sync_cp_dump(SERVER, args_array, **kwargs):
+def sync_cp_dump(server, args_array, **kwargs):
 
     """Function:  sync_cp_dump
 
@@ -105,32 +104,30 @@ def sync_cp_dump(SERVER, args_array, **kwargs):
         destination directory.
 
     Arguments:
-        (input) SERVER -> Database server instance.
+        (input) server -> Database server instance.
         (input) args_array -> Array of command line options and values.
-        (input) **kwargs:
-            None
-        (output) err_flag -> True|False - if an error has occurred.
+        (output) err_flag -> True|False - If an error has occurred.
         (output) err_msg -> Error message.
 
     """
 
+    args_array = dict(args_array)
     err_flag = False
     err_msg = None
 
-    if not (SERVER.is_locked()):
-        SERVER.lock_db(lock=True)
+    if not (server.is_locked()):
+        server.lock_db(lock=True)
 
-        if (SERVER.is_locked()):
+        if (server.is_locked()):
             dmp_dir = args_array["-o"] + "/cp_dump_" \
                 + datetime.datetime.strftime(datetime.datetime.now(),
                                              "%Y%m%d_%H%M")
 
             # Backup database.
-            shutil.copytree(SERVER.db_path, dmp_dir)
+            shutil.copytree(server.db_path, dmp_dir)
+            server.unlock_db()
 
-            SERVER.unlock_db()
-
-            if (SERVER.is_locked()):
+            if (server.is_locked()):
                 err_flag = True
                 err_msg = "Warning:  Database still locked after dump."
 
@@ -145,23 +142,24 @@ def sync_cp_dump(SERVER, args_array, **kwargs):
     return err_flag, err_msg
 
 
-def mongo_dump(SERVER, args_array, **kwargs):
+def mongo_dump(server, args_array, **kwargs):
 
     """Function:  mongo_dump
 
     Description:  Create the dump command and execute it.
 
     Arguments:
-        (input) SERVER -> Database server instance.
+        (input) server -> Database server instance.
         (input) args_array -> Array of command line options and values.
         (input) **kwargs:
             opt_arg -> Dictionary of additional options to add.
-        (output) True|False -> if an error has occurred.
-        (output) -> Error message.
+        (output) False -> If an error has occurred.
+        (output) None -> Error message.
 
     """
 
-    dump_cmd = mongo_libs.create_cmd(SERVER, args_array, "mongodump",
+    args_array = dict(args_array)
+    dump_cmd = mongo_libs.create_cmd(server, args_array, "mongodump",
                                      arg_parser.arg_set_path(args_array, "-p"),
                                      **kwargs)
     cmds_gen.run_prog(dump_cmd)
@@ -183,19 +181,21 @@ def run_program(args_array, func_dict, **kwargs):
 
     """
 
-    SERVER = mongo_libs.create_instance(args_array["-c"], args_array["-d"],
+    args_array = dict(args_array)
+    func_dict = dict(func_dict)
+    server = mongo_libs.create_instance(args_array["-c"], args_array["-d"],
                                         mongo_class.Server)
-    SERVER.connect()
+    server.connect()
 
     # Intersect args_array and func_dict to determine which functions to call.
     for x in set(args_array.keys()) & set(func_dict.keys()):
-        err_flag, err_msg = func_dict[x](SERVER, args_array, **kwargs)
+        err_flag, err_msg = func_dict[x](server, args_array, **kwargs)
 
         if err_flag:
             print(err_msg)
             break
 
-    cmds_gen.disconnect([SERVER])
+    cmds_gen.disconnect([server])
 
 
 def main():
@@ -236,14 +236,14 @@ def main():
     # Process argument list from command line.
     args_array = arg_parser.arg_parse2(sys.argv, opt_val_list)
 
-    if not gen_libs.help_func(args_array, __version__, help_message):
-        if not arg_parser.arg_require(args_array, opt_req_list) \
-           and arg_parser.arg_req_xor(args_array, opt_req_xor_list) \
-           and arg_parser.arg_noreq_xor(args_array, xor_noreq_list) \
-           and arg_parser.arg_cond_req(args_array, opt_con_req_list) \
-           and not arg_parser.arg_dir_chk_crt(args_array, dir_chk_list,
-                                              dir_crt_list):
-            run_program(args_array, func_dict, opt_arg=opt_arg_list)
+    if not gen_libs.help_func(args_array, __version__, help_message) \
+       and not arg_parser.arg_require(args_array, opt_req_list) \
+       and arg_parser.arg_req_xor(args_array, opt_req_xor_list) \
+       and arg_parser.arg_noreq_xor(args_array, xor_noreq_list) \
+       and arg_parser.arg_cond_req(args_array, opt_con_req_list) \
+       and not arg_parser.arg_dir_chk_crt(args_array, dir_chk_list,
+                                          dir_crt_list):
+        run_program(args_array, func_dict, opt_arg=opt_arg_list)
 
 
 if __name__ == "__main__":
