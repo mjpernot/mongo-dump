@@ -225,7 +225,7 @@ class UnitTest(unittest.TestCase):
         mock_help.return_value = False
         mock_arg.arg_require.return_value = False
         mock_arg.arg_req_xor.return_value = True
-        mock_arg.arg_noreq_xor.return_value = False
+        mock_arg.arg_noreq_xor.return_value = True
         mock_arg.arg_cond_req.return_value = False
 
         self.assertFalse(mongo_db_dump.main())
@@ -246,7 +246,7 @@ class UnitTest(unittest.TestCase):
         mock_help.return_value = False
         mock_arg.arg_require.return_value = False
         mock_arg.arg_req_xor.return_value = True
-        mock_arg.arg_noreq_xor.return_value = False
+        mock_arg.arg_noreq_xor.return_value = True
         mock_arg.arg_cond_req.return_value = False
 
         self.assertFalse(mongo_db_dump.main())
@@ -267,7 +267,7 @@ class UnitTest(unittest.TestCase):
         mock_help.return_value = False
         mock_arg.arg_require.return_value = False
         mock_arg.arg_req_xor.return_value = True
-        mock_arg.arg_noreq_xor.return_value = False
+        mock_arg.arg_noreq_xor.return_value = True
         mock_arg.arg_cond_req.return_value = True
         mock_arg.arg_dir_chk_crt.return_value = True
 
@@ -289,7 +289,7 @@ class UnitTest(unittest.TestCase):
         mock_help.return_value = False
         mock_arg.arg_require.return_value = False
         mock_arg.arg_req_xor.return_value = True
-        mock_arg.arg_noreq_xor.return_value = False
+        mock_arg.arg_noreq_xor.return_value = True
         mock_arg.arg_cond_req.return_value = True
         mock_arg.arg_dir_chk_crt.return_value = True
 
@@ -312,7 +312,7 @@ class UnitTest(unittest.TestCase):
         mock_help.return_value = False
         mock_arg.arg_require.return_value = False
         mock_arg.arg_req_xor.return_value = True
-        mock_arg.arg_noreq_xor.return_value = False
+        mock_arg.arg_noreq_xor.return_value = True
         mock_arg.arg_cond_req.return_value = True
         mock_arg.arg_dir_chk_crt.return_value = False
         mock_run.return_value = True
