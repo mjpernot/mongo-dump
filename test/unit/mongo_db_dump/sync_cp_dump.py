@@ -253,6 +253,7 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp -> Initialize testing environment.
+        test_db_dump -> Test with database dump successful.
         test_db_dump_locked -> Test with dumping of database, but still locked.
         test_unable_to_lock -> Test with database unable to lock it.
         test_db_locked -> Test with database is locked.
