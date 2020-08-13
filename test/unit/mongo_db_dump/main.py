@@ -35,6 +35,33 @@ import version
 __version__ = version.__version__
 
 
+class ProgramLock(object):
+
+    """Class:  ProgramLock
+
+    Description:  Class stub holder for gen_class.ProgramLock class.
+
+    Methods:
+        __init__ -> Class initialization.
+
+    """
+
+    def __init__(self, cmdline, flavor):
+
+        """Method:  __init__
+
+        Description:  Class initialization.
+
+        Arguments:
+            (input) cmdline -> Argv command line.
+            (input) flavor -> Lock flavor ID.
+
+        """
+
+        self.cmdline = cmdline
+        self.flavor = flavor
+
+
 class UnitTest(unittest.TestCase):
 
     """Class:  UnitTest
@@ -59,6 +86,10 @@ class UnitTest(unittest.TestCase):
         test_arg_cond_req_true -> Test arg_cond_req if returns true.
         test_arg_dir_chk_crt_true -> Test arg_dir_chk_crt if returns true.
         test_arg_dir_chk_crt_false -> Test arg_dir_chk_crt if returns false.
+        test_run_program -> Test run_program function.
+        test_programlock_id -> Test with ProgramLock with flavor id.
+        test_programlock_false -> Test with ProgramLock returns False.
+        test_programlock_true -> Test with ProgramLock returns True.
 
     """
 
@@ -73,6 +104,8 @@ class UnitTest(unittest.TestCase):
         """
 
         self.args_array = {"-c": "CfgFile", "-d": "CfgDir"}
+        self.args_array2 = {"-c": "CfgFile", "-d": "CfgDir", "-y": "Flavor"}
+        self.proglock = ProgramLock(["cmdline"], "FlavorID")
 
     @mock.patch("mongo_db_dump.gen_libs.help_func")
     @mock.patch("mongo_db_dump.arg_parser.arg_parse2")
@@ -295,10 +328,12 @@ class UnitTest(unittest.TestCase):
 
         self.assertFalse(mongo_db_dump.main())
 
+    @mock.patch("mongo_db_dump.gen_class.ProgramLock")
     @mock.patch("mongo_db_dump.run_program")
     @mock.patch("mongo_db_dump.gen_libs.help_func")
     @mock.patch("mongo_db_dump.arg_parser")
-    def test_arg_dir_chk_crt_false(self, mock_arg, mock_help, mock_run):
+    def test_arg_dir_chk_crt_false(self, mock_arg, mock_help, mock_run,
+                                   mock_lock):
 
         """Function:  test_arg_dir_chk_crt_false
 
@@ -316,6 +351,113 @@ class UnitTest(unittest.TestCase):
         mock_arg.arg_cond_req.return_value = True
         mock_arg.arg_dir_chk_crt.return_value = False
         mock_run.return_value = True
+        mock_lock.return_value = self.proglock
+
+        self.assertFalse(mongo_db_dump.main())
+
+    @mock.patch("mongo_db_dump.gen_class.ProgramLock")
+    @mock.patch("mongo_db_dump.run_program")
+    @mock.patch("mongo_db_dump.gen_libs.help_func")
+    @mock.patch("mongo_db_dump.arg_parser")
+    def test_run_program(self, mock_arg, mock_help, mock_run, mock_lock):
+
+        """Function:  test_run_program
+
+        Description:  Test run_program function.
+
+        Arguments:
+
+        """
+
+        mock_arg.arg_parse2.return_value = self.args_array
+        mock_help.return_value = False
+        mock_arg.arg_require.return_value = False
+        mock_arg.arg_req_xor.return_value = True
+        mock_arg.arg_noreq_xor.return_value = True
+        mock_arg.arg_cond_req.return_value = True
+        mock_arg.arg_dir_chk_crt.return_value = False
+        mock_run.return_value = True
+        mock_lock.return_value = self.proglock
+
+        self.assertFalse(mongo_db_dump.main())
+
+    @mock.patch("mongo_db_dump.gen_class.ProgramLock")
+    @mock.patch("mongo_db_dump.run_program")
+    @mock.patch("mongo_db_dump.gen_libs.help_func")
+    @mock.patch("mongo_db_dump.arg_parser")
+    def test_programlock_true(self, mock_arg, mock_help, mock_run, mock_lock):
+
+        """Function:  test_programlock_true
+
+        Description:  Test with ProgramLock returns True.
+
+        Arguments:
+
+        """
+
+        mock_arg.arg_parse2.return_value = self.args_array
+        mock_help.return_value = False
+        mock_arg.arg_require.return_value = False
+        mock_arg.arg_req_xor.return_value = True
+        mock_arg.arg_noreq_xor.return_value = True
+        mock_arg.arg_cond_req.return_value = True
+        mock_arg.arg_dir_chk_crt.return_value = False
+        mock_run.return_value = True
+        mock_lock.return_value = self.proglock
+
+        self.assertFalse(mongo_db_dump.main())
+
+    @mock.patch("mongo_db_dump.gen_class.ProgramLock")
+    @mock.patch("mongo_db_dump.run_program")
+    @mock.patch("mongo_db_dump.gen_libs.help_func")
+    @mock.patch("mongo_db_dump.arg_parser")
+    def test_programlock_false(self, mock_arg, mock_help, mock_run, mock_lock):
+
+        """Function:  test_programlock_false
+
+        Description:  Test with ProgramLock returns False.
+
+        Arguments:
+
+        """
+
+        mock_arg.arg_parse2.return_value = self.args_array
+        mock_help.return_value = False
+        mock_arg.arg_require.return_value = False
+        mock_arg.arg_req_xor.return_value = True
+        mock_arg.arg_noreq_xor.return_value = True
+        mock_arg.arg_cond_req.return_value = True
+        mock_arg.arg_dir_chk_crt.return_value = False
+        mock_run.return_value = True
+        mock_lock.side_effect = \
+            mongo_db_dump.gen_class.SingleInstanceException
+
+        with gen_libs.no_std_out():
+            self.assertFalse(mongo_db_dump.main())
+
+    @mock.patch("mongo_db_dump.gen_class.ProgramLock")
+    @mock.patch("mongo_db_dump.run_program")
+    @mock.patch("mongo_db_dump.gen_libs.help_func")
+    @mock.patch("mongo_db_dump.arg_parser")
+    def test_programlock_id(self, mock_arg, mock_help, mock_run, mock_lock):
+
+        """Function:  test_programlock_id
+
+        Description:  Test with ProgramLock with flavor id.
+
+        Arguments:
+
+        """
+
+        mock_arg.arg_parse2.return_value = self.args_array2
+        mock_help.return_value = False
+        mock_arg.arg_require.return_value = False
+        mock_arg.arg_req_xor.return_value = True
+        mock_arg.arg_noreq_xor.return_value = True
+        mock_arg.arg_cond_req.return_value = True
+        mock_arg.arg_dir_chk_crt.return_value = False
+        mock_run.return_value = True
+        mock_lock.return_value = self.proglock
 
         self.assertFalse(mongo_db_dump.main())
 
