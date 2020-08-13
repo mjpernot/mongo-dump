@@ -11,7 +11,8 @@
         mongo_db_dump.py -c file -d path
             {-M [-z | -b name [-r | -t name] | -l] |
             -A}
-            [-o name | -p path | -s | -z | -q] [-v | -h]
+            [-o name | -p path | -s | -z | -q] [-y flavor_id]
+            [-v | -h]
 
     Arguments:
         -c file => Server configuration file.  Required arg.
@@ -30,6 +31,7 @@
         -a database => Name of authenication database.  Required for -b.
         -r => Include user and roles in dump.  Only available for -b.
         -q => Turn quiet mode on.  By default, displays out log of dump.
+        -y value => A flavor id for the program lock.  To create unique lock.
         -v => Display version of this program.
         -h => Help and usage message.
             NOTE 1:  -v or -h overrides the other options.
@@ -76,6 +78,7 @@ import datetime
 
 # Local
 import lib.gen_libs as gen_libs
+import lib.gen_class as gen_class
 import lib.arg_parser as arg_parser
 import lib.cmds_gen as cmds_gen
 import mongo_lib.mongo_class as mongo_class
@@ -233,7 +236,7 @@ def main():
     opt_con_req_list = {"-A": ["-o"], "-b": ["-a"], "-r": ["-b"], "-t": ["-b"]}
     opt_req_list = ["-c", "-d"]
     opt_req_xor_list = {"-A": "-M"}
-    opt_val_list = ["-a", "-b", "-c", "-d", "-o", "-p", "-t"]
+    opt_val_list = ["-a", "-b", "-c", "-d", "-o", "-p", "-t", "-y"]
     xor_noreq_list = {"-l": "-b"}
 
     # Process argument list from command line.
@@ -246,7 +249,16 @@ def main():
        and arg_parser.arg_cond_req(args_array, opt_con_req_list) \
        and not arg_parser.arg_dir_chk_crt(args_array, dir_chk_list,
                                           dir_crt_list):
-        run_program(args_array, func_dict, opt_arg=opt_arg_list)
+
+        try:
+            prog_lock = gen_class.ProgramLock(sys.argv,
+                                              args_array.get("-y", ""))
+            run_program(args_array, func_dict, opt_arg=opt_arg_list)
+            del prog_lock
+
+        except gen_class.SingleInstanceException:
+            print("WARNING:  Lock in place for mongo_db_dump with id: %s"
+                  % (args_array.get("-y", "")))
 
 
 if __name__ == "__main__":

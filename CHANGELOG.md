@@ -4,8 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
 
-## [3.0.3] - 2020-08-13
+## [3.1.0] - 2020-08-13
+### Added
+- Added program lock to prevent multiple dump runs concurrently.
+
 ### Changed
+- main:  Added -y option and program lock instance.
 - Documentation updates.
 
 
