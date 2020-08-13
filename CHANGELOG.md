@@ -7,11 +7,13 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 ## [3.1.0] - 2020-08-13
 ### Added
 - Added program lock to prevent multiple dump runs concurrently.
+- Added email capability to allow standard out and standard error to be emailed.
 
 ### Fixed
 - main:  Fixed handling command line arguments from SonarQube scan finding.
 
 ### Changed
+- main:  Added -e and -s options for email capability.
 - main:  Added -y option and program lock instance.
 - Documentation updates.
 

@@ -12,6 +12,7 @@
             {-M [-z | -b name [-r | -t name] | -l] |
             -A}
             [-o name | -p path | -s | -z | -q] [-y flavor_id]
+            [-e email {email2 email3 ...} {-s subject_line}]
             [-v | -h]
 
     Arguments:
@@ -31,6 +32,9 @@
         -a database => Name of authenication database.  Required for -b.
         -r => Include user and roles in dump.  Only available for -b.
         -q => Turn quiet mode on.  By default, displays out log of dump.
+        -e email_address(es) => Send output to one or more email addresses.
+        -s subject_line => Subject line of email.
+            Requires -e option.
         -y value => A flavor id for the program lock.  To create unique lock.
         -v => Display version of this program.
         -h => Help and usage message.
@@ -217,6 +221,7 @@ def main():
         func_dict -> dictionary list for the function calls or other options.
         opt_arg_list -> contains optional arguments for the command line.
         opt_con_req_list -> contains the options that require other options.
+        opt_multi_list -> contains the options that will have multiple values.
         opt_req_list -> contains the options that are required for the program.
         opt_val_list -> contains options which require values.
         xor_noreq_list -> contains options that are XOR, but are not required.
@@ -234,14 +239,17 @@ def main():
                     "-o": "--out=", "-a": "--authenticationDatabase=",
                     "-q": "--quiet", "-r": "--dumpDbUsersAndRoles",
                     "-t": "--collection="}
-    opt_con_req_list = {"-A": ["-o"], "-b": ["-a"], "-r": ["-b"], "-t": ["-b"]}
+    opt_con_req_list = {"-A": ["-o"], "-b": ["-a"], "-r": ["-b"], "-t": ["-b"],
+                        "-s": ["-e"]}
+    opt_multi_list = ["-e", "-s"]
     opt_req_list = ["-c", "-d"]
     opt_req_xor_list = {"-A": "-M"}
-    opt_val_list = ["-a", "-b", "-c", "-d", "-o", "-p", "-t", "-y"]
+    opt_val_list = ["-a", "-b", "-c", "-d", "-o", "-p", "-t", "-e", "-s", "-y"]
     xor_noreq_list = {"-l": "-b"}
 
     # Process argument list from command line.
-    args_array = arg_parser.arg_parse2(cmdline.argv, opt_val_list)
+    args_array = arg_parser.arg_parse2(cmdline.argv, opt_val_list,
+                                       multi_val=opt_multi_list)
 
     if not gen_libs.help_func(args_array, __version__, help_message) \
        and not arg_parser.arg_require(args_array, opt_req_list) \
