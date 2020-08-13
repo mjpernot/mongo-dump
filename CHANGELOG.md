@@ -8,6 +8,9 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 ### Added
 - Added program lock to prevent multiple dump runs concurrently.
 
+### Fixed
+- main:  Fixed handling command line arguments from SonarQube scan finding.
+
 ### Changed
 - main:  Added -y option and program lock instance.
 - Documentation updates.

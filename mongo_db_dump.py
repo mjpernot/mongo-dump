@@ -226,6 +226,7 @@ def main():
 
     """
 
+    cmdline = gen_libs.get_inst(sys)
     dir_chk_list = ["-d", "-o", "-p"]
     dir_crt_list = ["-o"]
     func_dict = {"-A": sync_cp_dump, "-M": mongo_dump}
@@ -240,7 +241,7 @@ def main():
     xor_noreq_list = {"-l": "-b"}
 
     # Process argument list from command line.
-    args_array = arg_parser.arg_parse2(sys.argv, opt_val_list)
+    args_array = arg_parser.arg_parse2(cmdline.argv, opt_val_list)
 
     if not gen_libs.help_func(args_array, __version__, help_message) \
        and not arg_parser.arg_require(args_array, opt_req_list) \
@@ -251,7 +252,7 @@ def main():
                                           dir_crt_list):
 
         try:
-            prog_lock = gen_class.ProgramLock(sys.argv,
+            prog_lock = gen_class.ProgramLock(cmdline.argv,
                                               args_array.get("-y", ""))
             run_program(args_array, func_dict, opt_arg=opt_arg_list)
             del prog_lock
