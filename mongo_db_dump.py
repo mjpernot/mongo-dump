@@ -8,8 +8,10 @@
         databases.
 
     Usage:
-        mongo_db_dump.py -c file -d path {-M [-z | -b name [-r | -t name] |
-            -l] | -A} [-o name | -p path | -s | -z | -q] [-v | -h]
+        mongo_db_dump.py -c file -d path
+            {-M [-z | -b name [-r | -t name] | -l] |
+            -A}
+            [-o name | -p path | -s | -z | -q] [-v | -h]
 
     Arguments:
         -c file => Server configuration file.  Required arg.
@@ -34,17 +36,18 @@
             NOTE 2:  -A and -M are XOR required arguments.
 
     Notes:
-        Mongo configuration file format (mongo.py).  The configuration
-            file format for the Mongo connection used for inserting data into
-            a database.  There are two ways to connect:  single or replica set.
+        Mongo configuration file format (config/mongo.py.TEMPLATE).  The
+            configuration file format for the Mongo connection used for
+            inserting data into a database.
+            There are two ways to connect:  single or replica set.
 
             1.)  Single database connection:
             # Single Configuration file for Mongo Database Server.
-            user = "root"
-            passwd = "ROOT_PASSWORD"
+            user = "USER"
+            passwd = "PASSWORD"
             host = "IP_ADDRESS"
             name = "HOSTNAME"
-            port = PORT_NUMBER (default of mysql is 27017)
+            port = 27017
             conf_file = None
             auth = True
 
