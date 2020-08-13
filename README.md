@@ -2,7 +2,7 @@
 # Classification (U)
 
 # Description:
-  This program is used to dump a database on a Mongo database server via the mongodump program.
+  Used to dump a database on a Mongo database server via the mongodump program.
 
 
 ###  This README file is broken down into the following sections:
@@ -66,12 +66,6 @@ pip install -r requirements-python-lib.txt --target mongo_lib/lib --trusted-host
 # Configuration:
 
 Create Mongodb configuration file.
-
-```
-cd config
-cp mongo.py.TEMPLATE mongo.py
-```
-
 Make the appropriate change to the environment.
   * Make the appropriate changes to connect to a Mongo database.
     - user = "USER"
@@ -85,6 +79,8 @@ Make the appropriate change to the environment.
     - db_auth = "AUTHENTICATION_DATABASE"
 
 ```
+cd config
+cp mongo.py.TEMPLATE mongo.py
 vim mongo.py
 chmod 600 mongo.py
 ```
@@ -102,10 +98,7 @@ chmod 600 mongo.py
 
 # Testing:
 
-
 # Unit Testing:
-
-### Description: Testing consists of unit testing for the functions in the mongo_db_dump.py program.
 
 ### Installation:
 
@@ -138,25 +131,18 @@ pip install -r requirements-python-lib.txt --target mongo_lib/lib --trusted-host
 ```
 
 
-# Unit test runs for mongo_db_dump.py:
+### Testing:
   * Replace **{Python_Project}** with the baseline path of the python program.
 
 ```
 cd {Python_Project}/mongo-dump
-test/unit/mongo_db_dump/help_message.py
-test/unit/mongo_db_dump/main.py
-test/unit/mongo_db_dump/mongo_dump.py
-test/unit/mongo_db_dump/run_program.py
-test/unit/mongo_db_dump/sync_cp_dump.py
-```
-
-### All unit testing
-```
 test/unit/mongo_db_dump/unit_test_run.sh
 ```
 
-### Code coverage program
+### Code coverage:
+
 ```
+cd {Python_Project}/mongo-dump
 test/unit/mongo_db_dump/code_coverage.sh
 ```
 
