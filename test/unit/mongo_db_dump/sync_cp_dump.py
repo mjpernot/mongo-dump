@@ -34,6 +34,59 @@ import version
 __version__ = version.__version__
 
 
+class Mail(object):
+
+    """Class:  Mail
+
+    Description:  Class stub holder for gen_class.Mail class.
+
+    Methods:
+        __init__ -> Class initialization.
+        add_2_msg -> Stub method holder for Mail.add_2_msg.
+        send_mail -> Stub method holder for Mail.send_mail.
+
+    """
+
+    def __init__(self):
+
+        """Method:  __init__
+
+        Description:  Class initialization.
+
+        Arguments:
+
+        """
+
+        self.data = None
+
+    def add_2_msg(self, data):
+
+        """Method:  add_2_msg
+
+        Description:  Stub method holder for Mail.add_2_msg.
+
+        Arguments:
+            (input) data -> Message line to add to email body.
+
+        """
+
+        self.data = data
+
+        return True
+
+    def send_mail(self):
+
+        """Method:  send_mail
+
+        Description:  Stub method holder for Mail.send_mail.
+
+        Arguments:
+
+        """
+
+        return True
+
+
 class Server3(object):
 
     """Class:  Server3
@@ -253,6 +306,10 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp -> Initialize testing environment.
+        test_db_locked_mail -> Test with database is locked and mail.
+        test_unable_to_lock_mail -> Test database unable to lock it & mail.
+        test_db_dump_locked_mail -> Test with database locked and mail.
+        test_db_dump_mail -> Test with successful dump and mail.
         test_db_dump -> Test with database dump successful.
         test_db_dump_locked -> Test with dumping of database, but still locked.
         test_unable_to_lock -> Test with database unable to lock it.
@@ -270,6 +327,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
+        self.mail = Mail()
         self.server = Server()
         self.server2 = Server2()
         self.server3 = Server3()
@@ -277,6 +335,72 @@ class UnitTest(unittest.TestCase):
         self.msg1 = "Error:  Database previously locked, unable to dump."
         self.msg2 = "Error:  Unable to lock the database for dump to occur."
         self.msg3 = "Warning:  Database still locked after dump."
+
+    def test_db_locked_mail(self):
+
+        """Function:  test_db_locked_mail
+
+        Description:  Test with database is locked and mail.
+
+        Arguments:
+
+        """
+
+        self.server.locked = True
+
+        self.assertEqual((mongo_db_dump.sync_cp_dump(
+            self.server, self.args_array, mail=self.mail)), (True, self.msg1))
+        self.assertEqual(self.mail.data, self.msg1)
+
+    def test_unable_to_lock_mail(self):
+
+        """Function:  test_unable_to_lock_mail
+
+        Description:  Test with database unable to lock it and mail.
+
+        Arguments:
+
+        """
+
+        self.server.locked = False
+
+        self.assertEqual((mongo_db_dump.sync_cp_dump(
+            self.server2, self.args_array, mail=self.mail)), (True, self.msg2))
+        self.assertEqual(self.mail.data, self.msg2)
+
+    @mock.patch("mongo_db_dump.shutil.copytree")
+    def test_db_dump_locked_mail(self, mock_copy):
+
+        """Function:  test_db_dump_locked_mail
+
+        Description:  Test with database locked and mail.
+
+        Arguments:
+
+        """
+
+        mock_copy.return_value = True
+
+        self.assertEqual((mongo_db_dump.sync_cp_dump(
+            self.server, self.args_array, mail=self.mail)), (True, self.msg3))
+        self.assertEqual(self.mail.data, self.msg3)
+
+    @mock.patch("mongo_db_dump.shutil.copytree")
+    def test_db_dump_mail(self, mock_copy):
+
+        """Function:  test_db_dump_mail
+
+        Description:  Test with successful dump and mail.
+
+        Arguments:
+
+        """
+
+        mock_copy.return_value = True
+
+        self.assertEqual((mongo_db_dump.sync_cp_dump(
+            self.server3, self.args_array, mail=self.mail)), (False, None))
+        self.assertEqual(self.mail.data, None)
 
     @mock.patch("mongo_db_dump.shutil.copytree")
     def test_db_dump(self, mock_copy):
