@@ -117,6 +117,7 @@ class Server3(object):
 
         self.db_path = "Database_Directory_Path"
         self.locked = False
+        self.hold = None
 
     def lock_db(self, lock):
 
@@ -129,6 +130,7 @@ class Server3(object):
 
         """
 
+        self.hold = lock
         self.locked = True
 
     def is_locked(self):
@@ -186,6 +188,7 @@ class Server2(object):
 
         self.db_path = "Database_Directory_Path"
         self.locked = False
+        self.hold = None
 
     def lock_db(self, lock):
 
@@ -198,7 +201,7 @@ class Server2(object):
 
         """
 
-        pass
+        self.hold = lock
 
     def is_locked(self):
 
