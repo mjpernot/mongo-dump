@@ -34,6 +34,43 @@ import version
 __version__ = version.__version__
 
 
+class SubProcess(object):
+
+    """Class:  SubProcess
+
+    Description:  Class which is a representation of the subprocess class.
+
+    Methods:
+        __init__ -> Initialize configuration environment.
+        wait -> subprocess.wait method.
+
+    """
+
+    def __init__(self):
+
+        """Method:  __init__
+
+        Description:  Initialization instance of the ZipFile class.
+
+        Arguments:
+
+        """
+
+        pass
+
+    def wait(self):
+
+        """Method:  wait
+
+        Description:  Mock representation of subprocess.wait method.
+
+        Arguments:
+
+        """
+
+        pass
+
+
 class Server(object):
 
     """Class:  Server
@@ -130,11 +167,12 @@ class UnitTest(unittest.TestCase):
         """
 
         self.server = Server()
+        self.subp = SubProcess()
         self.args_array = {"-o": "DirectoryPath", "-p": "DirectoryPath2"}
 
-    @mock.patch("mongo_db_dump.cmds_gen.run_prog")
+    @mock.patch("mongo_db_dump.subprocess.Popen")
     @mock.patch("mongo_db_dump.mongo_libs.create_cmd")
-    def test_db_dump(self, mock_cmd, mock_run):
+    def test_db_dump(self, mock_cmd, mock_subp):
 
         """Function:  test_db_dump
 
@@ -145,7 +183,7 @@ class UnitTest(unittest.TestCase):
         """
 
         mock_cmd.return_value = "DumpCommand"
-        mock_run.return_value = "RunCommand"
+        mock_subp.return_value = self.subp
 
         self.assertEqual((mongo_db_dump.mongo_dump(
             self.server, self.args_array)), (False, None))
