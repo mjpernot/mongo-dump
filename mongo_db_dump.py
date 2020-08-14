@@ -11,7 +11,7 @@
         mongo_db_dump.py -c file -d path
             {-M -o name [-z | -b name [-r | -t name] | -l] |
             -A -o name}
-            [-p path | -s | -z | -q] [-y flavor_id]
+            [-p path | -s | -z | -q | -y flavor_id | -x]
             [-e email {email2 email3 ...} {-s subject_line}]
             [-v | -h]
 
@@ -44,6 +44,7 @@
         -s subject_line => Subject line of email.
             Requires -e option.
         -y value => A flavor id for the program lock.  To create unique lock.
+        -x => Suppress standard out.
         -v => Display version of this program.
         -h => Help and usage message.
             NOTE 1:  -v or -h overrides the other options.

@@ -6,6 +6,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 
 ## [3.1.0] - 2020-08-13
 ### Added
+- Added standard out suppression option.
 - Added program lock to prevent multiple dump runs concurrently.
 - Added email capability to allow standard out and standard error to be emailed.
 
