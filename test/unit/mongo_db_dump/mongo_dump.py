@@ -231,10 +231,9 @@ class UnitTest(unittest.TestCase):
         self.subp = SubProcess()
         self.mail = Mail()
         self.dir_path = "./test/unit/mongo_db_dump/tmp"
-        self.args_array = {"-o": "./test/unit/mongo_db_dump/tmp",
-                           "-p": "DirectoryPath2"}
-        self.args_array2 = {"-o": "./test/unit/mongo_db_dump/tmp",
-                            "-p": "DirectoryPath2", "-x": True}
+        self.args_array = {"-o": self.dir_path, "-p": "DirectoryPath2"}
+        self.args_array2 = {"-o": self.dir_path, "-p": "DirectoryPath2",
+                            "-x": True}
         self.file_list = ["2020-08-14T14:31:12 writing sysmon.mysql_perf to",
                           "2020-08-14T14:31:12 writing sysmon.mongo_rep to"]
 
