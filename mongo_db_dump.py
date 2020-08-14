@@ -29,7 +29,7 @@
             Only for -M option.
         -l => Oplog option added to mongodump.
             Only for -M option.
-            Database being dumped must also be part of a replica set.
+            Database server being dumped must also be part of a replica set.
         -b database => Database name.
             Only for -M option.
         -t table => Collection name.
