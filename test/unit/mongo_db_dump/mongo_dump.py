@@ -29,6 +29,7 @@ import mock
 # Local
 sys.path.append(os.getcwd())
 import mongo_db_dump
+import lib.gen_libs as gen_libs
 import version
 
 __version__ = version.__version__
@@ -152,7 +153,10 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp -> Initialize testing environment.
+        test_log_file -> Test with log file with data.
+        test_empty_log -> Test with nothing written to log file.
         test_db_dump -> Test with database dump successful.
+        tearDown -> Cleanup of testing environment.
 
     """
 
@@ -168,7 +172,47 @@ class UnitTest(unittest.TestCase):
 
         self.server = Server()
         self.subp = SubProcess()
-        self.args_array = {"-o": "DirectoryPath", "-p": "DirectoryPath2"}
+        self.dir_path = "./test/unit/mongo_db_dump/tmp"
+        self.args_array = {"-o": "./test/unit/mongo_db_dump/tmp",
+                           "-p": "DirectoryPath2"}
+
+    @mock.patch("mongo_db_dump.gen_libs.is_empty_file",
+                mock.Mock(return_value=False))
+    @mock.patch("mongo_db_dump.subprocess.Popen")
+    @mock.patch("mongo_db_dump.mongo_libs.create_cmd")
+    def test_log_file(self, mock_cmd, mock_subp):
+
+        """Function:  test_log_file
+
+        Description:  Test with log file with data.
+
+        Arguments:
+
+        """
+
+        mock_cmd.return_value = "DumpCommand"
+        mock_subp.return_value = self.subp
+
+        self.assertEqual((mongo_db_dump.mongo_dump(
+            self.server, self.args_array)), (False, None))
+
+    @mock.patch("mongo_db_dump.subprocess.Popen")
+    @mock.patch("mongo_db_dump.mongo_libs.create_cmd")
+    def test_empty_log(self, mock_cmd, mock_subp):
+
+        """Function:  test_empty_log
+
+        Description:  Test with nothing written to log file.
+
+        Arguments:
+
+        """
+
+        mock_cmd.return_value = "DumpCommand"
+        mock_subp.return_value = self.subp
+
+        self.assertEqual((mongo_db_dump.mongo_dump(
+            self.server, self.args_array)), (False, None))
 
     @mock.patch("mongo_db_dump.subprocess.Popen")
     @mock.patch("mongo_db_dump.mongo_libs.create_cmd")
@@ -187,6 +231,22 @@ class UnitTest(unittest.TestCase):
 
         self.assertEqual((mongo_db_dump.mongo_dump(
             self.server, self.args_array)), (False, None))
+
+    def tearDown(self):
+
+        """Function:  tearDown
+
+        Description:  Cleanup of testing environment.
+
+        Arguments:
+
+        """
+
+        f_list = gen_libs.list_filter_files(self.dir_path, "dump_log_file_*")
+
+        if f_list:
+            for line in f_list:
+                os.remove(line)
 
 
 if __name__ == "__main__":
