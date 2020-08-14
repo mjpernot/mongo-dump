@@ -83,6 +83,7 @@
 
 # Standard
 import sys
+import os
 import shutil
 import datetime
 import subprocess
@@ -187,11 +188,19 @@ def mongo_dump(server, args_array, **kwargs):
 
     subp = gen_libs.get_inst(subprocess)
     args_array = dict(args_array)
+    dtg = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d_%H%M%S")
+    f_name = os.path.join(args_array["-o"], "dump_log_file_" + dtg + ".log")
     dump_cmd = mongo_libs.create_cmd(
         server, args_array, "mongodump",
         arg_parser.arg_set_path(args_array, "-p"), **kwargs)
-    proc1 = subp.Popen(dump_cmd)
-    proc1.wait()
+
+    with open(f_name, "w") as l_file:
+        proc1 = subp.Popen(dump_cmd, stderr=l_file)
+        proc1.wait()
+
+    if not gen_libs.is_empty_file(f_name):
+        for line in gen_libs.file_2_list(f_name):
+            print(line)
 
     return False, None
 
