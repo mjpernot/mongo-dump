@@ -193,13 +193,21 @@ def run_program(args_array, func_dict, **kwargs):
 
     args_array = dict(args_array)
     func_dict = dict(func_dict)
+    mail = None
     server = mongo_libs.create_instance(args_array["-c"], args_array["-d"],
                                         mongo_class.Server)
     server.connect()
 
+    if args_array.get("-e", False):
+        dtg = datetime.datetime.strftime(datetime.datetime.now(),
+                                         "%Y%m%d_%H%M%S")
+        subj = args_array.get("-s", [server.name, ": mongo_db_dump: ", dtg])
+        mail = gen_class.setup_mail(args_array.get("-e"), subj=subj)
+
     # Intersect args_array and func_dict to determine which functions to call.
     for x in set(args_array.keys()) & set(func_dict.keys()):
-        err_flag, err_msg = func_dict[x](server, args_array, **kwargs)
+        err_flag, err_msg = func_dict[x](server, args_array, mail=mail,
+                                         **kwargs)
 
         if err_flag:
             print(err_msg)
