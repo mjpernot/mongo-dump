@@ -191,6 +191,7 @@ def mongo_dump(server, args_array, **kwargs):
     subp = gen_libs.get_inst(subprocess)
     args_array = dict(args_array)
     mail = kwargs.get("mail", None)
+    sup_std = args_array.get("-x", False)
     dtg = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d_%H%M%S")
     f_name = os.path.join(args_array["-o"], "dump_log_file_" + dtg + ".log")
     dump_cmd = mongo_libs.create_cmd(
@@ -205,7 +206,8 @@ def mongo_dump(server, args_array, **kwargs):
         log_list = gen_libs.file_2_list(f_name)
 
         for line in log_list:
-            print(line)
+            if not sup_std:
+                print(line)
 
             if mail:
                 mail.add_2_msg(line)
