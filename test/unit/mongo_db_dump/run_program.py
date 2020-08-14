@@ -123,7 +123,7 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp -> Initialize testing environment.
-        
+        test_suppress_failure -> Test with dump failure and suppression.
         test_suppress_success -> Test with successful dump and suppression.
         test_email_subj -> Test with subject line passed.
         test_email_no_subj -> Test with no subject line passed.
@@ -167,7 +167,6 @@ class UnitTest(unittest.TestCase):
         mock_inst.return_value = self.server
         mock_disconn.return_value = True
 
-        
         self.assertFalse(mongo_db_dump.run_program(self.args_array4,
                                                    self.func_dict2))
 
