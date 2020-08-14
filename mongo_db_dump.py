@@ -9,9 +9,9 @@
 
     Usage:
         mongo_db_dump.py -c file -d path
-            {-M [-z | -b name [-r | -t name] | -l] |
-            -A}
-            [-o name | -p path | -s | -z | -q] [-y flavor_id]
+            {-M -o name [-z | -b name [-r | -t name] | -l] |
+            -A -o name}
+            [-p path | -s | -z | -q] [-y flavor_id]
             [-e email {email2 email3 ...} {-s subject_line}]
             [-v | -h]
 
@@ -19,19 +19,27 @@
         -c file => Server configuration file.  Required arg.
         -d dir path => Directory path to config file (-c). Required arg.
         -o dir path => Directory path to dump directory.
-        -p dir path => Directory path to mongo programs.  Only required if the
-            mongo binary programs do not run properly.  (i.e. not in the $PATH
-            variable.)
+            Required argument for both types of dumps (-M and -A options).
+        -p dir path => Directory path to mongo programs.
+            Only needed if the mongo binary programs do not run properly.
+            (i.e. not in the $PATH variable.)
         -M => Run the mongodump program.
         -A => Run the Sync/Copy dump program.
-        -z => Compress database dump.  Only for -M option.
-        -l => Oplog option added to mongodump.  Only for -M option and
-            database must also be part of a replica set.
-        -b database => Database name.  Only for -M option.
-        -t table => Collection name.  Only available for -b.
-        -a database => Name of authenication database.  Required for -b.
-        -r => Include user and roles in dump.  Only available for -b.
-        -q => Turn quiet mode on.  By default, displays out log of dump.
+        -z => Compress database dump.
+            Only for -M option.
+        -l => Oplog option added to mongodump.
+            Only for -M option.
+            Database being dumped must also be part of a replica set.
+        -b database => Database name.
+            Only for -M option.
+        -t table => Collection name.
+            Only available for -b option.
+        -a database => Name of authenication database.
+            Required for -b option.
+        -r => Include user and roles in dump.
+            Only available for -b option.
+        -q => Turn quiet mode on.
+            By default, displays out log of dump.
         -e email_address(es) => Send output to one or more email addresses.
         -s subject_line => Subject line of email.
             Requires -e option.
@@ -261,7 +269,7 @@ def main():
     opt_con_req_list = {"-A": ["-o"], "-b": ["-a"], "-r": ["-b"], "-t": ["-b"],
                         "-s": ["-e"]}
     opt_multi_list = ["-e", "-s"]
-    opt_req_list = ["-c", "-d"]
+    opt_req_list = ["-c", "-d", "-o"]
     opt_req_xor_list = {"-A": "-M"}
     opt_val_list = ["-a", "-b", "-c", "-d", "-o", "-p", "-t", "-e", "-s", "-y"]
     xor_noreq_list = {"-l": "-b"}

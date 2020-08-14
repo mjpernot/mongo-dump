@@ -10,6 +10,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - Added email capability to allow standard out and standard error to be emailed.
 
 ### Fixed
+- main:  Made "-o" option a required argument.
 - main:  Fixed handling command line arguments from SonarQube scan finding.
 
 ### Changed
