@@ -179,10 +179,9 @@ def mongo_dump(server, args_array, **kwargs):
 
     subp = gen_libs.get_inst(subprocess)
     args_array = dict(args_array)
-    dump_cmd = mongo_libs.create_cmd(server, args_array, "mongodump",
-                                     arg_parser.arg_set_path(args_array, "-p"),
-                                     **kwargs)
-
+    dump_cmd = mongo_libs.create_cmd(
+        server, args_array, "mongodump",
+        arg_parser.arg_set_path(args_array, "-p"), **kwargs)
     proc1 = subp.Popen(dump_cmd)
     proc1.wait()
 
