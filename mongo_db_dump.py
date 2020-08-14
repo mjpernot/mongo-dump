@@ -118,12 +118,15 @@ def sync_cp_dump(server, args_array, **kwargs):
         (input) args_array -> Array of command line options and values.
         (output) err_flag -> True|False - If an error has occurred.
         (output) err_msg -> Error message.
+        (input) **kwargs:
+            mail -> Email class instance.
 
     """
 
     args_array = dict(args_array)
     err_flag = False
     err_msg = None
+    mail = kwargs.get("mail", None)
 
     if not (server.is_locked()):
         server.lock_db(lock=True)
@@ -148,6 +151,11 @@ def sync_cp_dump(server, args_array, **kwargs):
     else:
         err_flag = True
         err_msg = "Error:  Database previously locked, unable to dump."
+
+    if mail and err_flag:
+        mail.add_2_msg("Error/Warning detected in database dump.")
+        mail.add_2_msg(err_msg)
+        mail.send_mail()
 
     return err_flag, err_msg
 
