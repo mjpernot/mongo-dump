@@ -206,6 +206,8 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp -> Initialize testing environment.
+        test_mail_log_suppress -> Test with log file and mail and suppression.
+        test_log_file_suppress -> Test with log file with data and suppression.
         test_empty_log_mail -> Test with nothing written to log file and mail.
         test_mail_log_file -> Test with log file and mail.
         test_log_file -> Test with log file with data.
@@ -231,8 +233,57 @@ class UnitTest(unittest.TestCase):
         self.dir_path = "./test/unit/mongo_db_dump/tmp"
         self.args_array = {"-o": "./test/unit/mongo_db_dump/tmp",
                            "-p": "DirectoryPath2"}
+        self.args_array2 = {"-o": "./test/unit/mongo_db_dump/tmp",
+                            "-p": "DirectoryPath2", "-x": True}
         self.file_list = ["2020-08-14T14:31:12 writing sysmon.mysql_perf to",
                           "2020-08-14T14:31:12 writing sysmon.mongo_rep to"]
+
+    @mock.patch("mongo_db_dump.gen_libs.is_empty_file",
+                mock.Mock(return_value=False))
+    @mock.patch("mongo_db_dump.gen_libs.file_2_list")
+    @mock.patch("mongo_db_dump.subprocess.Popen")
+    @mock.patch("mongo_db_dump.mongo_libs.create_cmd")
+    def test_mail_log_suppress(self, mock_cmd, mock_subp, mock_file):
+
+        """Function:  test_mail_log_suppress
+
+        Description:  Test with log file and mail and suppression.
+
+        Arguments:
+
+        """
+
+        mock_cmd.return_value = "DumpCommand"
+        mock_subp.return_value = self.subp
+        mock_file.return_value = self.file_list
+
+        with gen_libs.no_std_out():
+            self.assertEqual((mongo_db_dump.mongo_dump(
+                self.server, self.args_array2, mail=self.mail)), (False, None))
+
+        self.assertEqual(self.mail.data, self.file_list[1])
+
+    @mock.patch("mongo_db_dump.gen_libs.is_empty_file",
+                mock.Mock(return_value=False))
+    @mock.patch("mongo_db_dump.gen_libs.file_2_list")
+    @mock.patch("mongo_db_dump.subprocess.Popen")
+    @mock.patch("mongo_db_dump.mongo_libs.create_cmd")
+    def test_log_file_suppress(self, mock_cmd, mock_subp, mock_file):
+
+        """Function:  test_log_file_suppress
+
+        Description:  Test with log file with data and suppression.
+
+        Arguments:
+
+        """
+
+        mock_cmd.return_value = "DumpCommand"
+        mock_subp.return_value = self.subp
+        mock_file.return_value = self.file_list
+
+        self.assertEqual((mongo_db_dump.mongo_dump(
+            self.server, self.args_array2)), (False, None))
 
     @mock.patch("mongo_db_dump.subprocess.Popen")
     @mock.patch("mongo_db_dump.mongo_libs.create_cmd")
