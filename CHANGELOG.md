@@ -15,6 +15,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - main:  Fixed handling command line arguments from SonarQube scan finding.
 
 ### Changed
+- run_program: Added standard out suppression code.
 - mongo_dump:  Add email capability for dumps for standard out and error reporting.
 - mongo_dump:  Redirected subprocess stderr to file for printing to standard out.
 - mongo_dump:  Replaced cmds_gen.run_prog with subprocess code to run dump command.

@@ -248,7 +248,7 @@ def run_program(args_array, func_dict, **kwargs):
         err_flag, err_msg = func_dict[x](server, args_array, mail=mail,
                                          **kwargs)
 
-        if err_flag:
+        if err_flag and not args_array.get("-x", False):
             print(err_msg)
             break
 
