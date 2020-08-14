@@ -123,6 +123,8 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp -> Initialize testing environment.
+        
+        test_suppress_success -> Test with successful dump and suppression.
         test_email_subj -> Test with subject line passed.
         test_email_no_subj -> Test with no subject line passed.
         test_mail -> Test with mail setup.
@@ -148,6 +150,44 @@ class UnitTest(unittest.TestCase):
         self.args_array2 = {"-d": True, "-c": True, "-M": True, "-e": True}
         self.args_array3 = {"-d": True, "-c": True, "-M": True, "-e": True,
                             "-s": ["subject", "line"]}
+        self.args_array4 = {"-d": True, "-c": True, "-M": True, "-x": True}
+
+    @mock.patch("mongo_db_dump.cmds_gen.disconnect")
+    @mock.patch("mongo_db_dump.mongo_libs.create_instance")
+    def test_suppress_failure(self, mock_inst, mock_disconn):
+
+        """Function:  test_suppress_failure
+
+        Description:  Test with dump failure and suppression.
+
+        Arguments:
+
+        """
+
+        mock_inst.return_value = self.server
+        mock_disconn.return_value = True
+
+        
+        self.assertFalse(mongo_db_dump.run_program(self.args_array4,
+                                                   self.func_dict2))
+
+    @mock.patch("mongo_db_dump.cmds_gen.disconnect")
+    @mock.patch("mongo_db_dump.mongo_libs.create_instance")
+    def test_suppress_success(self, mock_inst, mock_disconn):
+
+        """Function:  test_suppress_success
+
+        Description:  Test with successful dump and suppression.
+
+        Arguments:
+
+        """
+
+        mock_inst.return_value = self.server
+        mock_disconn.return_value = True
+
+        self.assertFalse(mongo_db_dump.run_program(self.args_array,
+                                                   self.func_dict))
 
     @mock.patch("mongo_db_dump.cmds_gen.disconnect")
     @mock.patch("mongo_db_dump.mongo_libs.create_instance")
