@@ -24,6 +24,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - run_program:  Setup and configured email.
 - main:  Added -e and -s options for email capability.
 - main:  Added -y option and program lock instance.
+- run_program:  Change variable to standard naming convention.
 - Documentation updates.
 
 

@@ -246,9 +246,9 @@ def run_program(args_array, func_dict, **kwargs):
         mail = gen_class.setup_mail(args_array.get("-e"), subj=subj)
 
     # Intersect args_array and func_dict to determine which functions to call.
-    for x in set(args_array.keys()) & set(func_dict.keys()):
-        err_flag, err_msg = func_dict[x](server, args_array, mail=mail,
-                                         **kwargs)
+    for item in set(args_array.keys()) & set(func_dict.keys()):
+        err_flag, err_msg = func_dict[item](server, args_array, mail=mail,
+                                            **kwargs)
 
         if err_flag and not args_array.get("-x", False):
             print(err_msg)
