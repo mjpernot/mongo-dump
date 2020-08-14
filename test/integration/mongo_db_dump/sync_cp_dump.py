@@ -288,6 +288,8 @@ class UnitTest(unittest.TestCase):
         self.msg1a = self.msg + self.msg1
         self.msg2 = "Error:  Unable to lock the database for dump to occur."
         self.msg2a = self.msg + self.msg1
+        self.msg3 = ""
+        self.msg3a = ""
 
     @unittest.skip("Not yet working")
     def test_db_locked_mail(self):
