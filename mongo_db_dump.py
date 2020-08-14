@@ -77,6 +77,7 @@
 import sys
 import shutil
 import datetime
+import subprocess
 
 # Third-party
 
@@ -176,11 +177,14 @@ def mongo_dump(server, args_array, **kwargs):
 
     """
 
+    subp = gen_libs.get_inst(subprocess)
     args_array = dict(args_array)
     dump_cmd = mongo_libs.create_cmd(server, args_array, "mongodump",
                                      arg_parser.arg_set_path(args_array, "-p"),
                                      **kwargs)
-    cmds_gen.run_prog(dump_cmd)
+
+    proc1 = subp.Popen(dump_cmd)
+    proc1.wait()
 
     return False, None
 
