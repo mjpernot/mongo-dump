@@ -50,7 +50,7 @@ def mongo_dump2(server, args_array, **kwargs):
     status = True
     err_msg = "Dump Failure"
 
-    if server and args_array:
+    if server and args_array and kwargs.get("mail", True):
         status = True
         err_msg = "Dump Failure"
 
@@ -72,7 +72,7 @@ def mongo_dump(server, args_array, **kwargs):
     status = False
     err_msg = None
 
-    if server and args_array:
+    if server and args_array and kwargs.get("mail", True):
         status = False
         err_msg = None
 
