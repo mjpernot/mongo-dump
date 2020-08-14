@@ -47,7 +47,14 @@ def mongo_dump2(server, args_array, **kwargs):
 
     """
 
-    return True, "Dump Failure"
+    status = True
+    err_msg = "Dump Failure"
+
+    if server and args_array:
+        status = True
+        err_msg = "Dump Failure"
+
+    return status, err_msg
 
 
 def mongo_dump(server, args_array, **kwargs):
@@ -62,7 +69,14 @@ def mongo_dump(server, args_array, **kwargs):
 
     """
 
-    return False, None
+    status = False
+    err_msg = None
+
+    if server and args_array:
+        status = False
+        err_msg = None
+
+    return status, err_msg
 
 
 class Server(object):
@@ -86,7 +100,7 @@ class Server(object):
 
         """
 
-        pass
+        self.name = "Mongo_name"
 
     def connect(self):
 
@@ -109,6 +123,10 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp -> Initialize testing environment.
+        test_email_subj -> Test with subject line passed.
+        test_email_no_subj -> Test with no subject line passed.
+        test_mail -> Test with mail setup.
+        test_dump_error -> Test with dump returning error.
         test_run_program -> Test run_program function.
 
     """
@@ -127,6 +145,63 @@ class UnitTest(unittest.TestCase):
         self.func_dict = {"-M": mongo_dump}
         self.func_dict2 = {"-M": mongo_dump2}
         self.args_array = {"-d": True, "-c": True, "-M": True}
+        self.args_array2 = {"-d": True, "-c": True, "-M": True, "-e": True}
+        self.args_array3 = {"-d": True, "-c": True, "-M": True, "-e": True,
+                            "-s": ["subject", "line"]}
+
+    @mock.patch("mongo_db_dump.cmds_gen.disconnect")
+    @mock.patch("mongo_db_dump.mongo_libs.create_instance")
+    def test_email_subj(self, mock_inst, mock_disconn):
+
+        """Function:  test_email_subj
+
+        Description:  Test with subject line passed.
+
+        Arguments:
+
+        """
+
+        mock_inst.return_value = self.server
+        mock_disconn.return_value = True
+
+        self.assertFalse(mongo_db_dump.run_program(self.args_array3,
+                                                   self.func_dict))
+
+    @mock.patch("mongo_db_dump.cmds_gen.disconnect")
+    @mock.patch("mongo_db_dump.mongo_libs.create_instance")
+    def test_email_no_subj(self, mock_inst, mock_disconn):
+
+        """Function:  test_email_no_subj
+
+        Description:  Test with no subject line passed.
+
+        Arguments:
+
+        """
+
+        mock_inst.return_value = self.server
+        mock_disconn.return_value = True
+
+        self.assertFalse(mongo_db_dump.run_program(self.args_array2,
+                                                   self.func_dict))
+
+    @mock.patch("mongo_db_dump.cmds_gen.disconnect")
+    @mock.patch("mongo_db_dump.mongo_libs.create_instance")
+    def test_mail(self, mock_inst, mock_disconn):
+
+        """Function:  test_mail
+
+        Description:  Test with mail setup.
+
+        Arguments:
+
+        """
+
+        mock_inst.return_value = self.server
+        mock_disconn.return_value = True
+
+        self.assertFalse(mongo_db_dump.run_program(self.args_array2,
+                                                   self.func_dict))
 
     @mock.patch("mongo_db_dump.cmds_gen.disconnect")
     @mock.patch("mongo_db_dump.mongo_libs.create_instance")
