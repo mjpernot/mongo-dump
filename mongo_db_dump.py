@@ -181,6 +181,7 @@ def mongo_dump(server, args_array, **kwargs):
         (input) args_array -> Array of command line options and values.
         (input) **kwargs:
             opt_arg -> Dictionary of additional options to add.
+            mail -> Email class instance.
         (output) False -> If an error has occurred.
         (output) None -> Error message.
 
@@ -188,6 +189,7 @@ def mongo_dump(server, args_array, **kwargs):
 
     subp = gen_libs.get_inst(subprocess)
     args_array = dict(args_array)
+    mail = kwargs.get("mail", None)
     dtg = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d_%H%M%S")
     f_name = os.path.join(args_array["-o"], "dump_log_file_" + dtg + ".log")
     dump_cmd = mongo_libs.create_cmd(
@@ -199,8 +201,16 @@ def mongo_dump(server, args_array, **kwargs):
         proc1.wait()
 
     if not gen_libs.is_empty_file(f_name):
-        for line in gen_libs.file_2_list(f_name):
+        log_list = gen_libs.file_2_list(f_name)
+
+        for line in log_list:
             print(line)
+
+            if mail:
+                mail.add_2_msg(line)
+
+        if mail:
+            mail.send_mail()
 
     return False, None
 
