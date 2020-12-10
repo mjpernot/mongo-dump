@@ -73,11 +73,15 @@ Make the appropriate change to the environment.
     - japd = "PSWORD"
     - host = "HOST_IP"
     - name = "HOSTNAME"
+    - port = 27017
+    - conf_file = None
+    - auth = True
+    - auth_db = "admin"
+    - auth_mech = "SCRAM-SHA-1"
+    - use_arg = True
+    - use_uri = False
 
-  * If connecting to a Mongo replica set, otherwise set to None.
-    - repset = "REPLICA_SET_NAME"
-    - repset_hosts = "HOST_1:PORT, HOST_2:PORT, ..."
-    - db_auth = "AUTHENTICATION_DATABASE"
+  * Leave the Mongo replica set entries set to None.
 
 ```
 cd config
