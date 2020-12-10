@@ -2,7 +2,7 @@
 # Classification (U)
 
 # Description:
-  Used to dump a database on a Mongo database server via the mongodump program.
+  Used to dump a database on a Mongo database server via the mongodump program or sync/copy of the data structure.
 
 
 ###  This README file is broken down into the following sections:
@@ -16,13 +16,13 @@
 
 
 # Features:
-  * Dump Mongo database via mongodump program.
+  * Dump a full Mongo database via mongodump program.
+  * Dump individual Mongo databases via mongodump program.
+  * Run a sync/copy of the Mongo data structure to a backup directory.
 
 # Prerequisites:
 
   * List of Linux packages that need to be installed on the server.
-    - python-libs
-    - python-devel
     - git
     - python-pip
 
@@ -69,8 +69,8 @@ Create Mongodb configuration file.
 Make the appropriate change to the environment.
   * Make the appropriate changes to connect to a Mongo database.
     - user = "USER"
-    - passwd = "PASSWORD"
-    - host = "IP_ADDRESS"
+    - japd = "PSWORD"
+    - host = "HOST_IP"
     - name = "HOSTNAME"
 
   * If connecting to a Mongo replica set, otherwise set to None.
