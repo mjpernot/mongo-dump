@@ -53,30 +53,27 @@
     Notes:
         Mongo configuration file format (config/mongo.py.TEMPLATE).  The
             configuration file format for the Mongo connection used for
-            inserting data into a database.
-            There are two ways to connect:  single or replica set.
+            dumping data from a database.  Leave the Mongo replica set entries
+            set to None as it is not required for dumping purposes.
 
-            1.)  Single database connection:
-            # Single Configuration file for Mongo Database Server.
+            Configuration file for Mongo Database Server connection.
             user = "USER"
-            passwd = "PASSWORD"
-            host = "IP_ADDRESS"
+            japd = "PSWORD"
+            host = "HOST_IP"
             name = "HOSTNAME"
             port = 27017
             conf_file = None
             auth = True
-
-            2.)  Replica Set connection:  Same format as above, but with these
-                    additional entries at the end of the configuration file:
-            repset = "REPLICA_SET_NAME"
-            repset_hosts = "HOST1:PORT, HOST2:PORT, HOST3:PORT, [...]"
-            db_auth = "AUTHENTICATION_DATABASE"
+            auth_db = "admin"
+            auth_mech = "SCRAM-SHA-1"
+            use_arg = True
+            use_uri = False
 
         Configuration modules -> Name is runtime dependent as it can be used to
             connect to different databases with different names.
 
     Example:
-        mongo_db_dump.py -a -c mongo -d config -o /db_dump -z -M -l
+        mongo_db_dump.py c mongo -d config -o /db_dump -z -M -l
 
 """
 
