@@ -290,7 +290,7 @@ class UnitTest(unittest.TestCase):
 
         self.assertEqual((mongo_db_dump.sync_cp_dump(
             self.server, self.args_array, mail=self.mail)), (True, self.msg1))
-        self.assertEqual(self.mail.data, self.msg1)
+        self.assertEqual(self.mail.msg, self.msg1)
 
     @unittest.skip("Not yet working")
     @mock.patch("mongo_db_dump.gen_class.Mail.send_mail",
