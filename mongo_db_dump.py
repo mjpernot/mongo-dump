@@ -9,37 +9,36 @@
 
     Usage:
         mongo_db_dump.py -c file -d path
-            {-M -o name [-z | -b name [-r | -t name] | -l] |
-            -A -o name}
-            [-p path | -s | -z | -q | -y flavor_id | -x]
+            {-M -o dir_path [-z | -b database [-r | -t name] | -l | -q | -z] |
+             -A -o dir_path}
+            [-p path | -y flavor_id | -x]
             [-e email {email2 email3 ...} {-s subject_line}]
             [-v | -h]
 
     Arguments:
         -c file => Server configuration file.  Required arg.
-        -d dir path => Directory path to config file (-c). Required arg.
-        -o dir path => Directory path to dump directory.
-            Required argument for both types of dumps (-M and -A options).
+        -d dir_path => Directory path to config file (-c). Required arg.
         -p dir path => Directory path to mongo programs.
             Only needed if the mongo binary programs do not run properly.
             (i.e. not in the $PATH variable.)
+
         -M => Run the mongodump program.
-        -A => Run the Sync/Copy dump program.
-        -z => Compress database dump.
-            Only for -M option.
-        -l => Oplog option added to mongodump.
-            Only for -M option.
-            Database server being dumped must also be part of a replica set.
-        -b database => Database name.
-            Only for -M option.
-        -t table => Collection name.
-            Only available for -b option.
-        -a database => Name of authenication database.
-            Required for -b option.
-        -r => Include user and roles in dump.
-            Only available for -b option.
-        -q => Turn quiet mode on.
-            By default, displays out log of dump.
+            -z => Compress database dump.  Only for -M option.
+            -l => Oplog option added to mongodump. Only for -M option.
+            -b database => Database name. Only for -M option.
+            -t table => Collection name. Only available for -b option.
+            -a database => Name of authenication database. Required for -b
+                option.
+            -r => Include user and roles in dump. Only available for -b option.
+            -q => Turn quiet mode on. By default, displays out log of dump.
+            -o dir_path => Directory path to dump directory. Required argument
+                for option.
+
+        -A => Run the Sync/Copy dump program. Database server being dumped must
+                also be part of a replica set.
+            -o dir_path => Directory path to dump directory. Required argument
+                for option.
+
         -e email_address(es) => Send output to one or more email addresses.
         -s subject_line => Subject line of email.
             Requires -e option.
@@ -48,7 +47,7 @@
         -v => Display version of this program.
         -h => Help and usage message.
             NOTE 1:  -v or -h overrides the other options.
-            NOTE 2:  -A and -M are XOR required arguments.
+            NOTE 2:  -A and -M are Xor required arguments.
 
     Notes:
         Mongo configuration file format (config/mongo.py.TEMPLATE).  The
