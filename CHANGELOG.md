@@ -15,6 +15,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - main:  Fixed handling command line arguments from SonarQube scan finding.
 
 ### Changed
+- mongo_dump:  Added err_flag and err_msg status variables.
 - config/mongo.py.TEMPLATE:  Added authentication mechanism entries to config file.
 - mongo_dump: Added standard out suppression code.
 - run_program: Added standard out suppression code.

@@ -185,6 +185,8 @@ def mongo_dump(server, args_array, **kwargs):
 
     """
 
+    err_flag = False
+    err_msg = None
     subp = gen_libs.get_inst(subprocess)
     args_array = dict(args_array)
     mail = kwargs.get("mail", None)
@@ -212,7 +214,7 @@ def mongo_dump(server, args_array, **kwargs):
         if mail:
             mail.send_mail()
 
-    return False, None
+    return err_flag, err_msg
 
 
 def run_program(args_array, func_dict, **kwargs):
