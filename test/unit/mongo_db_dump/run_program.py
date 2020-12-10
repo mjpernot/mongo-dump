@@ -101,6 +101,8 @@ class Server(object):
         """
 
         self.name = "Mongo_name"
+        self.status = False
+        self.errmsg = None
 
     def connect(self):
 
@@ -112,7 +114,7 @@ class Server(object):
 
         """
 
-        pass
+        return self.status, self.errmsg
 
 
 class UnitTest(unittest.TestCase):
