@@ -9,7 +9,8 @@
 
     Usage:
         mongo_db_dump.py -c file -d path
-            {-M -o dir_path [-z | -b database [-r | -t name] | -l | -q | -z] |
+            {-M -o dir_path [-z | -b database -a database
+                [-r | -t name] | -l | -q | -z] |
              -A -o dir_path}
             [-p path | -y flavor_id | -x]
             [-e email {email2 email3 ...} {-s subject_line}]
