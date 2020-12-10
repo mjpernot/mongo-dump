@@ -152,7 +152,7 @@ class UnitTest(unittest.TestCase):
                             "-s": ["subject", "line"]}
         self.args_array4 = {"-d": True, "-c": True, "-M": True, "-x": True}
 
-    @mock.patch("mongo_db_dump.cmds_gen.disconnect")
+    @mock.patch("mongo_db_dump.mongo_libs.disconnect")
     @mock.patch("mongo_db_dump.mongo_libs.create_instance")
     def test_suppress_failure(self, mock_inst, mock_disconn):
 
@@ -170,7 +170,7 @@ class UnitTest(unittest.TestCase):
         self.assertFalse(mongo_db_dump.run_program(self.args_array4,
                                                    self.func_dict2))
 
-    @mock.patch("mongo_db_dump.cmds_gen.disconnect")
+    @mock.patch("mongo_db_dump.mongo_libs.disconnect")
     @mock.patch("mongo_db_dump.mongo_libs.create_instance")
     def test_suppress_success(self, mock_inst, mock_disconn):
 
@@ -188,7 +188,7 @@ class UnitTest(unittest.TestCase):
         self.assertFalse(mongo_db_dump.run_program(self.args_array,
                                                    self.func_dict))
 
-    @mock.patch("mongo_db_dump.cmds_gen.disconnect")
+    @mock.patch("mongo_db_dump.mongo_libs.disconnect")
     @mock.patch("mongo_db_dump.mongo_libs.create_instance")
     def test_email_subj(self, mock_inst, mock_disconn):
 
@@ -206,7 +206,7 @@ class UnitTest(unittest.TestCase):
         self.assertFalse(mongo_db_dump.run_program(self.args_array3,
                                                    self.func_dict))
 
-    @mock.patch("mongo_db_dump.cmds_gen.disconnect")
+    @mock.patch("mongo_db_dump.mongo_libs.disconnect")
     @mock.patch("mongo_db_dump.mongo_libs.create_instance")
     def test_email_no_subj(self, mock_inst, mock_disconn):
 
@@ -224,7 +224,7 @@ class UnitTest(unittest.TestCase):
         self.assertFalse(mongo_db_dump.run_program(self.args_array2,
                                                    self.func_dict))
 
-    @mock.patch("mongo_db_dump.cmds_gen.disconnect")
+    @mock.patch("mongo_db_dump.mongo_libs.disconnect")
     @mock.patch("mongo_db_dump.mongo_libs.create_instance")
     def test_mail(self, mock_inst, mock_disconn):
 
@@ -242,7 +242,7 @@ class UnitTest(unittest.TestCase):
         self.assertFalse(mongo_db_dump.run_program(self.args_array2,
                                                    self.func_dict))
 
-    @mock.patch("mongo_db_dump.cmds_gen.disconnect")
+    @mock.patch("mongo_db_dump.mongo_libs.disconnect")
     @mock.patch("mongo_db_dump.mongo_libs.create_instance")
     def test_dump_error(self, mock_inst, mock_disconn):
 
@@ -261,7 +261,7 @@ class UnitTest(unittest.TestCase):
             self.assertFalse(mongo_db_dump.run_program(self.args_array,
                                                        self.func_dict2))
 
-    @mock.patch("mongo_db_dump.cmds_gen.disconnect")
+    @mock.patch("mongo_db_dump.mongo_libs.disconnect")
     @mock.patch("mongo_db_dump.mongo_libs.create_instance")
     def test_run_program(self, mock_inst, mock_disconn):
 
