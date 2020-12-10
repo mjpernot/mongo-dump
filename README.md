@@ -30,6 +30,7 @@
     - lib/cmds_gen
     - lib/arg_parser
     - lib/gen_libs
+    - lig/gen_class
     - mongo_lib/mongo_class
     - mongo_lib/mongo_libs
 
