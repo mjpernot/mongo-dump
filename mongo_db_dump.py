@@ -253,7 +253,7 @@ def run_program(args_array, func_dict, **kwargs):
             print(err_msg)
             break
 
-    cmds_gen.disconnect([server])
+    mongo_libs.disconnect([server])
 
 
 def main():

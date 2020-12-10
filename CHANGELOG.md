@@ -15,6 +15,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - main:  Fixed handling command line arguments from SonarQube scan finding.
 
 ### Changed
+- run_program:  Replaced cmds_gen.disconnect with mongo_libs.disconnect.
 - mongo_dump:  Added err_flag and err_msg status variables.
 - config/mongo.py.TEMPLATE:  Added authentication mechanism entries to config file.
 - mongo_dump: Added standard out suppression code.
@@ -28,6 +29,9 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - main:  Added -y option and program lock instance.
 - run_program:  Change variable to standard naming convention.
 - Documentation updates.
+
+### Removed
+- lib.cmds_gen library module - no longer required.
 
 
 ## [3.0.2] - 2019-09-30
