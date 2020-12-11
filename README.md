@@ -2,7 +2,7 @@
 # Classification (U)
 
 # Description:
-  Used to dump a database on a Mongo database server via the mongodump program or sync/copy of the data structure.
+  Used to dump a database on a Mongo database server via the mongodump program or sync/copy of the directory structure.
 
 
 ###  This README file is broken down into the following sections:
