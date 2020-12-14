@@ -154,9 +154,11 @@ class UnitTest(unittest.TestCase):
                             "-s": ["subject", "line"]}
         self.args_array4 = {"-d": True, "-c": True, "-M": True, "-x": True}
 
-    @mock.patch("mongo_db_dump.mongo_libs.disconnect")
+    @mock.patch("mongo_db_dump.get_req_options", mock.Mock(return_value=[]))
+    @mock.patch("mongo_db_dump.mongo_libs.disconnect",
+                mock.Mock(return_value=True))
     @mock.patch("mongo_db_dump.mongo_libs.create_instance")
-    def test_suppress_failure(self, mock_inst, mock_disconn):
+    def test_suppress_failure(self, mock_inst):
 
         """Function:  test_suppress_failure
 
@@ -167,14 +169,15 @@ class UnitTest(unittest.TestCase):
         """
 
         mock_inst.return_value = self.server
-        mock_disconn.return_value = True
 
         self.assertFalse(mongo_db_dump.run_program(self.args_array4,
                                                    self.func_dict2))
 
-    @mock.patch("mongo_db_dump.mongo_libs.disconnect")
+    @mock.patch("mongo_db_dump.get_req_options", mock.Mock(return_value=[]))
+    @mock.patch("mongo_db_dump.mongo_libs.disconnect",
+                mock.Mock(return_value=True))
     @mock.patch("mongo_db_dump.mongo_libs.create_instance")
-    def test_suppress_success(self, mock_inst, mock_disconn):
+    def test_suppress_success(self, mock_inst):
 
         """Function:  test_suppress_success
 
@@ -185,14 +188,15 @@ class UnitTest(unittest.TestCase):
         """
 
         mock_inst.return_value = self.server
-        mock_disconn.return_value = True
 
         self.assertFalse(mongo_db_dump.run_program(self.args_array,
                                                    self.func_dict))
 
-    @mock.patch("mongo_db_dump.mongo_libs.disconnect")
+    @mock.patch("mongo_db_dump.get_req_options", mock.Mock(return_value=[]))
+    @mock.patch("mongo_db_dump.mongo_libs.disconnect",
+                mock.Mock(return_value=True))
     @mock.patch("mongo_db_dump.mongo_libs.create_instance")
-    def test_email_subj(self, mock_inst, mock_disconn):
+    def test_email_subj(self, mock_inst):
 
         """Function:  test_email_subj
 
@@ -203,14 +207,15 @@ class UnitTest(unittest.TestCase):
         """
 
         mock_inst.return_value = self.server
-        mock_disconn.return_value = True
 
         self.assertFalse(mongo_db_dump.run_program(self.args_array3,
                                                    self.func_dict))
 
-    @mock.patch("mongo_db_dump.mongo_libs.disconnect")
+    @mock.patch("mongo_db_dump.get_req_options", mock.Mock(return_value=[]))
+    @mock.patch("mongo_db_dump.mongo_libs.disconnect",
+                mock.Mock(return_value=True))
     @mock.patch("mongo_db_dump.mongo_libs.create_instance")
-    def test_email_no_subj(self, mock_inst, mock_disconn):
+    def test_email_no_subj(self, mock_inst):
 
         """Function:  test_email_no_subj
 
@@ -221,14 +226,15 @@ class UnitTest(unittest.TestCase):
         """
 
         mock_inst.return_value = self.server
-        mock_disconn.return_value = True
 
         self.assertFalse(mongo_db_dump.run_program(self.args_array2,
                                                    self.func_dict))
 
-    @mock.patch("mongo_db_dump.mongo_libs.disconnect")
+    @mock.patch("mongo_db_dump.get_req_options", mock.Mock(return_value=[]))
+    @mock.patch("mongo_db_dump.mongo_libs.disconnect",
+                mock.Mock(return_value=True))
     @mock.patch("mongo_db_dump.mongo_libs.create_instance")
-    def test_mail(self, mock_inst, mock_disconn):
+    def test_mail(self, mock_inst):
 
         """Function:  test_mail
 
@@ -239,14 +245,15 @@ class UnitTest(unittest.TestCase):
         """
 
         mock_inst.return_value = self.server
-        mock_disconn.return_value = True
 
         self.assertFalse(mongo_db_dump.run_program(self.args_array2,
                                                    self.func_dict))
 
-    @mock.patch("mongo_db_dump.mongo_libs.disconnect")
+    @mock.patch("mongo_db_dump.get_req_options", mock.Mock(return_value=[]))
+    @mock.patch("mongo_db_dump.mongo_libs.disconnect",
+                mock.Mock(return_value=True))
     @mock.patch("mongo_db_dump.mongo_libs.create_instance")
-    def test_dump_error(self, mock_inst, mock_disconn):
+    def test_dump_error(self, mock_inst):
 
         """Function:  test_dump_error
 
@@ -257,15 +264,16 @@ class UnitTest(unittest.TestCase):
         """
 
         mock_inst.return_value = self.server
-        mock_disconn.return_value = True
 
         with gen_libs.no_std_out():
             self.assertFalse(mongo_db_dump.run_program(self.args_array,
                                                        self.func_dict2))
 
-    @mock.patch("mongo_db_dump.mongo_libs.disconnect")
+    @mock.patch("mongo_db_dump.get_req_options", mock.Mock(return_value=[]))
+    @mock.patch("mongo_db_dump.mongo_libs.disconnect",
+                mock.Mock(return_value=True))
     @mock.patch("mongo_db_dump.mongo_libs.create_instance")
-    def test_run_program(self, mock_inst, mock_disconn):
+    def test_run_program(self, mock_inst):
 
         """Function:  test_run_program
 
@@ -276,7 +284,6 @@ class UnitTest(unittest.TestCase):
         """
 
         mock_inst.return_value = self.server
-        mock_disconn.return_value = True
 
         self.assertFalse(mongo_db_dump.run_program(self.args_array,
                                                    self.func_dict))
