@@ -9,8 +9,7 @@
 
     Usage:
         mongo_db_dump.py -c file -d path
-            {-M -o dir_path [-z | -b database -a database
-                [-r | -t name] | -l | -q | -z] |
+            {-M -o dir_path [-z | -b database [-r | -t name] | -l | -q | -z] |
              -A -o dir_path}
             [-p path | -y flavor_id | -x]
             [-e email {email2 email3 ...} {-s subject_line}]
@@ -28,8 +27,6 @@
             -l => Oplog option added to mongodump. Only for -M option.
             -b database => Database name. Only for -M option.
             -t table => Collection name. Only available for -b option.
-            -a database => Name of authenication database. Required for -b
-                option.
             -r => Include user and roles in dump. Only available for -b option.
             -q => Turn quiet mode on. By default, displays out log of dump.
             -o dir_path => Directory path to dump directory. Required argument
@@ -286,6 +283,7 @@ def main():
         line arguments and values.
 
     Variables:
+        arg_req_dict -> contains link between config entry and required option.
         dir_chk_list -> contains options which will be directories.
         dir_crt_list -> contain options that require directory to be created.
         func_dict -> dictionary list for the function calls or other options.
@@ -302,19 +300,18 @@ def main():
     """
 
     cmdline = gen_libs.get_inst(sys)
+    arg_req_dict = {"auth_db": "--authenticationDatabase="}
     dir_chk_list = ["-d", "-o", "-p"]
     dir_crt_list = ["-o"]
     func_dict = {"-A": sync_cp_dump, "-M": mongo_dump}
     opt_arg_list = {"-l": "--oplog", "-z": "--gzip", "-b": "--db=",
-                    "-o": "--out=", "-a": "--authenticationDatabase=",
-                    "-q": "--quiet", "-r": "--dumpDbUsersAndRoles",
-                    "-t": "--collection="}
-    opt_con_req_list = {"-A": ["-o"], "-b": ["-a"], "-r": ["-b"], "-t": ["-b"],
-                        "-s": ["-e"]}
+                    "-o": "--out=", "-q": "--quiet",
+                    "-r": "--dumpDbUsersAndRoles", "-t": "--collection="}
+    opt_con_req_list = {"-A": ["-o"], "-r": ["-b"], "-t": ["-b"], "-s": ["-e"]}
     opt_multi_list = ["-e", "-s"]
     opt_req_list = ["-c", "-d", "-o"]
     opt_req_xor_list = {"-A": "-M"}
-    opt_val_list = ["-a", "-b", "-c", "-d", "-o", "-p", "-t", "-e", "-s", "-y"]
+    opt_val_list = ["-b", "-c", "-d", "-o", "-p", "-t", "-e", "-s", "-y"]
     xor_noreq_list = {"-l": "-b"}
 
     # Process argument list from command line.
@@ -332,7 +329,8 @@ def main():
         try:
             prog_lock = gen_class.ProgramLock(cmdline.argv,
                                               args_array.get("-y", ""))
-            run_program(args_array, func_dict, opt_arg=opt_arg_list)
+            run_program(args_array, func_dict, opt_arg=opt_arg_list,
+                        arg_req_dict=arg_req_dict)
             del prog_lock
 
         except gen_class.SingleInstanceException:
