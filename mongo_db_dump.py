@@ -216,6 +216,29 @@ def mongo_dump(server, args_array, **kwargs):
     return err_flag, err_msg
 
 
+def get_req_options(server, arg_req_dict, **kwargs):
+
+    """Function:  get_req_options
+
+    Description:  Assigns configuration entry values to required options.  If
+        the entry is not set (e.g. None), then the option is skipped.
+
+    Arguments:
+        (input) server -> Database server instance.
+        (input) args_array -> Dict of command line options and values.
+        (output) arg_rep -> List of required options with values.
+
+    """
+
+    arg_req_dict = dict(arg_req_dict)
+
+    arg_req = [arg_req_dict[item] + getattr(server, item)
+               for item in arg_req_dict.keys()
+               if hasattr(server, item) and getattr(server, item)]
+
+    return arg_req
+
+
 def run_program(args_array, func_dict, **kwargs):
 
     """Function:  run_program

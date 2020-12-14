@@ -5,7 +5,11 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 
 
 ## [3.1.0] - 2020-08-13
+- Added authentication mechanism for logging into Mongo.
+- Replaced "-a" option with Mongo configuration file setting.
+
 ### Added
+- get_req_options:  Assigns configuration entry values to required options.
 - Added standard out suppression option.
 - Added program lock to prevent multiple dump runs concurrently.
 - Added email capability to allow standard out and standard error to be emailed.
