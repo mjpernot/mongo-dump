@@ -19,6 +19,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - main:  Fixed handling command line arguments from SonarQube scan finding.
 
 ### Changed
+- run_program:  Added call to create required options list and pass to function.
 - main:  Removed "-a" options from system variables.
 - main:  Added arg_req_dict which contains link between config entry and required option.
 - run_program:  Replaced cmds_gen.disconnect with mongo_libs.disconnect.

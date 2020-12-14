@@ -176,6 +176,7 @@ def mongo_dump(server, args_array, **kwargs):
         (input) **kwargs:
             opt_arg -> Dictionary of additional options to add.
             mail -> Email class instance.
+            req_arg -> List of required options for the command line.
         (output) False -> If an error has occurred.
         (output) None -> Error message.
 
@@ -246,16 +247,19 @@ def run_program(args_array, func_dict, **kwargs):
         (input) args_array -> Dict of command line options and values.
         (input) func_dict -> Dictionary list of functions and options.
         (input) **kwargs:
-            opt_arg -> Dictionary of additional options to add
+            opt_arg -> Dictionary of additional options to add.
+            arg_req_dict -> contains link between config and required option.
 
     """
 
     args_array = dict(args_array)
     func_dict = dict(func_dict)
+    arg_req_dict = dict(kwargs.get("arg_req_dict", {}))
     mail = None
     server = mongo_libs.create_instance(args_array["-c"], args_array["-d"],
                                         mongo_class.Server)
     server.connect()
+    req_arg = get_req_options(server, arg_req_dict)
 
     if args_array.get("-e", False):
         dtg = datetime.datetime.strftime(datetime.datetime.now(),
@@ -266,7 +270,7 @@ def run_program(args_array, func_dict, **kwargs):
     # Intersect args_array and func_dict to determine which functions to call.
     for item in set(args_array.keys()) & set(func_dict.keys()):
         err_flag, err_msg = func_dict[item](server, args_array, mail=mail,
-                                            **kwargs)
+                                            req_arg=req_arg, **kwargs)
 
         if err_flag and not args_array.get("-x", False):
             print(err_msg)
