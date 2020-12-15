@@ -9,6 +9,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - Replaced "-a" option with Mongo configuration file setting.
 
 ### Added
+- run_program:  Capture and process connection status.
 - get_req_options:  Assigns configuration entry values to required options.
 - Added standard out suppression option.
 - Added program lock to prevent multiple dump runs concurrently.

@@ -258,25 +258,31 @@ def run_program(args_array, func_dict, **kwargs):
     mail = None
     server = mongo_libs.create_instance(args_array["-c"], args_array["-d"],
                                         mongo_class.Server)
-    server.connect()
-    req_arg = get_req_options(server, arg_req_dict)
+    status = server.connect()
 
-    if args_array.get("-e", False):
-        dtg = datetime.datetime.strftime(datetime.datetime.now(),
-                                         "%Y%m%d_%H%M%S")
-        subj = args_array.get("-s", [server.name, ": mongo_db_dump: ", dtg])
-        mail = gen_class.setup_mail(args_array.get("-e"), subj=subj)
+    if status[0]:
+        req_arg = get_req_options(server, arg_req_dict)
 
-    # Intersect args_array and func_dict to determine which functions to call.
-    for item in set(args_array.keys()) & set(func_dict.keys()):
-        err_flag, err_msg = func_dict[item](server, args_array, mail=mail,
-                                            req_arg=req_arg, **kwargs)
+        if args_array.get("-e", False):
+            dtg = datetime.datetime.strftime(datetime.datetime.now(),
+                                             "%Y%m%d_%H%M%S")
+            subj = args_array.get("-s",
+                                  [server.name, ": mongo_db_dump: ", dtg])
+            mail = gen_class.setup_mail(args_array.get("-e"), subj=subj)
 
-        if err_flag:
-            print(err_msg)
-            break
+        # Intersect args_array and func_dict to decide which functions to call.
+        for item in set(args_array.keys()) & set(func_dict.keys()):
+            err_flag, err_msg = func_dict[item](server, args_array, mail=mail,
+                                                req_arg=req_arg, **kwargs)
 
-    mongo_libs.disconnect([server])
+            if err_flag:
+                print(err_msg)
+                break
+
+        mongo_libs.disconnect([server])
+
+    else:
+        print("Connection failure:  %s" % (status[1]))
 
 
 def main():
