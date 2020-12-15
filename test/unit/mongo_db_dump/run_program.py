@@ -101,7 +101,7 @@ class Server(object):
         """
 
         self.name = "Mongo_name"
-        self.status = False
+        self.status = True
         self.errmsg = None
 
     def connect(self):
@@ -125,6 +125,7 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp -> Initialize testing environment.
+        test_connect_failure -> Test with connection failure.
         test_suppress_failure -> Test with dump failure and suppression.
         test_suppress_success -> Test with successful dump and suppression.
         test_email_subj -> Test with subject line passed.
@@ -153,6 +154,28 @@ class UnitTest(unittest.TestCase):
         self.args_array3 = {"-d": True, "-c": True, "-M": True, "-e": True,
                             "-s": ["subject", "line"]}
         self.args_array4 = {"-d": True, "-c": True, "-M": True, "-x": True}
+
+    @mock.patch("mongo_db_dump.get_req_options", mock.Mock(return_value=[]))
+    @mock.patch("mongo_db_dump.mongo_libs.disconnect",
+                mock.Mock(return_value=True))
+    @mock.patch("mongo_db_dump.mongo_libs.create_instance")
+    def test_connect_failure(self, mock_inst):
+
+        """Function:  test_connect_failure
+
+        Description:  Test with connection failure.
+
+        Arguments:
+
+        """
+
+        self.server.status = False
+        self.server.errmsg = "Connection failure"
+        mock_inst.return_value = self.server
+
+        with gen_libs.no_std_out():
+            self.assertFalse(mongo_db_dump.run_program(self.args_array,
+                                                       self.func_dict))
 
     @mock.patch("mongo_db_dump.get_req_options", mock.Mock(return_value=[]))
     @mock.patch("mongo_db_dump.mongo_libs.disconnect",
