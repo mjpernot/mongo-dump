@@ -170,8 +170,9 @@ class UnitTest(unittest.TestCase):
 
         mock_inst.return_value = self.server
 
-        self.assertFalse(mongo_db_dump.run_program(self.args_array4,
-                                                   self.func_dict2))
+        with gen_libs.no_std_out():
+            self.assertFalse(mongo_db_dump.run_program(self.args_array4,
+                                                       self.func_dict2))
 
     @mock.patch("mongo_db_dump.get_req_options", mock.Mock(return_value=[]))
     @mock.patch("mongo_db_dump.mongo_libs.disconnect",
