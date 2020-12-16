@@ -21,7 +21,8 @@ pipeline {
                 virtualenv test_env
                 source test_env/bin/activate
                 pip2 install mock==2.0.0 --user
-                pip2 install pymongo==3.2.0 --user
+                pip2 install pymongo==3.8.0 --user
+                ./test/unit/mongo_db_dump/get_req_options.py
                 ./test/unit/mongo_db_dump/help_message.py
                 ./test/unit/mongo_db_dump/main.py
                 ./test/unit/mongo_db_dump/mongo_dump.py
@@ -50,32 +51,32 @@ pipeline {
             steps {
                 script {
                     server = Artifactory.server('Artifactory')
-                    server.credentialsId = 'svc-highpoint-artifactory'
+                    server.credentialsId = 'art-svc-highpoint-dev'
                     uploadSpec = """{
                         "files": [
                             {
                                 "pattern": "./*.py",
                                 "recursive": false,
                                 "excludePatterns": [],
-                                "target": "generic-local/highpoint/mongo-dump/"
+                                "target": "pypi-proj-local/highpoint/mongo-dump/"
                             },
                             {
                                 "pattern": "./*.txt",
                                 "recursive": false,
                                 "excludePatterns": [],
-                                "target": "generic-local/highpoint/mongo-dump/"
+                                "target": "pypi-proj-local/highpoint/mongo-dump/"
                             },
                             {
                                 "pattern": "./*.md",
                                 "recursive": false,
                                 "excludePatterns": [],
-                                "target": "generic-local/highpoint/mongo-dump/"
+                                "target": "pypi-proj-local/highpoint/mongo-dump/"
                             },
                             {
                                 "pattern": "*.TEMPLATE",
                                 "recursive": true,
                                 "excludePatterns": [],
-                                "target": "generic-local/highpoint/mongo-dump/config/"
+                                "target": "pypi-proj-local/highpoint/mongo-dump/config/"
                             }
                         ]
                     }"""
