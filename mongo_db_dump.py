@@ -8,57 +8,69 @@
         databases.
 
     Usage:
-        mongo_db_dump.py -c file -d path {-M [-z | -b name [-r | -t name] |
-            -l] | -A} [-o name | -p path | -s | -z | -q] [-v | -h]
+        mongo_db_dump.py -c file -d path
+            {-M -o dir_path [-z | -b database [-r | -t name] | -l | -q | -z] |
+             -A -o dir_path}
+            [-p path | -y flavor_id | -x]
+            [-e email {email2 email3 ...} {-s subject_line}]
+            [-v | -h]
 
     Arguments:
         -c file => Server configuration file.  Required arg.
-        -d dir path => Directory path to config file (-c). Required arg.
-        -o dir path => Directory path to dump directory.
-        -p dir path => Directory path to mongo programs.  Only required if the
-            mongo binary programs do not run properly.  (i.e. not in the $PATH
-            variable.)
+        -d dir_path => Directory path to config file (-c). Required arg.
+        -p dir path => Directory path to mongo programs.
+            Only needed if the mongo binary programs do not run properly.
+            (i.e. not in the $PATH variable.)
+
         -M => Run the mongodump program.
-        -A => Run the Sync/Copy dump program.
-        -z => Compress database dump.  Only for -M option.
-        -l => Oplog option added to mongodump.  Only for -M option and
-            database must also be part of a replica set.
-        -b database => Database name.  Only for -M option.
-        -t table => Collection name.  Only available for -b.
-        -a database => Name of authenication database.  Required for -b.
-        -r => Include user and roles in dump.  Only available for -b.
-        -q => Turn quiet mode on.  By default, displays out log of dump.
+            -z => Compress database dump.  Only for -M option.
+            -l => Oplog option added to mongodump. Only for -M option.
+            -b database => Database name. Only for -M option.
+            -t table => Collection name. Only available for -b option.
+            -r => Include user and roles in dump. Only available for -b option.
+            -q => Turn quiet mode on. By default, displays out log of dump.
+            -o dir_path => Directory path to dump directory. Required argument
+                for option.
+
+        -A => Run the Sync/Copy dump program. Database server being dumped must
+                also be part of a replica set.
+            -o dir_path => Directory path to dump directory. Required argument
+                for option.
+
+        -e email_address(es) => Send output to one or more email addresses.
+        -s subject_line => Subject line of email.
+            Requires -e option.
+        -y value => A flavor id for the program lock.  To create unique lock.
+        -x => Suppress standard out.
         -v => Display version of this program.
         -h => Help and usage message.
             NOTE 1:  -v or -h overrides the other options.
-            NOTE 2:  -A and -M are XOR required arguments.
+            NOTE 2:  -A and -M are Xor required arguments.
 
     Notes:
-        Mongo configuration file format (mongo.py).  The configuration
-            file format for the Mongo connection used for inserting data into
-            a database.  There are two ways to connect:  single or replica set.
+        Mongo configuration file format (config/mongo.py.TEMPLATE).  The
+            configuration file format for the Mongo connection used for
+            dumping data from a database.  Leave the Mongo replica set entries
+            set to None as it is not required for dumping purposes.
 
-            1.)  Single database connection:
-            # Single Configuration file for Mongo Database Server.
-            user = "root"
-            passwd = "ROOT_PASSWORD"
-            host = "IP_ADDRESS"
+            Configuration file for Mongo Database Server connection.
+            user = "USER"
+            japd = "PSWORD"
+            host = "HOST_IP"
             name = "HOSTNAME"
-            port = PORT_NUMBER (default of mysql is 27017)
+            port = 27017
             conf_file = None
             auth = True
-
-            2.)  Replica Set connection:  Same format as above, but with these
-                    additional entries at the end of the configuration file:
-            repset = "REPLICA_SET_NAME"
-            repset_hosts = "HOST1:PORT, HOST2:PORT, HOST3:PORT, [...]"
-            db_auth = "AUTHENTICATION_DATABASE"
+            auth_db = "admin"
+            auth_mech = "SCRAM-SHA-1"
+            use_arg = True
+            use_uri = False
 
         Configuration modules -> Name is runtime dependent as it can be used to
             connect to different databases with different names.
 
     Example:
-        mongo_db_dump.py -a -c mongo -d config -o /db_dump -z -M -l
+        mongo_db_dump.py c mongo -d config -o /db_dump -z -M -l
 
 """
 
@@ -66,15 +78,17 @@
 
 # Standard
 import sys
+import os
 import shutil
 import datetime
+import subprocess
 
 # Third-party
 
 # Local
 import lib.gen_libs as gen_libs
+import lib.gen_class as gen_class
 import lib.arg_parser as arg_parser
-import lib.cmds_gen as cmds_gen
 import mongo_lib.mongo_class as mongo_class
 import mongo_lib.mongo_libs as mongo_libs
 import version
@@ -108,12 +122,15 @@ def sync_cp_dump(server, args_array, **kwargs):
         (input) args_array -> Array of command line options and values.
         (output) err_flag -> True|False - If an error has occurred.
         (output) err_msg -> Error message.
+        (input) **kwargs:
+            mail -> Email class instance.
 
     """
 
     args_array = dict(args_array)
     err_flag = False
     err_msg = None
+    mail = kwargs.get("mail", None)
 
     if not (server.is_locked()):
         server.lock_db(lock=True)
@@ -139,6 +156,11 @@ def sync_cp_dump(server, args_array, **kwargs):
         err_flag = True
         err_msg = "Error:  Database previously locked, unable to dump."
 
+    if mail and err_flag:
+        mail.add_2_msg("Error/Warning detected in database dump.")
+        mail.add_2_msg(err_msg)
+        mail.send_mail()
+
     return err_flag, err_msg
 
 
@@ -153,18 +175,66 @@ def mongo_dump(server, args_array, **kwargs):
         (input) args_array -> Array of command line options and values.
         (input) **kwargs:
             opt_arg -> Dictionary of additional options to add.
+            mail -> Email class instance.
+            req_arg -> List of required options for the command line.
         (output) False -> If an error has occurred.
         (output) None -> Error message.
 
     """
 
+    err_flag = False
+    err_msg = None
+    subp = gen_libs.get_inst(subprocess)
     args_array = dict(args_array)
-    dump_cmd = mongo_libs.create_cmd(server, args_array, "mongodump",
-                                     arg_parser.arg_set_path(args_array, "-p"),
-                                     **kwargs)
-    cmds_gen.run_prog(dump_cmd)
+    mail = kwargs.get("mail", None)
+    sup_std = args_array.get("-x", False)
+    dtg = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d_%H%M%S")
+    f_name = os.path.join(args_array["-o"], "dump_log_file_" + dtg + ".log")
+    dump_cmd = mongo_libs.create_cmd(
+        server, args_array, "mongodump",
+        arg_parser.arg_set_path(args_array, "-p"), **kwargs)
 
-    return False, None
+    with open(f_name, "w") as l_file:
+        proc1 = subp.Popen(dump_cmd, stderr=l_file)
+        proc1.wait()
+
+    if not gen_libs.is_empty_file(f_name):
+        log_list = gen_libs.file_2_list(f_name)
+
+        for line in log_list:
+            if not sup_std:
+                print(line)
+
+            if mail:
+                mail.add_2_msg(line)
+
+        if mail:
+            mail.send_mail()
+
+    return err_flag, err_msg
+
+
+def get_req_options(server, arg_req_dict, **kwargs):
+
+    """Function:  get_req_options
+
+    Description:  Assigns configuration entry values to required options.  If
+        the entry is not set (e.g. None), then the option is skipped.
+
+    Arguments:
+        (input) server -> Database server instance.
+        (input) args_array -> Dict of command line options and values.
+        (output) arg_rep -> List of required options with values.
+
+    """
+
+    arg_req_dict = dict(arg_req_dict)
+
+    arg_req = [arg_req_dict[item] + getattr(server, item)
+               for item in arg_req_dict.keys()
+               if hasattr(server, item) and getattr(server, item)]
+
+    return arg_req
 
 
 def run_program(args_array, func_dict, **kwargs):
@@ -177,25 +247,42 @@ def run_program(args_array, func_dict, **kwargs):
         (input) args_array -> Dict of command line options and values.
         (input) func_dict -> Dictionary list of functions and options.
         (input) **kwargs:
-            opt_arg -> Dictionary of additional options to add
+            opt_arg -> Dictionary of additional options to add.
+            arg_req_dict -> contains link between config and required option.
 
     """
 
     args_array = dict(args_array)
     func_dict = dict(func_dict)
+    arg_req_dict = dict(kwargs.get("arg_req_dict", {}))
+    mail = None
     server = mongo_libs.create_instance(args_array["-c"], args_array["-d"],
                                         mongo_class.Server)
-    server.connect()
+    status = server.connect()
 
-    # Intersect args_array and func_dict to determine which functions to call.
-    for x in set(args_array.keys()) & set(func_dict.keys()):
-        err_flag, err_msg = func_dict[x](server, args_array, **kwargs)
+    if status[0]:
+        req_arg = get_req_options(server, arg_req_dict)
 
-        if err_flag:
-            print(err_msg)
-            break
+        if args_array.get("-e", False):
+            dtg = datetime.datetime.strftime(datetime.datetime.now(),
+                                             "%Y%m%d_%H%M%S")
+            subj = args_array.get("-s",
+                                  [server.name, ": mongo_db_dump: ", dtg])
+            mail = gen_class.setup_mail(args_array.get("-e"), subj=subj)
 
-    cmds_gen.disconnect([server])
+        # Intersect args_array and func_dict to decide which functions to call.
+        for item in set(args_array.keys()) & set(func_dict.keys()):
+            err_flag, err_msg = func_dict[item](server, args_array, mail=mail,
+                                                req_arg=req_arg, **kwargs)
+
+            if err_flag:
+                print(err_msg)
+                break
+
+        mongo_libs.disconnect([server])
+
+    else:
+        print("Connection failure:  %s" % (status[1]))
 
 
 def main():
@@ -206,11 +293,13 @@ def main():
         line arguments and values.
 
     Variables:
+        arg_req_dict -> contains link between config entry and required option.
         dir_chk_list -> contains options which will be directories.
         dir_crt_list -> contain options that require directory to be created.
         func_dict -> dictionary list for the function calls or other options.
         opt_arg_list -> contains optional arguments for the command line.
         opt_con_req_list -> contains the options that require other options.
+        opt_multi_list -> contains the options that will have multiple values.
         opt_req_list -> contains the options that are required for the program.
         opt_val_list -> contains options which require values.
         xor_noreq_list -> contains options that are XOR, but are not required.
@@ -220,21 +309,24 @@ def main():
 
     """
 
+    cmdline = gen_libs.get_inst(sys)
+    arg_req_dict = {"auth_db": "--authenticationDatabase="}
     dir_chk_list = ["-d", "-o", "-p"]
     dir_crt_list = ["-o"]
     func_dict = {"-A": sync_cp_dump, "-M": mongo_dump}
     opt_arg_list = {"-l": "--oplog", "-z": "--gzip", "-b": "--db=",
-                    "-o": "--out=", "-a": "--authenticationDatabase=",
-                    "-q": "--quiet", "-r": "--dumpDbUsersAndRoles",
-                    "-t": "--collection="}
-    opt_con_req_list = {"-A": ["-o"], "-b": ["-a"], "-r": ["-b"], "-t": ["-b"]}
-    opt_req_list = ["-c", "-d"]
+                    "-o": "--out=", "-q": "--quiet",
+                    "-r": "--dumpDbUsersAndRoles", "-t": "--collection="}
+    opt_con_req_list = {"-A": ["-o"], "-r": ["-b"], "-t": ["-b"], "-s": ["-e"]}
+    opt_multi_list = ["-e", "-s"]
+    opt_req_list = ["-c", "-d", "-o"]
     opt_req_xor_list = {"-A": "-M"}
-    opt_val_list = ["-a", "-b", "-c", "-d", "-o", "-p", "-t"]
+    opt_val_list = ["-b", "-c", "-d", "-o", "-p", "-t", "-e", "-s", "-y"]
     xor_noreq_list = {"-l": "-b"}
 
     # Process argument list from command line.
-    args_array = arg_parser.arg_parse2(sys.argv, opt_val_list)
+    args_array = arg_parser.arg_parse2(cmdline.argv, opt_val_list,
+                                       multi_val=opt_multi_list)
 
     if not gen_libs.help_func(args_array, __version__, help_message) \
        and not arg_parser.arg_require(args_array, opt_req_list) \
@@ -243,7 +335,17 @@ def main():
        and arg_parser.arg_cond_req(args_array, opt_con_req_list) \
        and not arg_parser.arg_dir_chk_crt(args_array, dir_chk_list,
                                           dir_crt_list):
-        run_program(args_array, func_dict, opt_arg=opt_arg_list)
+
+        try:
+            prog_lock = gen_class.ProgramLock(cmdline.argv,
+                                              args_array.get("-y", ""))
+            run_program(args_array, func_dict, opt_arg=opt_arg_list,
+                        arg_req_dict=arg_req_dict)
+            del prog_lock
+
+        except gen_class.SingleInstanceException:
+            print("WARNING:  Lock in place for mongo_db_dump with id: %s"
+                  % (args_array.get("-y", "")))
 
 
 if __name__ == "__main__":

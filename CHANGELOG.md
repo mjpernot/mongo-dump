@@ -4,6 +4,46 @@ All notable changes to this project will be documented in this file.
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
 
+## [3.1.0] - 2020-08-13
+- Added authentication mechanism for logging into Mongo.
+- Replaced "-a" option with Mongo configuration file setting.
+
+### Added
+- run_program:  Capture and process connection status.
+- get_req_options:  Assigns configuration entry values to required options.
+- Added standard out suppression option.
+- Added program lock to prevent multiple dump runs concurrently.
+- Added email capability to allow standard out and standard error to be emailed.
+
+### Fixed
+- run_program:  Removed the standard out suppression for error printing.
+- main:  Made "-o" option a required argument.
+- main:  Fixed handling command line arguments from SonarQube scan finding.
+
+### Changed
+- run_program:  Added call to create required options list and pass to function.
+- main:  Removed "-a" options from system variables.
+- main:  Added arg_req_dict which contains link between config entry and required option.
+- run_program:  Replaced cmds_gen.disconnect with mongo_libs.disconnect.
+- mongo_dump:  Added err_flag and err_msg status variables.
+- config/mongo.py.TEMPLATE:  Added authentication mechanism entries to config file.
+- mongo_dump: Added standard out suppression code.
+- run_program: Added standard out suppression code.
+- mongo_dump:  Add email capability for dumps for standard out and error reporting.
+- mongo_dump:  Redirected subprocess stderr to file for printing to standard out.
+- mongo_dump:  Replaced cmds_gen.run_prog with subprocess code to run dump command.
+- sync_cp_dump:  Add email capability for dumps error/warnings detected.
+- run_program:  Setup and configured email.
+- main:  Added -e and -s options for email capability.
+- main:  Added -y option and program lock instance.
+- run_program:  Change variable to standard naming convention.
+- Documentation updates.
+
+### Removed
+- Removed "-a" option, replaced with entry in configuration file.
+- lib.cmds_gen library module - no longer required.
+
+
 ## [3.0.2] - 2019-09-30
 ### Fixed
 - sync_cp_dump:  Fixed problem with mutable default arguments issue.
