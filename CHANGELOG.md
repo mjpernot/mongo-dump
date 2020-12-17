@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
 
+## [3.2.0] - 2020-12-16
+- Added Mongo export capability.
+
+### Added
+- mongo_generic:  Create a mongo dump/export command and execute it.
+
+
 ## [3.1.0] - 2020-08-13
 - Added authentication mechanism for logging into Mongo.
 - Replaced "-a" option with Mongo configuration file setting.

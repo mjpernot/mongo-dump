@@ -177,8 +177,8 @@ def mongo_dump(server, args_array, **kwargs):
             opt_arg -> Dictionary of additional options to add.
             mail -> Email class instance.
             req_arg -> List of required options for the command line.
-        (output) False -> If an error has occurred.
-        (output) None -> Error message.
+        (output) err_flag -> If an error has occurred.
+        (output) err_msg -> Error message.
 
     """
 
@@ -196,6 +196,62 @@ def mongo_dump(server, args_array, **kwargs):
 
     with open(f_name, "w") as l_file:
         proc1 = subp.Popen(dump_cmd, stderr=l_file)
+        proc1.wait()
+
+    if not gen_libs.is_empty_file(f_name):
+        log_list = gen_libs.file_2_list(f_name)
+
+        for line in log_list:
+            if not sup_std:
+                print(line)
+
+            if mail:
+                mail.add_2_msg(line)
+
+        if mail:
+            mail.send_mail()
+
+    return err_flag, err_msg
+
+
+def mongo_generic(server, args_array, cmd_name, **kwargs):
+
+    """Function:  mongo_generic
+
+    Description:  Create a mongo dump/export command and execute it.
+
+    Arguments:
+        (input) server -> Database server instance.
+        (input) args_array -> Array of command line options and values.
+        (input) cmd_name -> Name of Mongo binary program to execute.
+        (input) **kwargs:
+            opt_arg -> Dictionary of additional options to add.
+            req_arg -> List of required options for the command line.
+            mail -> Email class instance.
+            log_name -> Base name of the log file name.
+            opt_name -> Optional name to include in log file name.
+        (output) err_flag -> If an error has occurred.
+        (output) err_msg -> Error message.
+
+    """
+
+    err_flag = False
+    err_msg = None
+    subp = gen_libs.get_inst(subprocess)
+    args_array = dict(args_array)
+    mail = kwargs.get("mail", None)
+    log_name = kwargs.get("log_name", "log_file")
+    opt_name = kwargs.get("opt_name", "")
+    sup_std = args_array.get("-x", False)
+    dtg = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d_%H%M%S")
+    f_name = os.path.join(
+        args_array["-o"], log_name + "_" + opt_name + "_" + dtg + ".log")
+    cmd = mongo_libs.create_cmd(
+        server, args_array, cmd_name,
+        arg_parser.arg_set_path(args_array, "-p"), **kwargs)
+
+    with open(f_name, "w") as l_file:
+        proc1 = subp.Popen(cmd, stderr=l_file)
         proc1.wait()
 
     if not gen_libs.is_empty_file(f_name):
