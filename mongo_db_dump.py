@@ -241,11 +241,18 @@ def mongo_generic(server, args_array, cmd_name, **kwargs):
     args_array = dict(args_array)
     mail = kwargs.get("mail", None)
     log_name = kwargs.get("log_name", "log_file")
-    opt_name = kwargs.get("opt_name", "")
+    opt_name = kwargs.get("opt_name", None)
     sup_std = args_array.get("-x", False)
     dtg = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d_%H%M%S")
-    f_name = os.path.join(
-        args_array["-o"], log_name + "_" + opt_name + "_" + dtg + ".log")
+
+    if opt_name:
+        opt_name = opt_name + "_"
+
+    else:
+        opt_name = ""
+
+    f_name = os.path.join(args_array["-o"],
+                          log_name + "_" + opt_name + dtg + ".log")
     cmd = mongo_libs.create_cmd(
         server, args_array, cmd_name,
         arg_parser.arg_set_path(args_array, "-p"), **kwargs)
@@ -266,6 +273,36 @@ def mongo_generic(server, args_array, cmd_name, **kwargs):
 
         if mail:
             mail.send_mail()
+
+    return err_flag, err_msg
+
+
+def mongo_export(server, args_array, **kwargs):
+
+    """Function:  mongo_export
+
+    Description:  Setup Mongo Export call.
+
+    Arguments:
+        (input) server -> Database server instance.
+        (input) args_array -> Array of command line options and values.
+        (input) **kwargs:
+            opt_arg -> Dictionary of additional options to add.
+            req_arg -> List of required options for the command line.
+            mail -> Email class instance.
+        (output) err_flag -> If an error has occurred.
+        (output) err_msg -> Error message.
+
+    """
+
+    err_flag = False
+    err_msg = None
+    log_name = "export"
+    opt_name = args_array["-b"] + "_" + args_array["-t"]
+
+    err_flag, err_msg = mongo_generic(
+        server, args_array, "mongoexport", log_name=log_name,
+        opt_name=opt_name, **kwargs)
 
     return err_flag, err_msg
 

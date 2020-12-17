@@ -8,6 +8,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - Added Mongo export capability.
 
 ### Added
+- mongo_export:  Setup Mongo Export call.
 - mongo_generic:  Create a mongo dump/export command and execute it.
 
 
