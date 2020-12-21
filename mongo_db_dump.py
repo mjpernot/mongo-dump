@@ -283,7 +283,6 @@ def mongo_export(server, args_array, **kwargs):
 
     """
 
-    opt = "--out="
     log_name = "export_"
     args_array = dict(args_array)
     mail = kwargs.get("mail", None)
