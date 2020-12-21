@@ -198,8 +198,7 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp -> Initialize testing environment.
-        test_opt_name -> Test with passed in optional log name.
-        test_log_name -> Test with passed in log name.
+        test_log_file -> Test with passed in log name.
         test_mail_log_suppress -> Test with log file and mail and suppression.
         test_log_file_suppress -> Test with log file with data and suppression.
         test_empty_log_mail -> Test with nothing written to log file and mail.
@@ -227,41 +226,18 @@ class UnitTest(unittest.TestCase):
         self.mail = Mail()
         self.cmd_name = "mongodump"
         self.cmd_name2 = "mongoexport"
-        self.log_name = "log_file"
-        self.log_name2 = "dump_log_file"
-        self.log_name3 = "export_log"
-        self.opt_name = "db_collection_name"
         self.dir_path = "./test/unit/mongo_db_dump/tmp"
-        self.args_array = {"-o": self.dir_path, "-p": "DirectoryPath2"}
-        self.args_array2 = {"-o": self.dir_path, "-p": "DirectoryPath2",
-                            "-x": True}
+        self.log_file = self.dir_path + "/log_file"
+        self.args_array = {"-p": "DirectoryPath2"}
+        self.args_array2 = {"-p": "DirectoryPath2", "-x": True}
         self.file_list = ["2020-08-14T14:31:12 writing sysmon.mysql_perf to",
                           "2020-08-14T14:31:12 writing sysmon.mongo_rep to"]
 
     @mock.patch("mongo_db_dump.subprocess.Popen")
     @mock.patch("mongo_db_dump.mongo_libs.create_cmd")
-    def test_opt_name(self, mock_cmd, mock_subp):
+    def test_log_file(self, mock_cmd, mock_subp):
 
-        """Function:  test_opt_name
-
-        Description:  Test with passed in optional log name.
-
-        Arguments:
-
-        """
-
-        mock_cmd.return_value = "ExportCommand"
-        mock_subp.return_value = self.subp
-
-        self.assertEqual((mongo_db_dump.mongo_generic(
-            self.server, self.args_array, self.cmd_name2,
-            log_name=self.log_name3, opt_name=self.opt_name)), (False, None))
-
-    @mock.patch("mongo_db_dump.subprocess.Popen")
-    @mock.patch("mongo_db_dump.mongo_libs.create_cmd")
-    def test_log_name(self, mock_cmd, mock_subp):
-
-        """Function:  test_log_name
+        """Function:  test_log_file
 
         Description:  Test with passed in log name.
 
@@ -273,8 +249,8 @@ class UnitTest(unittest.TestCase):
         mock_subp.return_value = self.subp
 
         self.assertEqual((mongo_db_dump.mongo_generic(
-            self.server, self.args_array, self.cmd_name2,
-            log_name = self.log_name3)), (False, None))
+            self.server, self.args_array, self.cmd_name2, self.log_file)),
+                         (False, None))
 
     @mock.patch("mongo_db_dump.gen_libs.is_empty_file",
                 mock.Mock(return_value=False))
@@ -297,8 +273,8 @@ class UnitTest(unittest.TestCase):
 
         with gen_libs.no_std_out():
             self.assertEqual((mongo_db_dump.mongo_generic(
-                self.server, self.args_array2, self.cmd_name, mail=self.mail)),
-                             (False, None))
+                self.server, self.args_array2, self.cmd_name, self.log_file,
+                mail=self.mail)), (False, None))
 
         self.assertEqual(self.mail.data, self.file_list[1])
 
@@ -322,7 +298,8 @@ class UnitTest(unittest.TestCase):
         mock_file.return_value = self.file_list
 
         self.assertEqual((mongo_db_dump.mongo_generic(
-            self.server, self.args_array2, self.cmd_name)), (False, None))
+            self.server, self.args_array2, self.cmd_name, self.log_file)),
+                         (False, None))
 
     @mock.patch("mongo_db_dump.subprocess.Popen")
     @mock.patch("mongo_db_dump.mongo_libs.create_cmd")
@@ -340,8 +317,8 @@ class UnitTest(unittest.TestCase):
         mock_subp.return_value = self.subp
 
         self.assertEqual((mongo_db_dump.mongo_generic(
-            self.server, self.args_array, self.cmd_name, mail=self.mail)),
-                         (False, None))
+            self.server, self.args_array, self.cmd_name, self.log_file,
+            mail=self.mail)), (False, None))
 
         self.assertEqual(self.mail.data, None)
 
@@ -366,8 +343,8 @@ class UnitTest(unittest.TestCase):
 
         with gen_libs.no_std_out():
             self.assertEqual((mongo_db_dump.mongo_generic(
-                self.server, self.args_array, self.cmd_name, mail=self.mail)),
-                             (False, None))
+                self.server, self.args_array, self.cmd_name, self.log_file,
+                mail=self.mail)), (False, None))
 
         self.assertEqual(self.mail.data, self.file_list[1])
 
@@ -392,7 +369,8 @@ class UnitTest(unittest.TestCase):
 
         with gen_libs.no_std_out():
             self.assertEqual((mongo_db_dump.mongo_generic(
-                self.server, self.args_array, self.cmd_name)), (False, None))
+                self.server, self.args_array, self.cmd_name, self.log_file)),
+                             (False, None))
 
     @mock.patch("mongo_db_dump.subprocess.Popen")
     @mock.patch("mongo_db_dump.mongo_libs.create_cmd")
@@ -410,7 +388,8 @@ class UnitTest(unittest.TestCase):
         mock_subp.return_value = self.subp
 
         self.assertEqual((mongo_db_dump.mongo_generic(
-            self.server, self.args_array, self.cmd_name)), (False, None))
+            self.server, self.args_array, self.cmd_name, self.log_file)),
+                         (False, None))
 
     @mock.patch("mongo_db_dump.subprocess.Popen")
     @mock.patch("mongo_db_dump.mongo_libs.create_cmd")
@@ -428,7 +407,8 @@ class UnitTest(unittest.TestCase):
         mock_subp.return_value = self.subp
 
         self.assertEqual((mongo_db_dump.mongo_generic(
-            self.server, self.args_array, self.cmd_name2)), (False, None))
+            self.server, self.args_array, self.cmd_name2, self.log_file)),
+                         (False, None))
 
     @mock.patch("mongo_db_dump.subprocess.Popen")
     @mock.patch("mongo_db_dump.mongo_libs.create_cmd")
@@ -446,7 +426,8 @@ class UnitTest(unittest.TestCase):
         mock_subp.return_value = self.subp
 
         self.assertEqual((mongo_db_dump.mongo_generic(
-            self.server, self.args_array, self.cmd_name)), (False, None))
+            self.server, self.args_array, self.cmd_name, self.log_file)),
+                         (False, None))
 
     def tearDown(self):
 
@@ -458,22 +439,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        f_list = gen_libs.list_filter_files(self.dir_path,
-                                            self.log_name + "_*")
-
-        if f_list:
-            for line in f_list:
-                os.remove(line)
-
-        f_list = gen_libs.list_filter_files(self.dir_path,
-                                            self.log_name2 + "_*")
-
-        if f_list:
-            for line in f_list:
-                os.remove(line)
-
-        f_list = gen_libs.list_filter_files(self.dir_path,
-                                            self.log_name3 + "_*")
+        f_list = gen_libs.list_filter_files(self.dir_path, "log_file*")
 
         if f_list:
             for line in f_list:
