@@ -291,8 +291,8 @@ def mongo_export(server, args_array, **kwargs):
     dtg = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d_%H%M%S")
 
     if "-o" in args_array.keys() and args_array["-o"]:
-        log_file = os.path.join(args_array["-o"],
-                                log_name + opt_name + "_" + dtg + ".log")
+        log_file = os.path.join(
+            args_array["-o"], log_name + opt_name + "_" + dtg + ".log")
         args_array["-o"] = os.path.join(
             args_array["-o"], log_name + opt_name + ".json")
         err_flag, err_msg = mongo_generic(
