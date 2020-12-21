@@ -198,7 +198,7 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp -> Initialize testing environment.
-        test_log_file -> Test with passed in log name.
+        test_log_file2 -> Test with passed in log name.
         test_mail_log_suppress -> Test with log file and mail and suppression.
         test_log_file_suppress -> Test with log file with data and suppression.
         test_empty_log_mail -> Test with nothing written to log file and mail.
@@ -235,9 +235,9 @@ class UnitTest(unittest.TestCase):
 
     @mock.patch("mongo_db_dump.subprocess.Popen")
     @mock.patch("mongo_db_dump.mongo_libs.create_cmd")
-    def test_log_file(self, mock_cmd, mock_subp):
+    def test_log_file2(self, mock_cmd, mock_subp):
 
-        """Function:  test_log_file
+        """Function:  test_log_file2
 
         Description:  Test with passed in log name.
 
@@ -248,9 +248,10 @@ class UnitTest(unittest.TestCase):
         mock_cmd.return_value = "ExportCommand"
         mock_subp.return_value = self.subp
 
-        self.assertEqual((mongo_db_dump.mongo_generic(
-            self.server, self.args_array, self.cmd_name2, self.log_file)),
-            (False, None))
+        self.assertEqual(
+            mongo_db_dump.mongo_generic(
+                self.server, self.args_array, self.cmd_name2, self.log_file), (
+                    False, None))
 
     @mock.patch("mongo_db_dump.gen_libs.is_empty_file",
                 mock.Mock(return_value=False))
@@ -272,9 +273,10 @@ class UnitTest(unittest.TestCase):
         mock_file.return_value = self.file_list
 
         with gen_libs.no_std_out():
-            self.assertEqual((mongo_db_dump.mongo_generic(
-                self.server, self.args_array2, self.cmd_name, self.log_file,
-                mail=self.mail)), (False, None))
+            self.assertEqual(
+                mongo_db_dump.mongo_generic(
+                    self.server, self.args_array2, self.cmd_name,
+                    self.log_file, mail=self.mail), (False, None))
 
         self.assertEqual(self.mail.data, self.file_list[1])
 
@@ -297,9 +299,10 @@ class UnitTest(unittest.TestCase):
         mock_subp.return_value = self.subp
         mock_file.return_value = self.file_list
 
-        self.assertEqual((mongo_db_dump.mongo_generic(
-            self.server, self.args_array2, self.cmd_name, self.log_file)),
-            (False, None))
+        self.assertEqual(
+            mongo_db_dump.mongo_generic(
+                self.server, self.args_array2, self.cmd_name, self.log_file), (
+                    False, None))
 
     @mock.patch("mongo_db_dump.subprocess.Popen")
     @mock.patch("mongo_db_dump.mongo_libs.create_cmd")
@@ -316,9 +319,10 @@ class UnitTest(unittest.TestCase):
         mock_cmd.return_value = "DumpCommand"
         mock_subp.return_value = self.subp
 
-        self.assertEqual((mongo_db_dump.mongo_generic(
-            self.server, self.args_array, self.cmd_name, self.log_file,
-            mail=self.mail)), (False, None))
+        self.assertEqual(
+            mongo_db_dump.mongo_generic(
+                self.server, self.args_array, self.cmd_name, self.log_file,
+                mail=self.mail), (False, None))
 
         self.assertEqual(self.mail.data, None)
 
@@ -342,9 +346,10 @@ class UnitTest(unittest.TestCase):
         mock_file.return_value = self.file_list
 
         with gen_libs.no_std_out():
-            self.assertEqual((mongo_db_dump.mongo_generic(
-                self.server, self.args_array, self.cmd_name, self.log_file,
-                mail=self.mail)), (False, None))
+            self.assertEqual(
+                mongo_db_dump.mongo_generic(
+                    self.server, self.args_array, self.cmd_name, self.log_file,
+                    mail=self.mail), (False, None))
 
         self.assertEqual(self.mail.data, self.file_list[1])
 
@@ -368,9 +373,10 @@ class UnitTest(unittest.TestCase):
         mock_file.return_value = self.file_list
 
         with gen_libs.no_std_out():
-            self.assertEqual((mongo_db_dump.mongo_generic(
-                self.server, self.args_array, self.cmd_name, self.log_file)),
-                (False, None))
+            self.assertEqual(
+                mongo_db_dump.mongo_generic(
+                    self.server, self.args_array, self.cmd_name,
+                    self.log_file), (False, None))
 
     @mock.patch("mongo_db_dump.subprocess.Popen")
     @mock.patch("mongo_db_dump.mongo_libs.create_cmd")
@@ -387,9 +393,10 @@ class UnitTest(unittest.TestCase):
         mock_cmd.return_value = "DumpCommand"
         mock_subp.return_value = self.subp
 
-        self.assertEqual((mongo_db_dump.mongo_generic(
-            self.server, self.args_array, self.cmd_name, self.log_file)),
-            (False, None))
+        self.assertEqual(
+            mongo_db_dump.mongo_generic(
+                self.server, self.args_array, self.cmd_name, self.log_file), (
+                    False, None))
 
     @mock.patch("mongo_db_dump.subprocess.Popen")
     @mock.patch("mongo_db_dump.mongo_libs.create_cmd")
@@ -406,9 +413,10 @@ class UnitTest(unittest.TestCase):
         mock_cmd.return_value = "ExportCommand"
         mock_subp.return_value = self.subp
 
-        self.assertEqual((mongo_db_dump.mongo_generic(
-            self.server, self.args_array, self.cmd_name2, self.log_file)),
-            (False, None))
+        self.assertEqual(
+            mongo_db_dump.mongo_generic(
+                self.server, self.args_array, self.cmd_name2, self.log_file), (
+                    False, None))
 
     @mock.patch("mongo_db_dump.subprocess.Popen")
     @mock.patch("mongo_db_dump.mongo_libs.create_cmd")
@@ -425,9 +433,10 @@ class UnitTest(unittest.TestCase):
         mock_cmd.return_value = "DumpCommand"
         mock_subp.return_value = self.subp
 
-        self.assertEqual((mongo_db_dump.mongo_generic(
-            self.server, self.args_array, self.cmd_name, self.log_file)),
-            (False, None))
+        self.assertEqual(
+            (mongo_db_dump.mongo_generic(
+                self.server, self.args_array, self.cmd_name, self.log_file)), (
+                    False, None))
 
     def tearDown(self):
 
