@@ -250,7 +250,7 @@ class UnitTest(unittest.TestCase):
 
         self.assertEqual((mongo_db_dump.mongo_generic(
             self.server, self.args_array, self.cmd_name2, self.log_file)),
-                         (False, None))
+            (False, None))
 
     @mock.patch("mongo_db_dump.gen_libs.is_empty_file",
                 mock.Mock(return_value=False))
@@ -299,7 +299,7 @@ class UnitTest(unittest.TestCase):
 
         self.assertEqual((mongo_db_dump.mongo_generic(
             self.server, self.args_array2, self.cmd_name, self.log_file)),
-                         (False, None))
+            (False, None))
 
     @mock.patch("mongo_db_dump.subprocess.Popen")
     @mock.patch("mongo_db_dump.mongo_libs.create_cmd")
@@ -370,7 +370,7 @@ class UnitTest(unittest.TestCase):
         with gen_libs.no_std_out():
             self.assertEqual((mongo_db_dump.mongo_generic(
                 self.server, self.args_array, self.cmd_name, self.log_file)),
-                             (False, None))
+                (False, None))
 
     @mock.patch("mongo_db_dump.subprocess.Popen")
     @mock.patch("mongo_db_dump.mongo_libs.create_cmd")
@@ -389,7 +389,7 @@ class UnitTest(unittest.TestCase):
 
         self.assertEqual((mongo_db_dump.mongo_generic(
             self.server, self.args_array, self.cmd_name, self.log_file)),
-                         (False, None))
+            (False, None))
 
     @mock.patch("mongo_db_dump.subprocess.Popen")
     @mock.patch("mongo_db_dump.mongo_libs.create_cmd")
@@ -408,7 +408,7 @@ class UnitTest(unittest.TestCase):
 
         self.assertEqual((mongo_db_dump.mongo_generic(
             self.server, self.args_array, self.cmd_name2, self.log_file)),
-                         (False, None))
+            (False, None))
 
     @mock.patch("mongo_db_dump.subprocess.Popen")
     @mock.patch("mongo_db_dump.mongo_libs.create_cmd")
@@ -427,7 +427,7 @@ class UnitTest(unittest.TestCase):
 
         self.assertEqual((mongo_db_dump.mongo_generic(
             self.server, self.args_array, self.cmd_name, self.log_file)),
-                         (False, None))
+            (False, None))
 
     def tearDown(self):
 
