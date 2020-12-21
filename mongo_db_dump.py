@@ -182,34 +182,21 @@ def mongo_dump(server, args_array, **kwargs):
 
     """
 
+    log_name = "dump_"
     err_flag = False
     err_msg = None
     subp = gen_libs.get_inst(subprocess)
     args_array = dict(args_array)
-    mail = kwargs.get("mail", None)
-    sup_std = args_array.get("-x", False)
     dtg = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d_%H%M%S")
-    f_name = os.path.join(args_array["-o"], "dump_log_file_" + dtg + ".log")
-    dump_cmd = mongo_libs.create_cmd(
-        server, args_array, "mongodump",
-        arg_parser.arg_set_path(args_array, "-p"), **kwargs)
 
-    with open(f_name, "w") as l_file:
-        proc1 = subp.Popen(dump_cmd, stderr=l_file)
-        proc1.wait()
+    if "-o" in args_array.keys() and args_array["-o"]:
+        log_file = os.path.join(args_array["-o"], log_name + dtg + ".log")
+        err_flag, err_msg = mongo_generic(
+            server, args_array, "mongodump", log_file, **kwargs)
 
-    if not gen_libs.is_empty_file(f_name):
-        log_list = gen_libs.file_2_list(f_name)
-
-        for line in log_list:
-            if not sup_std:
-                print(line)
-
-            if mail:
-                mail.add_2_msg(line)
-
-        if mail:
-            mail.send_mail()
+    else:
+        err_flag = True
+        err_msg = "Error:  Missing -o option or value."
 
     return err_flag, err_msg
 
