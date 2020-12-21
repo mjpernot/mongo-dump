@@ -107,6 +107,8 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp -> Initialize testing environment.
+        test_missing_value -> Test with missing -o value.
+        test_missing_option -> Test with missing -o option.
         test_failure -> Test with failure of mongo export.
         test_mongo_export -> Test with mongo export call.
 
@@ -123,7 +125,39 @@ class UnitTest(unittest.TestCase):
         """
 
         self.server = Server()
-        self.args_array = {"-b": "Database_Name", "-t": "Table_Name"}
+        self.args_array = {"-b": "Database_Name", "-t": "Table_Name",
+                           "-o": "/directory/path"}
+        self.args_array2 = {"-b": "Database_Name", "-t": "Table_Name"}
+        self.args_array3 = {"-b": "Database_Name", "-t": "Table_Name",
+                            "-o": None}
+
+    def test_missing_value(self):
+
+        """Function:  test_missing_value
+
+        Description:  Test with missing -o value.
+
+        Arguments:
+
+        """
+
+        self.assertEqual(
+            (mongo_db_dump.mongo_export(self.server, self.args_array3)),
+            (True, "Error:  Missing -o option or value."))
+
+    def test_missing_option(self):
+
+        """Function:  test_missing_option
+
+        Description:  Test with missing -o option.
+
+        Arguments:
+
+        """
+
+        self.assertEqual(
+            (mongo_db_dump.mongo_export(self.server, self.args_array2)),
+            (True, "Error:  Missing -o option or value."))
 
     @mock.patch("mongo_db_dump.mongo_generic")
     def test_failure(self, mock_cmd):
