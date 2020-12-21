@@ -185,7 +185,6 @@ def mongo_dump(server, args_array, **kwargs):
     log_name = "dump_"
     err_flag = False
     err_msg = None
-    subp = gen_libs.get_inst(subprocess)
     args_array = dict(args_array)
     dtg = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d_%H%M%S")
 
