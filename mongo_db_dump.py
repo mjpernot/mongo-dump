@@ -285,9 +285,6 @@ def mongo_export(server, args_array, **kwargs):
 
     log_name = "export_"
     args_array = dict(args_array)
-    mail = kwargs.get("mail", None)
-    opt_arg = dict(kwargs.get("opt_arg", {}))
-    req_arg = list(kwargs.get("req_arg", []))
     err_flag = False
     err_msg = None
     opt_name = args_array["-b"] + "_" + args_array["-t"]
@@ -299,8 +296,7 @@ def mongo_export(server, args_array, **kwargs):
         args_array["-o"] = os.path.join(
             args_array["-o"], log_name + opt_name + ".json")
         err_flag, err_msg = mongo_generic(
-            server, args_array, "mongoexport", log_file, mail=mail,
-            opt_arg=opt_arg, req_arg=req_arg)
+            server, args_array, "mongoexport", log_file, **kwargs)
 
     else:
         err_flag = True
