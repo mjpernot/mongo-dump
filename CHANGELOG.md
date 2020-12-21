@@ -12,6 +12,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - mongo_generic:  Create a mongo dump/export command and execute it.
 
 ### Changed
+- main:  Removed "-A" from opt_con_req_list as "-o" option is now a required option.
 - main:  Replaced arg_parser.arg_req_xor with arg_parser.arg_xor_dict to allow for multiple Xor checks.
 - main:  Added "-E" option to execute mongoexport.
 

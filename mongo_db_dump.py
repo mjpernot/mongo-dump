@@ -214,7 +214,7 @@ def mongo_dump(server, args_array, **kwargs):
     return err_flag, err_msg
 
 
-def mongo_generic(server, args_array, cmd_name, **kwargs):
+def mongo_generic(server, args_array, cmd_name, log_file, **kwargs):
 
     """Function:  mongo_generic
 
@@ -224,12 +224,11 @@ def mongo_generic(server, args_array, cmd_name, **kwargs):
         (input) server -> Database server instance.
         (input) args_array -> Array of command line options and values.
         (input) cmd_name -> Name of Mongo binary program to execute.
+        (input) log_file -> Directory path and file name for log.
         (input) **kwargs:
             opt_arg -> Dictionary of additional options to add.
             req_arg -> List of required options for the command line.
             mail -> Email class instance.
-            log_name -> Base name of the log file name.
-            opt_name -> Optional name to include in log file name.
         (output) err_flag -> If an error has occurred.
         (output) err_msg -> Error message.
 
@@ -240,29 +239,18 @@ def mongo_generic(server, args_array, cmd_name, **kwargs):
     subp = gen_libs.get_inst(subprocess)
     args_array = dict(args_array)
     mail = kwargs.get("mail", None)
-    log_name = kwargs.get("log_name", "log_file")
-    opt_name = kwargs.get("opt_name", None)
     sup_std = args_array.get("-x", False)
-    dtg = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d_%H%M%S")
 
-    if opt_name:
-        opt_name = opt_name + "_"
-
-    else:
-        opt_name = ""
-
-    f_name = os.path.join(args_array["-o"],
-                          log_name + "_" + opt_name + dtg + ".log")
     cmd = mongo_libs.create_cmd(
         server, args_array, cmd_name,
         arg_parser.arg_set_path(args_array, "-p"), **kwargs)
 
-    with open(f_name, "w") as l_file:
+    with open(log_file, "w") as l_file:
         proc1 = subp.Popen(cmd, stderr=l_file)
         proc1.wait()
 
-    if not gen_libs.is_empty_file(f_name):
-        log_list = gen_libs.file_2_list(f_name)
+    if not gen_libs.is_empty_file(log_file):
+        log_list = gen_libs.file_2_list(log_file)
 
         for line in log_list:
             if not sup_std:
@@ -295,14 +283,29 @@ def mongo_export(server, args_array, **kwargs):
 
     """
 
+    opt = "--out="
+    log_name = "export_"
+    args_array = dict(args_array)
+    mail = kwargs.get("mail", None)
+    opt_arg = dict(kwargs.get("opt_arg", {}))
+    req_arg = list(kwargs.get("req_arg", []))
     err_flag = False
     err_msg = None
-    log_name = "export"
     opt_name = args_array["-b"] + "_" + args_array["-t"]
+    dtg = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d_%H%M%S")
 
-    err_flag, err_msg = mongo_generic(
-        server, args_array, "mongoexport", log_name=log_name,
-        opt_name=opt_name, **kwargs)
+    if "-o" in args_array.keys() and args_array["-o"]:
+        log_file = os.path.join(args_array["-o"],
+                                log_name + opt_name + "_" + dtg + ".log")
+        args_array["-o"] = os.path.join(
+            args_array["-o"], log_name + opt_name + ".json")
+        err_flag, err_msg = mongo_generic(
+            server, args_array, "mongoexport", log_file, mail=mail,
+            opt_arg=opt_arg, req_arg=req_arg)
+
+    else:
+        err_flag = True
+        err_msg = "Error:  Missing -o option or value."
 
     return err_flag, err_msg
 
