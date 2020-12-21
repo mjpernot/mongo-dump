@@ -395,6 +395,7 @@ def main():
         opt_multi_list -> contains the options that will have multiple values.
         opt_req_list -> contains the options that are required for the program.
         opt_val_list -> contains options which require values.
+        opt_xor_dict -> contains dict with key that is xor with it's values.
         xor_noreq_list -> contains options that are XOR, but are not required.
 
     Arguments:
@@ -406,15 +407,16 @@ def main():
     arg_req_dict = {"auth_db": "--authenticationDatabase="}
     dir_chk_list = ["-d", "-o", "-p"]
     dir_crt_list = ["-o"]
-    func_dict = {"-A": sync_cp_dump, "-M": mongo_dump}
+    func_dict = {"-A": sync_cp_dump, "-M": mongo_dump, "-E": mongo_export}
     opt_arg_list = {"-l": "--oplog", "-z": "--gzip", "-b": "--db=",
                     "-o": "--out=", "-q": "--quiet",
                     "-r": "--dumpDbUsersAndRoles", "-t": "--collection="}
-    opt_con_req_list = {"-A": ["-o"], "-r": ["-b"], "-t": ["-b"], "-s": ["-e"]}
+    opt_con_req_list = {"-r": ["-b"], "-t": ["-b"], "-s": ["-e"],
+                        "-E": ["-b", "-t"]}
     opt_multi_list = ["-e", "-s"]
     opt_req_list = ["-c", "-d", "-o"]
-    opt_req_xor_list = {"-A": "-M"}
     opt_val_list = ["-b", "-c", "-d", "-o", "-p", "-t", "-e", "-s", "-y"]
+    opt_xor_dict = {"-A": ["-M", "-E"], "-E": ["-M", "-A"], "-M": ["-A", "-E"]}
     xor_noreq_list = {"-l": "-b"}
 
     # Process argument list from command line.
@@ -423,7 +425,7 @@ def main():
 
     if not gen_libs.help_func(args_array, __version__, help_message) \
        and not arg_parser.arg_require(args_array, opt_req_list) \
-       and arg_parser.arg_req_xor(args_array, opt_req_xor_list) \
+       and arg_parser.arg_xor_dict(args_array, opt_xor_dict) \
        and arg_parser.arg_noreq_xor(args_array, xor_noreq_list) \
        and arg_parser.arg_cond_req(args_array, opt_con_req_list) \
        and not arg_parser.arg_dir_chk_crt(args_array, dir_chk_list,

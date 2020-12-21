@@ -11,6 +11,10 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - mongo_export:  Setup Mongo Export call.
 - mongo_generic:  Create a mongo dump/export command and execute it.
 
+### Changed
+- main:  Replaced arg_parser.arg_req_xor with arg_parser.arg_xor_dict to allow for multiple Xor checks.
+- main:  Added "-E" option to execute mongoexport.
+
 
 ## [3.1.0] - 2020-08-13
 - Added authentication mechanism for logging into Mongo.
