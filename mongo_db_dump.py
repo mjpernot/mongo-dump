@@ -10,7 +10,8 @@
     Usage:
         mongo_db_dump.py -c file -d path
             {-M -o dir_path [-z | -b database [-r | -t name] | -l | -q | -z] |
-             -A -o dir_path}
+             -A -o dir_path |
+             -E -o dir_path -b database -t name [-q]}
             [-p path | -y flavor_id | -x]
             [-e email {email2 email3 ...} {-s subject_line}]
             [-v | -h]
@@ -23,9 +24,9 @@
             (i.e. not in the $PATH variable.)
 
         -M => Run the mongodump program.
-            -z => Compress database dump.  Only for -M option.
-            -l => Oplog option added to mongodump. Only for -M option.
-            -b database => Database name. Only for -M option.
+            -z => Compress database dump.
+            -l => Oplog option added to mongodump.
+            -b database => Database name.
             -t table => Collection name. Only available for -b option.
             -r => Include user and roles in dump. Only available for -b option.
             -q => Turn quiet mode on. By default, displays out log of dump.
@@ -34,6 +35,13 @@
 
         -A => Run the Sync/Copy dump program. Database server being dumped must
                 also be part of a replica set.
+            -o dir_path => Directory path to dump directory. Required argument
+                for option.
+
+        -E => Run the mongoexport program.
+            -b database => Database name.
+            -t table => Collection name. Only available for -b option.
+            -q => Turn quiet mode on. By default, displays out log of dump.
             -o dir_path => Directory path to dump directory. Required argument
                 for option.
 
@@ -50,8 +58,10 @@
     Notes:
         Mongo configuration file format (config/mongo.py.TEMPLATE).  The
             configuration file format for the Mongo connection used for
-            dumping data from a database.  Leave the Mongo replica set entries
-            set to None as it is not required for dumping purposes.
+            dumping data from a database.
+
+        Note:  Leave the Mongo replica set entries set to None as it is not
+            required for dumping purposes.
 
             Configuration file for Mongo Database Server connection.
             user = "USER"
