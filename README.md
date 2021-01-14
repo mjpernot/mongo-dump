@@ -28,7 +28,6 @@
     - python-pip
 
   * Local class/library dependencies within the program structure.
-    - lib/cmds_gen
     - lib/arg_parser
     - lib/gen_libs
     - lig/gen_class
@@ -74,8 +73,7 @@ pip install -r requirements-python-lib.txt --target mongo_lib/lib --trusted-host
 
 # Configuration:
 
-Create Mongodb configuration file.
-Make the appropriate change to the environment.
+Create Mongodb configuration file.  Make the appropriate change to the environment.
   * Make the appropriate changes to connect to a Mongo database.
     - user = "USER"
     - japd = "PSWORD"
@@ -92,7 +90,7 @@ Make the appropriate change to the environment.
   * Notes for auth_mech configuration entry:
     - NOTE 1:  SCRAM-SHA-256 only works for Mongodb 4.0 and better.
     - NOTE 2:  FIPS 140-2 environment requires SCRAM-SHA-1 or SCRAM-SHA-256.
-    - NOTE 3:  MONGODB-CR is not suppoerted in Mongodb 4.0 and better.
+    - NOTE 3:  MONGODB-CR is not supported in Mongodb 4.0 and better.
 
   * Leave the Mongo replica set entries set to None.
 
