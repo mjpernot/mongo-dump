@@ -41,10 +41,10 @@ class Server(object):
     Description:  Class stub holder for mongo_class.Server class.
 
     Methods:
-        __init__ -> Class initialization.
-        lock_db -> Stub holder for mongo_class.Server.lock_db method.
-        is_locked -> Stub holder for mongo_class.Server.is_locked method.
-        unlock_db -> Stub holder for mongo_class.Server.unlock_db method.
+        __init__
+        lock_db
+        is_locked
+        unlock_db
 
     """
 
@@ -106,11 +106,11 @@ class UnitTest(unittest.TestCase):
     Description:  Class which is a representation of a unit testing.
 
     Methods:
-        setUp -> Initialize testing environment.
-        test_missing_value -> Test with missing -o value.
-        test_missing_option -> Test with missing -o option.
-        test_failure -> Test with failure of mongo dump.
-        test_db_dump -> Test with database dump successful.
+        setUp
+        test_missing_value
+        test_missing_option
+        test_failure
+        test_db_dump
 
     """
 
