@@ -64,6 +64,7 @@
             required for dumping purposes.
 
             Configuration file for Mongo Database Server connection.
+
             user = "USER"
             japd = "PSWORD"
             host = "HOST_IP"
@@ -75,6 +76,17 @@
             auth_mech = "SCRAM-SHA-1"
             use_arg = True
             use_uri = False
+        
+        Note:  If using SSL connections then set one or more of the following
+            entries.
+
+            Configuration settings for SSL connections.  See configuration file
+                for details on each entry:
+
+            ssl_client_ca = None
+            ssl_client_key = None
+            ssl_client_cert = None
+            ssl_client_phrase = None
 
         Configuration modules -> Name is runtime dependent as it can be used to
             connect to different databases with different names.
