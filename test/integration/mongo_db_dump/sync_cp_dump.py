@@ -42,10 +42,10 @@ class Server3(object):
     Description:  Class stub holder for mongo_class.Server class.
 
     Methods:
-        __init__ -> Class initialization.
-        lock_db -> Stub holder for mongo_class.Server.lock_db method.
-        is_locked -> Stub holder for mongo_class.Server.is_locked method.
-        unlock_db -> Stub holder for mongo_class.Server.unlock_db method.
+        __init__
+        lock_db
+        is_locked
+        unlock_db
 
     """
 
@@ -109,10 +109,10 @@ class Server2(object):
     Description:  Class stub holder for mongo_class.Server class.
 
     Methods:
-        __init__ -> Class initialization.
-        lock_db -> Stub holder for mongo_class.Server.lock_db method.
-        is_locked -> Stub holder for mongo_class.Server.is_locked method.
-        unlock_db -> Stub holder for mongo_class.Server.unlock_db method.
+        __init__
+        lock_db
+        is_locked
+        unlock_db
 
     """
 
@@ -175,10 +175,10 @@ class Server(object):
     Description:  Class stub holder for mongo_class.Server class.
 
     Methods:
-        __init__ -> Class initialization.
-        lock_db -> Stub holder for mongo_class.Server.lock_db method.
-        is_locked -> Stub holder for mongo_class.Server.is_locked method.
-        unlock_db -> Stub holder for mongo_class.Server.unlock_db method.
+        __init__
+        lock_db
+        is_locked
+        unlock_db
 
     """
 
@@ -240,15 +240,15 @@ class UnitTest(unittest.TestCase):
     Description:  Class which is a representation of a unit testing.
 
     Methods:
-        setUp -> Initialize testing environment.
-        test_db_locked_mail -> Test with database is locked and mail.
-        test_unable_to_lock_mail -> Test database unable to lock it & mail.
-        test_db_dump_locked_mail -> Test with database locked and mail.
-        test_db_dump_mail -> Test with successful dump and mail.
-        test_db_dump -> Test with database dump successful.
-        test_db_dump_locked -> Test with dumping of database, but still locked.
-        test_unable_to_lock -> Test with database unable to lock it.
-        test_db_locked -> Test with database is locked.
+        setUp
+        test_db_locked_mail
+        test_unable_to_lock_mail
+        test_db_dump_locked_mail
+        test_db_dump_mail
+        test_db_dump
+        test_db_dump_locked
+        test_unable_to_lock
+        test_db_locked
 
     """
 
