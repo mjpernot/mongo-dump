@@ -12,6 +12,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - mongo_generic:  Create a mongo dump/export command and execute it.
 
 ### Changed
+- config/mongo.py.TEMPLATE:  Added SSL configuration entries.
 - get_req_options:  Removed \*\*kwargs is not required.
 - mongo_dump:  Refactored function to use the mongo_generic function for dumping.
 - main:  Removed "-A" from opt_con_req_list as "-o" option is now a required option.
