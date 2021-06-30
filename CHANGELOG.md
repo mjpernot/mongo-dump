@@ -44,8 +44,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - run_program:  Replaced cmds_gen.disconnect with mongo_libs.disconnect.
 - mongo_dump:  Added err_flag and err_msg status variables.
 - config/mongo.py.TEMPLATE:  Added authentication mechanism entries to config file.
-- mongo_dump: Added standard out suppression code.
-- run_program: Added standard out suppression code.
+- mongo_dump, run_program: Added standard out suppression code.
 - mongo_dump:  Add email capability for dumps for standard out and error reporting.
 - mongo_dump:  Redirected subprocess stderr to file for printing to standard out.
 - mongo_dump:  Replaced cmds_gen.run_prog with subprocess code to run dump command.
@@ -63,15 +62,11 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 
 ## [3.0.2] - 2019-09-30
 ### Fixed
-- sync_cp_dump:  Fixed problem with mutable default arguments issue.
-- mongo_dump:  Fixed problem with mutable default arguments issue.
-- run_program:  Fixed problem with mutable default arguments issue.
+- sync_cp_dump, mongo_dump, run_program:  Fixed problem with mutable default arguments issue.
 
 ### Changed
 - main:  Refactored "if" statements.
-- sync_cp_dump:  Changed variable to standard naming convention.
-- mongo_dump:  Changed variable to standard naming convention.
-- run_program:  Changed variable to standard naming convention.
+- sync_cp_dump, mongo_dump, run_program:  Changed variable to standard naming convention.
 - Documentation changes.
 
 
