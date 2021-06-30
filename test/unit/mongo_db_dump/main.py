@@ -42,7 +42,7 @@ class ProgramLock(object):
     Description:  Class stub holder for gen_class.ProgramLock class.
 
     Methods:
-        __init__ -> Class initialization.
+        __init__
 
     """
 
@@ -70,22 +70,22 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp -> Initialize testing environment.
-        test_help_true -> Test help if returns true.
-        test_help_false -> Test help if returns false.
-        test_arg_req_true -> Test arg_require if returns true.
-        test_arg_req_false -> Test arg_require if returns false.
-        test_arg_xor_dict_false -> Test arg_xor_dict if returns false.
-        test_arg_xor_dict_true -> Test arg_xor_dict if returns true.
-        test_arg_noreq_xor_false -> Test arg_noreq_xor if returns false.
-        test_arg_noreq_xor_true -> Test arg_noreq_xor if returns true.
-        test_arg_cond_req_false -> Test arg_cond_req if returns false.
-        test_arg_cond_req_true -> Test arg_cond_req if returns true.
-        test_arg_dir_chk_crt_true -> Test arg_dir_chk_crt if returns true.
-        test_arg_dir_chk_crt_false -> Test arg_dir_chk_crt if returns false.
-        test_run_program -> Test run_program function.
-        test_programlock_id -> Test with ProgramLock with flavor id.
-        test_programlock_false -> Test with ProgramLock returns False.
-        test_programlock_true -> Test with ProgramLock returns True.
+        test_help_true
+        test_help_false
+        test_arg_req_true
+        test_arg_req_false
+        test_arg_xor_dict_false
+        test_arg_xor_dict_true
+        test_arg_noreq_xor_false
+        test_arg_noreq_xor_true
+        test_arg_cond_req_false
+        test_arg_cond_req_true
+        test_arg_dir_chk_crt_true
+        test_arg_dir_chk_crt_false
+        test_run_program
+        test_programlock_id
+        test_programlock_false
+        test_programlock_true
 
     """
 
