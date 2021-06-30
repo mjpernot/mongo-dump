@@ -301,7 +301,7 @@ def mongo_export(server, args_array, **kwargs):
     return err_flag, err_msg
 
 
-def get_req_options(server, arg_req_dict, **kwargs):
+def get_req_options(server, arg_req_dict):
 
     """Function:  get_req_options
 
