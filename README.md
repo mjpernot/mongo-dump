@@ -26,6 +26,7 @@
   * List of Linux packages that need to be installed on the server.
     - git
     - python-pip
+    - python-devel
 
   * Local class/library dependencies within the program structure.
     - lib/arg_parser
