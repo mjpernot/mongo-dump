@@ -97,6 +97,8 @@ class SubProcess(object):
     Methods:
         __init__
         wait
+        PIPE
+        stdout
 
     """
 
@@ -117,6 +119,30 @@ class SubProcess(object):
         """Method:  wait
 
         Description:  Mock representation of subprocess.wait method.
+
+        Arguments:
+
+        """
+
+        pass
+
+    def PIPE(self):
+
+        """Method:  PIPE
+
+        Description:  Mock representation of subprocess.PIPE method.
+
+        Arguments:
+
+        """
+
+        pass
+
+    def stdout(self):
+
+        """Method:  stdout
+
+        Description:  Mock representation of subprocess.stdout method.
 
         Arguments:
 
@@ -151,6 +177,7 @@ class Server(object):
 
         self.db_path = "Database_Directory_Path"
         self.locked = False
+        self.japd = "JAPD"
 
     def lock_db(self, lock):
 
