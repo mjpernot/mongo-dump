@@ -7,6 +7,9 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 ## [3.2.0] - 2020-12-16
 - Added Mongo export capability.
 
+### Fixed
+- mongo_generic:  Passed option instead of directory path mongo_libs.create_cmd call.
+
 ### Added
 - mongo_export:  Setup Mongo Export call.
 - mongo_generic:  Create a mongo dump/export command and execute it.
