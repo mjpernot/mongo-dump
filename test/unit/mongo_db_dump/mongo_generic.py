@@ -42,9 +42,9 @@ class Mail(object):
     Description:  Class stub holder for gen_class.Mail class.
 
     Methods:
-        __init__ -> Class initialization.
-        add_2_msg -> Stub method holder for Mail.add_2_msg.
-        send_mail -> Stub method holder for Mail.send_mail.
+        __init__
+        add_2_msg
+        send_mail
 
     """
 
@@ -95,8 +95,10 @@ class SubProcess(object):
     Description:  Class which is a representation of the subprocess class.
 
     Methods:
-        __init__ -> Initialize configuration environment.
-        wait -> subprocess.wait method.
+        __init__
+        wait
+        PIPE
+        stdout
 
     """
 
@@ -124,6 +126,30 @@ class SubProcess(object):
 
         pass
 
+    def PIPE(self):
+
+        """Method:  PIPE
+
+        Description:  Mock representation of subprocess.PIPE method.
+
+        Arguments:
+
+        """
+
+        pass
+
+    def stdout(self):
+
+        """Method:  stdout
+
+        Description:  Mock representation of subprocess.stdout method.
+
+        Arguments:
+
+        """
+
+        pass
+
 
 class Server(object):
 
@@ -132,10 +158,10 @@ class Server(object):
     Description:  Class stub holder for mongo_class.Server class.
 
     Methods:
-        __init__ -> Class initialization.
-        lock_db -> Stub holder for mongo_class.Server.lock_db method.
-        is_locked -> Stub holder for mongo_class.Server.is_locked method.
-        unlock_db -> Stub holder for mongo_class.Server.unlock_db method.
+        __init__
+        lock_db
+        is_locked
+        unlock_db
 
     """
 
@@ -151,6 +177,7 @@ class Server(object):
 
         self.db_path = "Database_Directory_Path"
         self.locked = False
+        self.japd = "JAPD"
 
     def lock_db(self, lock):
 
@@ -197,17 +224,17 @@ class UnitTest(unittest.TestCase):
     Description:  Class which is a representation of a unit testing.
 
     Methods:
-        setUp -> Initialize testing environment.
-        test_log_file2 -> Test with passed in log name.
-        test_mail_log_suppress -> Test with log file and mail and suppression.
-        test_log_file_suppress -> Test with log file with data and suppression.
-        test_empty_log_mail -> Test with nothing written to log file and mail.
-        test_mail_log_file -> Test with log file and mail.
-        test_log_file -> Test with log file with data.
-        test_empty_log -> Test with nothing written to log file.
-        test_export -> Test with database export successful.
-        test_db_dump -> Test with database dump successful.
-        tearDown -> Cleanup of testing environment.
+        setUp
+        test_log_file2
+        test_mail_log_suppress
+        test_log_file_suppress
+        test_empty_log_mail
+        test_mail_log_file
+        test_log_file
+        test_empty_log
+        test_export
+        test_db_dump
+        tearDown
 
     """
 

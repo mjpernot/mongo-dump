@@ -64,6 +64,7 @@
             required for dumping purposes.
 
             Configuration file for Mongo Database Server connection.
+
             user = "USER"
             japd = "PSWORD"
             host = "HOST_IP"
@@ -75,6 +76,17 @@
             auth_mech = "SCRAM-SHA-1"
             use_arg = True
             use_uri = False
+        
+        Note:  If using SSL connections then set one or more of the following
+            entries.
+
+            Configuration settings for SSL connections.  See configuration file
+                for details on each entry:
+
+            ssl_client_ca = None
+            ssl_client_key = None
+            ssl_client_cert = None
+            ssl_client_phrase = None
 
         Configuration modules -> Name is runtime dependent as it can be used to
             connect to different databases with different names.
@@ -236,13 +248,12 @@ def mongo_generic(server, args_array, cmd_name, log_file, **kwargs):
     args_array = dict(args_array)
     mail = kwargs.get("mail", None)
     sup_std = args_array.get("-x", False)
+    cmd = mongo_libs.create_cmd(server, args_array, cmd_name, "-p",
+                                no_pass=True, **kwargs)
 
-    cmd = mongo_libs.create_cmd(
-        server, args_array, cmd_name,
-        arg_parser.arg_set_path(args_array, "-p"), **kwargs)
-
+    proc2 = subp.Popen(["echo", server.japd], stdout=subp.PIPE)
     with open(log_file, "w") as l_file:
-        proc1 = subp.Popen(cmd, stderr=l_file)
+        proc1 = subp.Popen(cmd, stderr=l_file, stdin=proc2.stdout)
         proc1.wait()
 
     if not gen_libs.is_empty_file(log_file):
@@ -301,7 +312,7 @@ def mongo_export(server, args_array, **kwargs):
     return err_flag, err_msg
 
 
-def get_req_options(server, arg_req_dict, **kwargs):
+def get_req_options(server, arg_req_dict):
 
     """Function:  get_req_options
 
