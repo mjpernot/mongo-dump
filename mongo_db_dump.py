@@ -248,10 +248,12 @@ def mongo_generic(server, args_array, cmd_name, log_file, **kwargs):
     args_array = dict(args_array)
     mail = kwargs.get("mail", None)
     sup_std = args_array.get("-x", False)
-    cmd = mongo_libs.create_cmd(server, args_array, cmd_name, "-p", **kwargs)
+    cmd = mongo_libs.create_cmd(server, args_array, cmd_name, "-p",
+                                no_pass=True, **kwargs)
 
+    proc2 = subp.Popen(["echo", server.japd], stdout=subp.PIPE)
     with open(log_file, "w") as l_file:
-        proc1 = subp.Popen(cmd, stderr=l_file)
+        proc1 = subp.Popen(cmd, stderr=l_file, stdin=proc2.stdout)
         proc1.wait()
 
     if not gen_libs.is_empty_file(log_file):

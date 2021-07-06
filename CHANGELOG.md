@@ -15,6 +15,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - mongo_generic:  Create a mongo dump/export command and execute it.
 
 ### Changed
+- mongo_generic:  Passing in password via a second standard-in pipe.
 - config/mongo.py.TEMPLATE:  Added SSL configuration entries.
 - get_req_options:  Removed \*\*kwargs is not required.
 - mongo_dump:  Refactored function to use the mongo_generic function for dumping.
