@@ -27,8 +27,8 @@
             -z => Compress database dump.
             -l => Oplog option added to mongodump.
             -b database => Database name.
-            -t table => Collection name. Only available for -b option.
-            -r => Include user and roles in dump. Only available for -b option.
+                -t table => Collection name.
+                    -r => Include user and roles in dump.
             -q => Turn quiet mode on. By default, displays out log of dump.
             -o dir_path => Directory path to dump directory. Required argument
                 for option.
@@ -40,7 +40,7 @@
 
         -E => Run the mongoexport program.
             -b database => Database name.
-            -t table => Collection name. Only available for -b option.
+                -t table => Collection name.
             -q => Turn quiet mode on. By default, displays out log of dump.
             -o dir_path => Directory path to dump directory. Required argument
                 for option.
@@ -76,7 +76,7 @@
             auth_mech = "SCRAM-SHA-1"
             use_arg = True
             use_uri = False
-        
+
         Note:  If using SSL connections then set one or more of the following
             entries.  This will automatically enable SSL connections.
 
