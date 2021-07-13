@@ -78,7 +78,7 @@
             use_uri = False
         
         Note:  If using SSL connections then set one or more of the following
-            entries.
+            entries.  This will automatically enable SSL connections.
 
             Configuration settings for SSL connections.  See configuration file
                 for details on each entry:
