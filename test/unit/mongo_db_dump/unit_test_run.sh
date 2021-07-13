@@ -10,5 +10,7 @@ test/unit/mongo_db_dump/get_req_options.py
 test/unit/mongo_db_dump/help_message.py
 test/unit/mongo_db_dump/main.py
 test/unit/mongo_db_dump/mongo_dump.py
+test/unit/mongo_db_dump/mongo_export.py
+test/unit/mongo_db_dump/mongo_generic.py
 test/unit/mongo_db_dump/run_program.py
 test/unit/mongo_db_dump/sync_cp_dump.py

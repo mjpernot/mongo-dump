@@ -1,12 +1,12 @@
 #!/usr/bin/python
 # Classification (U)
 
-"""Program:  mongo_dump.py
+"""Program:  mongo_export.py
 
-    Description:  Unit testing of mongo_dump in mongo_db_dump.py.
+    Description:  Unit testing of mongo_export in mongo_db_dump.py.
 
     Usage:
-        test/unit/mongo_db_dump/mongo_dump.py
+        test/unit/mongo_db_dump/mongo_export.py
 
     Arguments:
 
@@ -110,7 +110,7 @@ class UnitTest(unittest.TestCase):
         test_missing_value
         test_missing_option
         test_failure
-        test_db_dump
+        test_mongo_export
 
     """
 
@@ -142,7 +142,7 @@ class UnitTest(unittest.TestCase):
         """
 
         self.assertEqual(
-            (mongo_db_dump.mongo_dump(self.server, self.args_array3)),
+            (mongo_db_dump.mongo_export(self.server, self.args_array3)),
             (True, "Error:  Missing -o option or value."))
 
     def test_missing_option(self):
@@ -156,7 +156,7 @@ class UnitTest(unittest.TestCase):
         """
 
         self.assertEqual(
-            (mongo_db_dump.mongo_dump(self.server, self.args_array2)),
+            (mongo_db_dump.mongo_export(self.server, self.args_array2)),
             (True, "Error:  Missing -o option or value."))
 
     @mock.patch("mongo_db_dump.mongo_generic")
@@ -164,7 +164,7 @@ class UnitTest(unittest.TestCase):
 
         """Function:  test_failure
 
-        Description:  Test with failure of mongo dump.
+        Description:  Test with failure of mongo export.
 
         Arguments:
 
@@ -172,15 +172,15 @@ class UnitTest(unittest.TestCase):
 
         mock_cmd.return_value = (True, "Error Message")
 
-        self.assertEqual((mongo_db_dump.mongo_dump(
+        self.assertEqual((mongo_db_dump.mongo_export(
             self.server, self.args_array)), (True, "Error Message"))
 
     @mock.patch("mongo_db_dump.mongo_generic")
-    def test_db_dump(self, mock_cmd):
+    def test_mongo_export(self, mock_cmd):
 
-        """Function:  test_db_dump
+        """Function:  test_mongo_export
 
-        Description:  Test with database dump successful.
+        Description:  Test with mongo export call.
 
         Arguments:
 
@@ -188,7 +188,7 @@ class UnitTest(unittest.TestCase):
 
         mock_cmd.return_value = (False, None)
 
-        self.assertEqual((mongo_db_dump.mongo_dump(
+        self.assertEqual((mongo_db_dump.mongo_export(
             self.server, self.args_array)), (False, None))
 
 

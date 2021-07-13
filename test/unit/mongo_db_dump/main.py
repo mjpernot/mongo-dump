@@ -42,7 +42,7 @@ class ProgramLock(object):
     Description:  Class stub holder for gen_class.ProgramLock class.
 
     Methods:
-        __init__ -> Class initialization.
+        __init__
 
     """
 
@@ -70,22 +70,22 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp -> Initialize testing environment.
-        test_help_true -> Test help if returns true.
-        test_help_false -> Test help if returns false.
-        test_arg_req_true -> Test arg_require if returns true.
-        test_arg_req_false -> Test arg_require if returns false.
-        test_arg_req_xor_false -> Test arg_req_xor if returns false.
-        test_arg_req_xor_true -> Test arg_req_xor if returns true.
-        test_arg_noreq_xor_false -> Test arg_noreq_xor if returns false.
-        test_arg_noreq_xor_true -> Test arg_noreq_xor if returns true.
-        test_arg_cond_req_false -> Test arg_cond_req if returns false.
-        test_arg_cond_req_true -> Test arg_cond_req if returns true.
-        test_arg_dir_chk_crt_true -> Test arg_dir_chk_crt if returns true.
-        test_arg_dir_chk_crt_false -> Test arg_dir_chk_crt if returns false.
-        test_run_program -> Test run_program function.
-        test_programlock_id -> Test with ProgramLock with flavor id.
-        test_programlock_false -> Test with ProgramLock returns False.
-        test_programlock_true -> Test with ProgramLock returns True.
+        test_help_true
+        test_help_false
+        test_arg_req_true
+        test_arg_req_false
+        test_arg_xor_dict_false
+        test_arg_xor_dict_true
+        test_arg_noreq_xor_false
+        test_arg_noreq_xor_true
+        test_arg_cond_req_false
+        test_arg_cond_req_true
+        test_arg_dir_chk_crt_true
+        test_arg_dir_chk_crt_false
+        test_run_program
+        test_programlock_id
+        test_programlock_false
+        test_programlock_true
 
     """
 
@@ -158,7 +158,7 @@ class UnitTest(unittest.TestCase):
 
         self.assertFalse(mongo_db_dump.main())
 
-    @mock.patch("mongo_db_dump.arg_parser.arg_req_xor")
+    @mock.patch("mongo_db_dump.arg_parser.arg_xor_dict")
     @mock.patch("mongo_db_dump.arg_parser.arg_require")
     @mock.patch("mongo_db_dump.gen_libs.help_func")
     @mock.patch("mongo_db_dump.arg_parser.arg_parse2")
@@ -181,11 +181,11 @@ class UnitTest(unittest.TestCase):
 
     @mock.patch("mongo_db_dump.gen_libs.help_func")
     @mock.patch("mongo_db_dump.arg_parser")
-    def test_arg_req_xor_false(self, mock_arg, mock_help):
+    def test_arg_xor_dict_false(self, mock_arg, mock_help):
 
-        """Function:  test_arg_req_xor_false
+        """Function:  test_arg_xor_dict_false
 
-        Description:  Test arg_req_xor if returns false.
+        Description:  Test arg_xor_dict if returns false.
 
         Arguments:
 
@@ -194,17 +194,17 @@ class UnitTest(unittest.TestCase):
         mock_arg.arg_parse2.return_value = self.args_array
         mock_help.return_value = False
         mock_arg.arg_require.return_value = False
-        mock_arg.arg_req_xor.return_value = False
+        mock_arg.arg_xor_dict.return_value = False
 
         self.assertFalse(mongo_db_dump.main())
 
     @mock.patch("mongo_db_dump.gen_libs.help_func")
     @mock.patch("mongo_db_dump.arg_parser")
-    def test_arg_req_xor_true(self, mock_arg, mock_help):
+    def test_arg_xor_dict_true(self, mock_arg, mock_help):
 
-        """Function:  test_arg_req_xor_true
+        """Function:  test_arg_xor_dict_true
 
-        Description:  Test arg_req_xor if returns true.
+        Description:  Test arg_xor_dict if returns true.
 
         Arguments:
 
@@ -213,7 +213,7 @@ class UnitTest(unittest.TestCase):
         mock_arg.arg_parse2.return_value = self.args_array
         mock_help.return_value = False
         mock_arg.arg_require.return_value = False
-        mock_arg.arg_req_xor.return_value = True
+        mock_arg.arg_xor_dict.return_value = True
         mock_arg.arg_noreq_xor.return_value = False
 
         self.assertFalse(mongo_db_dump.main())
@@ -233,7 +233,7 @@ class UnitTest(unittest.TestCase):
         mock_arg.arg_parse2.return_value = self.args_array
         mock_help.return_value = False
         mock_arg.arg_require.return_value = False
-        mock_arg.arg_req_xor.return_value = True
+        mock_arg.arg_xor_dict.return_value = True
         mock_arg.arg_noreq_xor.return_value = False
 
         self.assertFalse(mongo_db_dump.main())
@@ -253,7 +253,7 @@ class UnitTest(unittest.TestCase):
         mock_arg.arg_parse2.return_value = self.args_array
         mock_help.return_value = False
         mock_arg.arg_require.return_value = False
-        mock_arg.arg_req_xor.return_value = True
+        mock_arg.arg_xor_dict.return_value = True
         mock_arg.arg_noreq_xor.return_value = True
         mock_arg.arg_cond_req.return_value = False
 
@@ -274,7 +274,7 @@ class UnitTest(unittest.TestCase):
         mock_arg.arg_parse2.return_value = self.args_array
         mock_help.return_value = False
         mock_arg.arg_require.return_value = False
-        mock_arg.arg_req_xor.return_value = True
+        mock_arg.arg_xor_dict.return_value = True
         mock_arg.arg_noreq_xor.return_value = True
         mock_arg.arg_cond_req.return_value = False
 
@@ -295,7 +295,7 @@ class UnitTest(unittest.TestCase):
         mock_arg.arg_parse2.return_value = self.args_array
         mock_help.return_value = False
         mock_arg.arg_require.return_value = False
-        mock_arg.arg_req_xor.return_value = True
+        mock_arg.arg_xor_dict.return_value = True
         mock_arg.arg_noreq_xor.return_value = True
         mock_arg.arg_cond_req.return_value = True
         mock_arg.arg_dir_chk_crt.return_value = True
@@ -317,7 +317,7 @@ class UnitTest(unittest.TestCase):
         mock_arg.arg_parse2.return_value = self.args_array
         mock_help.return_value = False
         mock_arg.arg_require.return_value = False
-        mock_arg.arg_req_xor.return_value = True
+        mock_arg.arg_xor_dict.return_value = True
         mock_arg.arg_noreq_xor.return_value = True
         mock_arg.arg_cond_req.return_value = True
         mock_arg.arg_dir_chk_crt.return_value = True
@@ -342,7 +342,7 @@ class UnitTest(unittest.TestCase):
         mock_arg.arg_parse2.return_value = self.args_array
         mock_help.return_value = False
         mock_arg.arg_require.return_value = False
-        mock_arg.arg_req_xor.return_value = True
+        mock_arg.arg_xor_dict.return_value = True
         mock_arg.arg_noreq_xor.return_value = True
         mock_arg.arg_cond_req.return_value = True
         mock_arg.arg_dir_chk_crt.return_value = False
@@ -368,7 +368,7 @@ class UnitTest(unittest.TestCase):
         mock_arg.arg_parse2.return_value = self.args_array
         mock_help.return_value = False
         mock_arg.arg_require.return_value = False
-        mock_arg.arg_req_xor.return_value = True
+        mock_arg.arg_xor_dict.return_value = True
         mock_arg.arg_noreq_xor.return_value = True
         mock_arg.arg_cond_req.return_value = True
         mock_arg.arg_dir_chk_crt.return_value = False
@@ -394,7 +394,7 @@ class UnitTest(unittest.TestCase):
         mock_arg.arg_parse2.return_value = self.args_array
         mock_help.return_value = False
         mock_arg.arg_require.return_value = False
-        mock_arg.arg_req_xor.return_value = True
+        mock_arg.arg_xor_dict.return_value = True
         mock_arg.arg_noreq_xor.return_value = True
         mock_arg.arg_cond_req.return_value = True
         mock_arg.arg_dir_chk_crt.return_value = False
@@ -420,7 +420,7 @@ class UnitTest(unittest.TestCase):
         mock_arg.arg_parse2.return_value = self.args_array
         mock_help.return_value = False
         mock_arg.arg_require.return_value = False
-        mock_arg.arg_req_xor.return_value = True
+        mock_arg.arg_xor_dict.return_value = True
         mock_arg.arg_noreq_xor.return_value = True
         mock_arg.arg_cond_req.return_value = True
         mock_arg.arg_dir_chk_crt.return_value = False
@@ -448,7 +448,7 @@ class UnitTest(unittest.TestCase):
         mock_arg.arg_parse2.return_value = self.args_array2
         mock_help.return_value = False
         mock_arg.arg_require.return_value = False
-        mock_arg.arg_req_xor.return_value = True
+        mock_arg.arg_xor_dict.return_value = True
         mock_arg.arg_noreq_xor.return_value = True
         mock_arg.arg_cond_req.return_value = True
         mock_arg.arg_dir_chk_crt.return_value = False
