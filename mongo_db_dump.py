@@ -10,7 +10,8 @@
     Usage:
         mongo_db_dump.py -c file -d path
             {-M -o dir_path [-z | -b database [-r | -t name] | -l | -q | -z] |
-             -A -o dir_path}
+             -A -o dir_path |
+             -E -o dir_path -b database -t name [-q]}
             [-p path | -y flavor_id | -x]
             [-e email {email2 email3 ...} {-s subject_line}]
             [-v | -h]
@@ -23,17 +24,24 @@
             (i.e. not in the $PATH variable.)
 
         -M => Run the mongodump program.
-            -z => Compress database dump.  Only for -M option.
-            -l => Oplog option added to mongodump. Only for -M option.
-            -b database => Database name. Only for -M option.
-            -t table => Collection name. Only available for -b option.
-            -r => Include user and roles in dump. Only available for -b option.
+            -z => Compress database dump.
+            -l => Oplog option added to mongodump.
+            -b database => Database name.
+                -t table => Collection name.
+                    -r => Include user and roles in dump.
             -q => Turn quiet mode on. By default, displays out log of dump.
             -o dir_path => Directory path to dump directory. Required argument
                 for option.
 
         -A => Run the Sync/Copy dump program. Database server being dumped must
                 also be part of a replica set.
+            -o dir_path => Directory path to dump directory. Required argument
+                for option.
+
+        -E => Run the mongoexport program.
+            -b database => Database name.
+                -t table => Collection name.
+            -q => Turn quiet mode on. By default, displays out log of dump.
             -o dir_path => Directory path to dump directory. Required argument
                 for option.
 
@@ -50,10 +58,13 @@
     Notes:
         Mongo configuration file format (config/mongo.py.TEMPLATE).  The
             configuration file format for the Mongo connection used for
-            dumping data from a database.  Leave the Mongo replica set entries
-            set to None as it is not required for dumping purposes.
+            dumping data from a database.
+
+        Note:  Leave the Mongo replica set entries set to None as it is not
+            required for dumping purposes.
 
             Configuration file for Mongo Database Server connection.
+
             user = "USER"
             japd = "PSWORD"
             host = "HOST_IP"
@@ -65,6 +76,17 @@
             auth_mech = "SCRAM-SHA-1"
             use_arg = True
             use_uri = False
+
+        Note:  If using SSL connections then set one or more of the following
+            entries.  This will automatically enable SSL connections.
+
+            Configuration settings for SSL connections.  See configuration file
+                for details on each entry:
+
+            ssl_client_ca = None
+            ssl_client_key = None
+            ssl_client_cert = None
+            ssl_client_phrase = None
 
         Configuration modules -> Name is runtime dependent as it can be used to
             connect to different databases with different names.
@@ -177,8 +199,46 @@ def mongo_dump(server, args_array, **kwargs):
             opt_arg -> Dictionary of additional options to add.
             mail -> Email class instance.
             req_arg -> List of required options for the command line.
-        (output) False -> If an error has occurred.
-        (output) None -> Error message.
+        (output) err_flag -> If an error has occurred.
+        (output) err_msg -> Error message.
+
+    """
+
+    log_name = "dump_"
+    err_flag = False
+    err_msg = None
+    args_array = dict(args_array)
+    dtg = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d_%H%M%S")
+
+    if "-o" in args_array.keys() and args_array["-o"]:
+        log_file = os.path.join(args_array["-o"], log_name + dtg + ".log")
+        err_flag, err_msg = mongo_generic(
+            server, args_array, "mongodump", log_file, **kwargs)
+
+    else:
+        err_flag = True
+        err_msg = "Error:  Missing -o option or value."
+
+    return err_flag, err_msg
+
+
+def mongo_generic(server, args_array, cmd_name, log_file, **kwargs):
+
+    """Function:  mongo_generic
+
+    Description:  Create a mongo dump/export command and execute it.
+
+    Arguments:
+        (input) server -> Database server instance.
+        (input) args_array -> Array of command line options and values.
+        (input) cmd_name -> Name of Mongo binary program to execute.
+        (input) log_file -> Directory path and file name for log.
+        (input) **kwargs:
+            opt_arg -> Dictionary of additional options to add.
+            req_arg -> List of required options for the command line.
+            mail -> Email class instance.
+        (output) err_flag -> If an error has occurred.
+        (output) err_msg -> Error message.
 
     """
 
@@ -188,18 +248,16 @@ def mongo_dump(server, args_array, **kwargs):
     args_array = dict(args_array)
     mail = kwargs.get("mail", None)
     sup_std = args_array.get("-x", False)
-    dtg = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d_%H%M%S")
-    f_name = os.path.join(args_array["-o"], "dump_log_file_" + dtg + ".log")
-    dump_cmd = mongo_libs.create_cmd(
-        server, args_array, "mongodump",
-        arg_parser.arg_set_path(args_array, "-p"), **kwargs)
+    cmd = mongo_libs.create_cmd(server, args_array, cmd_name, "-p",
+                                no_pass=True, **kwargs)
 
-    with open(f_name, "w") as l_file:
-        proc1 = subp.Popen(dump_cmd, stderr=l_file)
+    proc2 = subp.Popen(["echo", server.japd], stdout=subp.PIPE)
+    with open(log_file, "w") as l_file:
+        proc1 = subp.Popen(cmd, stderr=l_file, stdin=proc2.stdout)
         proc1.wait()
 
-    if not gen_libs.is_empty_file(f_name):
-        log_list = gen_libs.file_2_list(f_name)
+    if not gen_libs.is_empty_file(log_file):
+        log_list = gen_libs.file_2_list(log_file)
 
         for line in log_list:
             if not sup_std:
@@ -214,7 +272,47 @@ def mongo_dump(server, args_array, **kwargs):
     return err_flag, err_msg
 
 
-def get_req_options(server, arg_req_dict, **kwargs):
+def mongo_export(server, args_array, **kwargs):
+
+    """Function:  mongo_export
+
+    Description:  Setup Mongo Export call.
+
+    Arguments:
+        (input) server -> Database server instance.
+        (input) args_array -> Array of command line options and values.
+        (input) **kwargs:
+            opt_arg -> Dictionary of additional options to add.
+            req_arg -> List of required options for the command line.
+            mail -> Email class instance.
+        (output) err_flag -> If an error has occurred.
+        (output) err_msg -> Error message.
+
+    """
+
+    log_name = "export_"
+    args_array = dict(args_array)
+    err_flag = False
+    err_msg = None
+    opt_name = args_array["-b"] + "_" + args_array["-t"]
+    dtg = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d_%H%M%S")
+
+    if "-o" in args_array.keys() and args_array["-o"]:
+        log_file = os.path.join(
+            args_array["-o"], log_name + opt_name + "_" + dtg + ".log")
+        args_array["-o"] = os.path.join(
+            args_array["-o"], log_name + opt_name + ".json")
+        err_flag, err_msg = mongo_generic(
+            server, args_array, "mongoexport", log_file, **kwargs)
+
+    else:
+        err_flag = True
+        err_msg = "Error:  Missing -o option or value."
+
+    return err_flag, err_msg
+
+
+def get_req_options(server, arg_req_dict):
 
     """Function:  get_req_options
 
@@ -302,6 +400,7 @@ def main():
         opt_multi_list -> contains the options that will have multiple values.
         opt_req_list -> contains the options that are required for the program.
         opt_val_list -> contains options which require values.
+        opt_xor_dict -> contains dict with key that is xor with it's values.
         xor_noreq_list -> contains options that are XOR, but are not required.
 
     Arguments:
@@ -313,15 +412,16 @@ def main():
     arg_req_dict = {"auth_db": "--authenticationDatabase="}
     dir_chk_list = ["-d", "-o", "-p"]
     dir_crt_list = ["-o"]
-    func_dict = {"-A": sync_cp_dump, "-M": mongo_dump}
+    func_dict = {"-A": sync_cp_dump, "-M": mongo_dump, "-E": mongo_export}
     opt_arg_list = {"-l": "--oplog", "-z": "--gzip", "-b": "--db=",
                     "-o": "--out=", "-q": "--quiet",
                     "-r": "--dumpDbUsersAndRoles", "-t": "--collection="}
-    opt_con_req_list = {"-A": ["-o"], "-r": ["-b"], "-t": ["-b"], "-s": ["-e"]}
+    opt_con_req_list = {"-r": ["-b"], "-t": ["-b"], "-s": ["-e"],
+                        "-E": ["-b", "-t"]}
     opt_multi_list = ["-e", "-s"]
     opt_req_list = ["-c", "-d", "-o"]
-    opt_req_xor_list = {"-A": "-M"}
     opt_val_list = ["-b", "-c", "-d", "-o", "-p", "-t", "-e", "-s", "-y"]
+    opt_xor_dict = {"-A": ["-M", "-E"], "-E": ["-M", "-A"], "-M": ["-A", "-E"]}
     xor_noreq_list = {"-l": "-b"}
 
     # Process argument list from command line.
@@ -330,7 +430,7 @@ def main():
 
     if not gen_libs.help_func(args_array, __version__, help_message) \
        and not arg_parser.arg_require(args_array, opt_req_list) \
-       and arg_parser.arg_req_xor(args_array, opt_req_xor_list) \
+       and arg_parser.arg_xor_dict(args_array, opt_xor_dict) \
        and arg_parser.arg_noreq_xor(args_array, xor_noreq_list) \
        and arg_parser.arg_cond_req(args_array, opt_con_req_list) \
        and not arg_parser.arg_dir_chk_crt(args_array, dir_chk_list,
