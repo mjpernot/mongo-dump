@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
 
+## [3.2.1] - 2022-04-04
+
+
 ## [3.2.0] - 2020-12-16
 - Added Mongo export capability.
 
