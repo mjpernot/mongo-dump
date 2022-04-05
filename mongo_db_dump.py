@@ -260,7 +260,7 @@ def mongo_generic(server, args_array, cmd_name, log_file, **kwargs):
     args_array = dict(args_array)
     mail = kwargs.get("mail", None)
     sup_std = args_array.get("-x", False)
-    err_file = kwargs.get("err_file", "/dev/null")
+    err_file = kwargs.get("err_file", log_file + ".err")
     e_file = open(err_file, "w")
     cmd = mongo_libs.create_cmd(
         server, args_array, cmd_name, "-p", no_pass=True, **kwargs)
