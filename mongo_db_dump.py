@@ -264,7 +264,6 @@ def mongo_generic(server, args_array, cmd_name, log_file, **kwargs):
     e_file = open(err_file, "w")
     cmd = mongo_libs.create_cmd(
         server, args_array, cmd_name, "-p", no_pass=True, **kwargs)
-
     proc2 = subp.Popen(["echo", server.japd], stdout=subp.PIPE)
 
     with open(log_file, "w") as l_file:
