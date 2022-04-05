@@ -234,11 +234,12 @@ def mongo_generic(server, args_array, cmd_name, log_file, **kwargs):
         (input) server -> Database server instance.
         (input) args_array -> Array of command line options and values.
         (input) cmd_name -> Name of Mongo binary program to execute.
-        (input) log_file -> Directory path and file name for log.
+        (input) log_file -> Directory path and file name for log file.
         (input) **kwargs:
             opt_arg -> Dictionary of additional options to add.
             req_arg -> List of required options for the command line.
             mail -> Email class instance.
+            err_file -> Directory path and file name for error file.
         (output) err_flag -> If an error has occurred.
         (output) err_msg -> Error message.
 
@@ -250,26 +251,49 @@ def mongo_generic(server, args_array, cmd_name, log_file, **kwargs):
     args_array = dict(args_array)
     mail = kwargs.get("mail", None)
     sup_std = args_array.get("-x", False)
-    cmd = mongo_libs.create_cmd(server, args_array, cmd_name, "-p",
-                                no_pass=True, **kwargs)
+    err_file = kwargs.get("err_file", "/dev/null")
+    e_file = open(err_file, "w")
+    cmd = mongo_libs.create_cmd(
+        server, args_array, cmd_name, "-p", no_pass=True, **kwargs)
 
     proc2 = subp.Popen(["echo", server.japd], stdout=subp.PIPE)
+
     with open(log_file, "w") as l_file:
-        proc1 = subp.Popen(cmd, stderr=l_file, stdin=proc2.stdout)
+        proc1 = subp.Popen(
+            cmd, stderr=e_file, stdin=proc2.stdout, stdout=l_file)
         proc1.wait()
 
+    e_file.close()
+
+# Do I want to set err_flag and err_msg if err_file has something?
     if not gen_libs.is_empty_file(log_file):
         log_list = gen_libs.file_2_list(log_file)
 
-        for line in log_list:
-            if not sup_std:
+        if not sup_std:
+            for line in log_list:
                 print(line)
+
+        if mail:
+            for line in log_list:
+                mail.add_2_msg(line)
+
+    if gen_libs.is_empty_file(err_file):
+        gen_libs.rm_file(err_file)
+
+    else:
+        err_list = gen_libs.file_2_list(err_file)
+
+        if mail:
+            mail.add_2_msg("Error messages detected during dump:")
+
+        for line in err_list:
+            print(line)
 
             if mail:
                 mail.add_2_msg(line)
 
-        if mail:
-            mail.send_mail()
+    if mail and mail.msg:
+        mail.send_mail()
 
     return err_flag, err_msg
 
