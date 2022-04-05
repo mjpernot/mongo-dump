@@ -212,8 +212,10 @@ def mongo_dump(server, args_array, **kwargs):
 
     if "-o" in args_array.keys() and args_array["-o"]:
         log_file = os.path.join(args_array["-o"], log_name + dtg + ".log")
+        err_file = os.path.join(args_array["-o"], log_name + dtg + ".err")
         err_flag, err_msg = mongo_generic(
-            server, args_array, "mongodump", log_file, **kwargs)
+            server, args_array, "mongodump", log_file, err_file=err_file,
+            **kwargs)
 
     else:
         err_flag = True
@@ -300,10 +302,13 @@ def mongo_export(server, args_array, **kwargs):
     if "-o" in args_array.keys() and args_array["-o"]:
         log_file = os.path.join(
             args_array["-o"], log_name + opt_name + "_" + dtg + ".log")
+        err_file = os.path.join(
+            args_array["-o"], log_name + opt_name + "_" + dtg + ".err")
         args_array["-o"] = os.path.join(
             args_array["-o"], log_name + opt_name + ".json")
         err_flag, err_msg = mongo_generic(
-            server, args_array, "mongoexport", log_file, **kwargs)
+            server, args_array, "mongoexport", log_file, err_file=err_file,
+            **kwargs)
 
     else:
         err_flag = True

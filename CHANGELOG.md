@@ -6,6 +6,8 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 
 ## [3.2.1] - 2022-04-04
 ### Changes
+- mongo_dump: Added error log file for any errors produced during dump.
+- mongo_export: Added error log file for any errors produced during export.
 - Documentation changes.
 
 
