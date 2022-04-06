@@ -58,20 +58,20 @@ class Mail(object):
 
         """
 
-        self.data = None
+        self.msg = ""
 
-    def add_2_msg(self, data):
+    def add_2_msg(self, line):
 
         """Method:  add_2_msg
 
         Description:  Stub method holder for Mail.add_2_msg.
 
         Arguments:
-            (input) data -> Message line to add to email body.
+            (input) line -> Message line to add to email body.
 
         """
 
-        self.data = data
+        self.msg = line
 
         return True
 
@@ -225,6 +225,8 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp
+        test_mail_error_file
+        test_error_file
         test_log_file2
         test_mail_log_suppress
         test_log_file_suppress
@@ -259,6 +261,85 @@ class UnitTest(unittest.TestCase):
         self.args_array2 = {"-p": "DirectoryPath2", "-x": True}
         self.file_list = ["2020-08-14T14:31:12 writing sysmon.mysql_perf to",
                           "2020-08-14T14:31:12 writing sysmon.mongo_rep to"]
+        self.file_list2 = ["Error detected in dump"]
+        e_file = self.dir_path + "/log_file.err"
+        self.msg = "Error detected in error file: %s" % e_file
+
+    @mock.patch("mongo_db_dump.gen_libs.is_empty_file",
+                mock.Mock(side_effect=[False, False]))
+    @mock.patch("mongo_db_dump.gen_libs.file_2_list")
+    @mock.patch("mongo_db_dump.subprocess.Popen")
+    @mock.patch("mongo_db_dump.mongo_libs.create_cmd")
+    def test_mail_error_file2(self, mock_cmd, mock_subp, mock_file):
+
+        """Function:  test_mail_error_file2
+
+        Description:  Test with error file with data and mail.
+
+        Arguments:
+
+        """
+
+        mock_cmd.return_value = "DumpCommand"
+        mock_subp.return_value = self.subp
+        mock_file.side_effect = [self.file_list, self.file_list2]
+
+        with gen_libs.no_std_out():
+            mongo_db_dump.mongo_generic(
+                self.server, self.args_array2, self.cmd_name, self.log_file,
+                mail=self.mail)
+
+        self.assertEqual(self.mail.msg, self.file_list2[0])
+
+    @mock.patch("mongo_db_dump.gen_libs.is_empty_file",
+                mock.Mock(side_effect=[False, False]))
+    @mock.patch("mongo_db_dump.gen_libs.file_2_list")
+    @mock.patch("mongo_db_dump.subprocess.Popen")
+    @mock.patch("mongo_db_dump.mongo_libs.create_cmd")
+    def test_mail_error_file(self, mock_cmd, mock_subp, mock_file):
+
+        """Function:  test_mail_error_file
+
+        Description:  Test with error file with data and mail.
+
+        Arguments:
+
+        """
+
+        mock_cmd.return_value = "DumpCommand"
+        mock_subp.return_value = self.subp
+        mock_file.side_effect = [self.file_list, self.file_list2]
+
+        with gen_libs.no_std_out():
+            self.assertEqual(
+                mongo_db_dump.mongo_generic(
+                    self.server, self.args_array2, self.cmd_name,
+                    self.log_file, mail=self.mail), (True, self.msg))
+
+    @mock.patch("mongo_db_dump.gen_libs.is_empty_file",
+                mock.Mock(side_effect=[False, False]))
+    @mock.patch("mongo_db_dump.gen_libs.file_2_list")
+    @mock.patch("mongo_db_dump.subprocess.Popen")
+    @mock.patch("mongo_db_dump.mongo_libs.create_cmd")
+    def test_error_file(self, mock_cmd, mock_subp, mock_file):
+
+        """Function:  test_error_file
+
+        Description:  Test with error file with data.
+
+        Arguments:
+
+        """
+
+        mock_cmd.return_value = "DumpCommand"
+        mock_subp.return_value = self.subp
+        mock_file.side_effect = [self.file_list, self.file_list2]
+
+        with gen_libs.no_std_out():
+            self.assertEqual(
+                mongo_db_dump.mongo_generic(
+                    self.server, self.args_array2, self.cmd_name,
+                    self.log_file), (True, self.msg))
 
     @mock.patch("mongo_db_dump.subprocess.Popen")
     @mock.patch("mongo_db_dump.mongo_libs.create_cmd")
@@ -281,7 +362,7 @@ class UnitTest(unittest.TestCase):
             (False, None))
 
     @mock.patch("mongo_db_dump.gen_libs.is_empty_file",
-                mock.Mock(return_value=False))
+                mock.Mock(side_effect=[False, True]))
     @mock.patch("mongo_db_dump.gen_libs.file_2_list")
     @mock.patch("mongo_db_dump.subprocess.Popen")
     @mock.patch("mongo_db_dump.mongo_libs.create_cmd")
@@ -305,10 +386,10 @@ class UnitTest(unittest.TestCase):
                     self.server, self.args_array2, self.cmd_name,
                     self.log_file, mail=self.mail), (False, None))
 
-        self.assertEqual(self.mail.data, self.file_list[1])
+        self.assertEqual(self.mail.msg, self.file_list[1])
 
     @mock.patch("mongo_db_dump.gen_libs.is_empty_file",
-                mock.Mock(return_value=False))
+                mock.Mock(side_effect=[False, True]))
     @mock.patch("mongo_db_dump.gen_libs.file_2_list")
     @mock.patch("mongo_db_dump.subprocess.Popen")
     @mock.patch("mongo_db_dump.mongo_libs.create_cmd")
@@ -351,10 +432,10 @@ class UnitTest(unittest.TestCase):
                 self.server, self.args_array, self.cmd_name, self.log_file,
                 mail=self.mail), (False, None))
 
-        self.assertEqual(self.mail.data, None)
+        self.assertEqual(self.mail.msg, "")
 
     @mock.patch("mongo_db_dump.gen_libs.is_empty_file",
-                mock.Mock(return_value=False))
+                mock.Mock(side_effect=[False, True]))
     @mock.patch("mongo_db_dump.gen_libs.file_2_list")
     @mock.patch("mongo_db_dump.subprocess.Popen")
     @mock.patch("mongo_db_dump.mongo_libs.create_cmd")
@@ -378,10 +459,10 @@ class UnitTest(unittest.TestCase):
                     self.server, self.args_array, self.cmd_name, self.log_file,
                     mail=self.mail), (False, None))
 
-        self.assertEqual(self.mail.data, self.file_list[1])
+        self.assertEqual(self.mail.msg, self.file_list[1])
 
     @mock.patch("mongo_db_dump.gen_libs.is_empty_file",
-                mock.Mock(return_value=False))
+                mock.Mock(side_effect=[False, True]))
     @mock.patch("mongo_db_dump.gen_libs.file_2_list")
     @mock.patch("mongo_db_dump.subprocess.Popen")
     @mock.patch("mongo_db_dump.mongo_libs.create_cmd")
