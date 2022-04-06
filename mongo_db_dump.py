@@ -240,17 +240,17 @@ def mongo_generic(server, args_array, cmd_name, log_file, **kwargs):
     Description:  Create a mongo dump/export command and execute it.
 
     Arguments:
-        (input) server -> Database server instance.
-        (input) args_array -> Array of command line options and values.
-        (input) cmd_name -> Name of Mongo binary program to execute.
-        (input) log_file -> Directory path and file name for log file.
+        (input) server -> Database server instance
+        (input) args_array -> Array of command line options and values
+        (input) cmd_name -> Name of Mongo binary program to execute
+        (input) log_file -> Directory path and file name for log file
         (input) **kwargs:
-            opt_arg -> Dictionary of additional options to add.
-            req_arg -> List of required options for the command line.
-            mail -> Email class instance.
-            err_file -> Directory path and file name for error file.
-        (output) err_flag -> If an error has occurred.
-        (output) err_msg -> Error message.
+            opt_arg -> Dictionary of additional options to add
+            req_arg -> List of required options for the command line
+            mail -> Email class instance
+            err_file -> Directory path and file name for error file
+        (output) err_flag -> If an error has occurred
+        (output) err_msg -> Error message
 
     """
 
@@ -273,6 +273,9 @@ def mongo_generic(server, args_array, cmd_name, log_file, **kwargs):
 
     e_file.close()
 
+    process_log_file(log_file, sup_std, mail)
+
+    """
     if not gen_libs.is_empty_file(log_file):
         log_list = gen_libs.file_2_list(log_file)
 
@@ -283,6 +286,7 @@ def mongo_generic(server, args_array, cmd_name, log_file, **kwargs):
         if mail:
             for line in log_list:
                 mail.add_2_msg(line)
+    """
 
     if gen_libs.is_empty_file(err_file):
         gen_libs.rm_file(err_file)
@@ -305,6 +309,31 @@ def mongo_generic(server, args_array, cmd_name, log_file, **kwargs):
         mail.send_mail()
 
     return err_flag, err_msg
+
+
+def process_log_file(log_file, sup_std, mail):
+
+    """Function:  process_log_file
+
+    Description:  Checks and processes the log file to standard out and mail.
+
+    Arguments:
+        (input) log_file -> Directory path and file name for log file
+        (input) sup_std -> True|False -Suppress standard out
+        (input) mail -> Email class instance
+
+    """
+
+    if not gen_libs.is_empty_file(log_file):
+        log_list = gen_libs.file_2_list(log_file)
+
+        if not sup_std:
+            for line in log_list:
+                print(line)
+
+        if mail:
+            for line in log_list:
+                mail.add_2_msg(line)
 
 
 def mongo_export(server, args_array, **kwargs):
