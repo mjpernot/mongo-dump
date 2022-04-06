@@ -272,21 +272,7 @@ def mongo_generic(server, args_array, cmd_name, log_file, **kwargs):
         proc1.wait()
 
     e_file.close()
-
     process_log_file(log_file, sup_std, mail)
-
-    """
-    if not gen_libs.is_empty_file(log_file):
-        log_list = gen_libs.file_2_list(log_file)
-
-        if not sup_std:
-            for line in log_list:
-                print(line)
-
-        if mail:
-            for line in log_list:
-                mail.add_2_msg(line)
-    """
 
     if gen_libs.is_empty_file(err_file):
         gen_libs.rm_file(err_file)
