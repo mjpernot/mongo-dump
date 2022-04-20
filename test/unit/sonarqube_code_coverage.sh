@@ -14,6 +14,7 @@ coverage run -a --source=mongo_db_dump test/unit/mongo_db_dump/main.py
 coverage run -a --source=mongo_db_dump test/unit/mongo_db_dump/mongo_dump.py
 coverage run -a --source=mongo_db_dump test/unit/mongo_db_dump/mongo_export.py
 coverage run -a --source=mongo_db_dump test/unit/mongo_db_dump/mongo_generic.py
+coverage run -a --source=mongo_db_dump test/unit/mongo_db_dump/process_log_file.py
 coverage run -a --source=mongo_db_dump test/unit/mongo_db_dump/run_program.py
 coverage run -a --source=mongo_db_dump test/unit/mongo_db_dump/sync_cp_dump.py
 
