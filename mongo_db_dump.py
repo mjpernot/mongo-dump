@@ -30,20 +30,17 @@
                 -t table => Collection name.
                     -r => Include user and roles in dump.
             -q => Turn quiet mode on. By default, displays out log of dump.
-            -o dir_path => Directory path to dump directory. Required argument
-                for option.
+            -o dir_path => Directory path to dump directory. Required argument.
 
         -A => Run the Sync/Copy dump program. Database server being dumped must
                 also be part of a replica set.
-            -o dir_path => Directory path to dump directory. Required argument
-                for option.
+            -o dir_path => Directory path to dump directory. Required argument.
 
         -E => Run the mongoexport program.
             -b database => Database name.
                 -t table => Collection name.
             -q => Turn quiet mode on. By default, displays out log of dump.
-            -o dir_path => Directory path to dump directory. Required argument
-                for option.
+            -o dir_path => Directory path to dump directory. Required argument.
 
         -e email_address(es) => Send output to one or more email addresses.
         -s subject_line => Subject line of email.
@@ -60,8 +57,8 @@
             configuration file format for the Mongo connection used for
             dumping data from a database.
 
-        Note:  Leave the Mongo replica set entries set to None as it is not
-            required for dumping purposes.
+        Leave the Mongo replica set entries set to None as it is not required
+            for dumping purposes.
 
             Configuration file for Mongo Database Server connection.
 
@@ -74,11 +71,9 @@
             auth = True
             auth_db = "admin"
             auth_mech = "SCRAM-SHA-1"
-            use_arg = True
-            use_uri = False
 
-        Note:  If using SSL connections then set one or more of the following
-            entries.  This will automatically enable SSL connections.
+        If using SSL connections then set one or more of the following entries.
+            This will automatically enable SSL connections.
 
             Configuration settings for SSL connections.  See configuration file
                 for details on each entry:
@@ -91,8 +86,20 @@
         Configuration modules -> Name is runtime dependent as it can be used to
             connect to different databases with different names.
 
-    Example:
+        A log file and error file (if any errors are detected) will be
+            written to the same directory as the dump file (-o option).
+
+            Note:  If the -q option is used on the command line, then there
+                will be no log entries in the log file of the dump.
+                To include the log entries, but still have nothing displayed
+                to standard out, then use the "1>/dev/null" after the dump
+                command on the command line.  See example 2 below.
+
+    Example 1:
         mongo_db_dump.py c mongo -d config -o /db_dump -z -M -l
+
+    Example 2: Send log entries to file, but have nothing displayed to stdout.
+        mongo_db_dump.py c mongo -d config -o /db_dump -z -M -l 1>/dev/null
 
 """
 
@@ -212,8 +219,10 @@ def mongo_dump(server, args_array, **kwargs):
 
     if "-o" in args_array.keys() and args_array["-o"]:
         log_file = os.path.join(args_array["-o"], log_name + dtg + ".log")
+        err_file = os.path.join(args_array["-o"], log_name + dtg + ".err")
         err_flag, err_msg = mongo_generic(
-            server, args_array, "mongodump", log_file, **kwargs)
+            server, args_array, "mongodump", log_file, err_file=err_file,
+            **kwargs)
 
     else:
         err_flag = True
@@ -229,16 +238,17 @@ def mongo_generic(server, args_array, cmd_name, log_file, **kwargs):
     Description:  Create a mongo dump/export command and execute it.
 
     Arguments:
-        (input) server -> Database server instance.
-        (input) args_array -> Array of command line options and values.
-        (input) cmd_name -> Name of Mongo binary program to execute.
-        (input) log_file -> Directory path and file name for log.
+        (input) server -> Database server instance
+        (input) args_array -> Array of command line options and values
+        (input) cmd_name -> Name of Mongo binary program to execute
+        (input) log_file -> Directory path and file name for log file
         (input) **kwargs:
-            opt_arg -> Dictionary of additional options to add.
-            req_arg -> List of required options for the command line.
-            mail -> Email class instance.
-        (output) err_flag -> If an error has occurred.
-        (output) err_msg -> Error message.
+            opt_arg -> Dictionary of additional options to add
+            req_arg -> List of required options for the command line
+            mail -> Email class instance
+            err_file -> Directory path and file name for error file
+        (output) err_flag -> If an error has occurred
+        (output) err_msg -> Error message
 
     """
 
@@ -248,28 +258,66 @@ def mongo_generic(server, args_array, cmd_name, log_file, **kwargs):
     args_array = dict(args_array)
     mail = kwargs.get("mail", None)
     sup_std = args_array.get("-x", False)
-    cmd = mongo_libs.create_cmd(server, args_array, cmd_name, "-p",
-                                no_pass=True, **kwargs)
-
+    err_file = kwargs.get("err_file", log_file + ".err")
+    e_file = open(err_file, "w")
+    cmd = mongo_libs.create_cmd(
+        server, args_array, cmd_name, "-p", no_pass=True, **kwargs)
     proc2 = subp.Popen(["echo", server.japd], stdout=subp.PIPE)
+
     with open(log_file, "w") as l_file:
-        proc1 = subp.Popen(cmd, stderr=l_file, stdin=proc2.stdout)
+        proc1 = subp.Popen(
+            cmd, stderr=l_file, stdin=proc2.stdout, stdout=e_file)
         proc1.wait()
 
-    if not gen_libs.is_empty_file(log_file):
-        log_list = gen_libs.file_2_list(log_file)
+    e_file.close()
+    process_log_file(log_file, sup_std, mail)
 
-        for line in log_list:
-            if not sup_std:
-                print(line)
+    if gen_libs.is_empty_file(err_file):
+        gen_libs.rm_file(err_file)
+
+    else:
+        err_list = gen_libs.file_2_list(err_file)
+        err_flag = True
+        err_msg = "Error detected in error file: %s" % err_file
+
+        if mail:
+            mail.add_2_msg("Error messages detected during dump:")
+
+        for line in err_list:
+            print(line)
 
             if mail:
                 mail.add_2_msg(line)
 
-        if mail:
-            mail.send_mail()
+    if mail and mail.msg:
+        mail.send_mail()
 
     return err_flag, err_msg
+
+
+def process_log_file(log_file, sup_std, mail):
+
+    """Function:  process_log_file
+
+    Description:  Checks and processes the log file to standard out and mail.
+
+    Arguments:
+        (input) log_file -> Directory path and file name for log file
+        (input) sup_std -> True|False -Suppress standard out
+        (input) mail -> Email class instance
+
+    """
+
+    if not gen_libs.is_empty_file(log_file):
+        log_list = gen_libs.file_2_list(log_file)
+
+        if not sup_std:
+            for line in log_list:
+                print(line)
+
+        if mail:
+            for line in log_list:
+                mail.add_2_msg(line)
 
 
 def mongo_export(server, args_array, **kwargs):
@@ -300,10 +348,13 @@ def mongo_export(server, args_array, **kwargs):
     if "-o" in args_array.keys() and args_array["-o"]:
         log_file = os.path.join(
             args_array["-o"], log_name + opt_name + "_" + dtg + ".log")
+        err_file = os.path.join(
+            args_array["-o"], log_name + opt_name + "_" + dtg + ".err")
         args_array["-o"] = os.path.join(
             args_array["-o"], log_name + opt_name + ".json")
         err_flag, err_msg = mongo_generic(
-            server, args_array, "mongoexport", log_file, **kwargs)
+            server, args_array, "mongoexport", log_file, err_file=err_file,
+            **kwargs)
 
     else:
         err_flag = True
