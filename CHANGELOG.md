@@ -5,10 +5,13 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 
 
 ## [3.2.1] - 2022-04-04
+- Upgraded mongo-lb to v4.2.1
+
 ### Changes
 - mongo_generic: Added standard error output for dump process and call process_log_file function.
 - mongo_dump: Added error log file for any errors produced during dump.
 - mongo_export: Added error log file for any errors produced during export.
+- config/mongo.py.TEMPLATE: Removed use_arg and use_uri configuration entries.
 - Documentation changes.
 
 ### Add

@@ -71,8 +71,6 @@
             auth = True
             auth_db = "admin"
             auth_mech = "SCRAM-SHA-1"
-            use_arg = True
-            use_uri = False
 
         If using SSL connections then set one or more of the following entries.
             This will automatically enable SSL connections.
