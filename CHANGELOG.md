@@ -11,6 +11,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
  
 ### Changed
 - Converted imports to use Python 2.7 or Python 3.
+- mongo_dump, mongo_export, get_req_options: Converted dictionary keys() call to list.
 
 
 ## [3.2.1] - 2022-04-04

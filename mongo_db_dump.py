@@ -115,12 +115,21 @@ import subprocess
 # Third-party
 
 # Local
-import lib.gen_libs as gen_libs
-import lib.gen_class as gen_class
-import lib.arg_parser as arg_parser
-import mongo_lib.mongo_class as mongo_class
-import mongo_lib.mongo_libs as mongo_libs
-import version
+try:
+    from .lib import arg_parser
+    from .lib import gen_libs
+    from .lib import gen_class
+    from .mongo_lib import mongo_libs
+    from .mongo_lib import mongo_class
+    from . import version
+
+except (ValueError, ImportError) as err:
+    import lib.gen_libs as gen_libs
+    import lib.gen_class as gen_class
+    import lib.arg_parser as arg_parser
+    import mongo_lib.mongo_libs as mongo_libs
+    import mongo_lib.mongo_class as mongo_class
+    import version
 
 __version__ = version.__version__
 
@@ -217,7 +226,7 @@ def mongo_dump(server, args_array, **kwargs):
     args_array = dict(args_array)
     dtg = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d_%H%M%S")
 
-    if "-o" in args_array.keys() and args_array["-o"]:
+    if "-o" in list(args_array.keys()) and args_array["-o"]:
         log_file = os.path.join(args_array["-o"], log_name + dtg + ".log")
         err_file = os.path.join(args_array["-o"], log_name + dtg + ".err")
         err_flag, err_msg = mongo_generic(
@@ -345,7 +354,7 @@ def mongo_export(server, args_array, **kwargs):
     opt_name = args_array["-b"] + "_" + args_array["-t"]
     dtg = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d_%H%M%S")
 
-    if "-o" in args_array.keys() and args_array["-o"]:
+    if "-o" in list(args_array.keys()) and args_array["-o"]:
         log_file = os.path.join(
             args_array["-o"], log_name + opt_name + "_" + dtg + ".log")
         err_file = os.path.join(
@@ -380,7 +389,7 @@ def get_req_options(server, arg_req_dict):
     arg_req_dict = dict(arg_req_dict)
 
     arg_req = [arg_req_dict[item] + getattr(server, item)
-               for item in arg_req_dict.keys()
+               for item in list(arg_req_dict.keys())
                if hasattr(server, item) and getattr(server, item)]
 
     return arg_req
