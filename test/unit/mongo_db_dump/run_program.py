@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # Classification (U)
 
 """Program:  run_program.py
@@ -17,11 +16,7 @@
 # Standard
 import sys
 import os
-
-if sys.version_info < (2, 7):
-    import unittest2 as unittest
-else:
-    import unittest
+import unittest
 
 # Third-party
 import mock
@@ -148,8 +143,8 @@ class UnitTest(unittest.TestCase):
         """
 
         self.server = Server()
-        self.func_dict = {"-M": mongo_dump}
-        self.func_dict2 = {"-M": mongo_dump2}
+        self.func_names = {"-M": mongo_dump}
+        self.func_names2 = {"-M": mongo_dump2}
         self.args_array = {"-d": True, "-c": True, "-M": True}
         self.args_array2 = {"-d": True, "-c": True, "-M": True, "-e": True}
         self.args_array3 = {"-d": True, "-c": True, "-M": True, "-e": True,
@@ -176,7 +171,7 @@ class UnitTest(unittest.TestCase):
 
         with gen_libs.no_std_out():
             self.assertFalse(mongo_db_dump.run_program(self.args_array,
-                                                       self.func_dict))
+                                                       self.func_names))
 
     @mock.patch("mongo_db_dump.get_req_options", mock.Mock(return_value=[]))
     @mock.patch("mongo_db_dump.mongo_libs.disconnect",
@@ -196,7 +191,7 @@ class UnitTest(unittest.TestCase):
 
         with gen_libs.no_std_out():
             self.assertFalse(mongo_db_dump.run_program(self.args_array4,
-                                                       self.func_dict2))
+                                                       self.func_names2))
 
     @mock.patch("mongo_db_dump.get_req_options", mock.Mock(return_value=[]))
     @mock.patch("mongo_db_dump.mongo_libs.disconnect",
@@ -215,7 +210,7 @@ class UnitTest(unittest.TestCase):
         mock_inst.return_value = self.server
 
         self.assertFalse(mongo_db_dump.run_program(self.args_array,
-                                                   self.func_dict))
+                                                   self.func_names))
 
     @mock.patch("mongo_db_dump.get_req_options", mock.Mock(return_value=[]))
     @mock.patch("mongo_db_dump.mongo_libs.disconnect",
@@ -234,7 +229,7 @@ class UnitTest(unittest.TestCase):
         mock_inst.return_value = self.server
 
         self.assertFalse(mongo_db_dump.run_program(self.args_array3,
-                                                   self.func_dict))
+                                                   self.func_names))
 
     @mock.patch("mongo_db_dump.get_req_options", mock.Mock(return_value=[]))
     @mock.patch("mongo_db_dump.mongo_libs.disconnect",
@@ -253,7 +248,7 @@ class UnitTest(unittest.TestCase):
         mock_inst.return_value = self.server
 
         self.assertFalse(mongo_db_dump.run_program(self.args_array2,
-                                                   self.func_dict))
+                                                   self.func_names))
 
     @mock.patch("mongo_db_dump.get_req_options", mock.Mock(return_value=[]))
     @mock.patch("mongo_db_dump.mongo_libs.disconnect",
@@ -272,7 +267,7 @@ class UnitTest(unittest.TestCase):
         mock_inst.return_value = self.server
 
         self.assertFalse(mongo_db_dump.run_program(self.args_array2,
-                                                   self.func_dict))
+                                                   self.func_names))
 
     @mock.patch("mongo_db_dump.get_req_options", mock.Mock(return_value=[]))
     @mock.patch("mongo_db_dump.mongo_libs.disconnect",
@@ -292,7 +287,7 @@ class UnitTest(unittest.TestCase):
 
         with gen_libs.no_std_out():
             self.assertFalse(mongo_db_dump.run_program(self.args_array,
-                                                       self.func_dict2))
+                                                       self.func_names2))
 
     @mock.patch("mongo_db_dump.get_req_options", mock.Mock(return_value=[]))
     @mock.patch("mongo_db_dump.mongo_libs.disconnect",
@@ -311,7 +306,7 @@ class UnitTest(unittest.TestCase):
         mock_inst.return_value = self.server
 
         self.assertFalse(mongo_db_dump.run_program(self.args_array,
-                                                   self.func_dict))
+                                                   self.func_names))
 
 
 if __name__ == "__main__":
