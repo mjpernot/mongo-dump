@@ -114,8 +114,6 @@ import shutil
 import datetime
 import subprocess
 
-# Third-party
-
 # Local
 try:
     from .lib import arg_parser
