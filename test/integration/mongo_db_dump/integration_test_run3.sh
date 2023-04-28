@@ -6,4 +6,4 @@
 
 echo ""
 echo "Unit testing..."
-/usr/bin/python test/unit/mongo_db_dump/sync_cp_dump.py
+/usr/bin/python3 test/unit/mongo_db_dump/sync_cp_dump.py
