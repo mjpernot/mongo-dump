@@ -9,7 +9,8 @@
 
     Usage:
         mongo_db_dump.py -c file -d path
-            {-M -o dir_path [-z | -b database [-r | -t name] | -l | -q | -z] |
+            {-M -o dir_path [-z | -b database [-r | -t name] | -l | -q | -z |
+                -i ] |
              -A -o dir_path |
              -E -o dir_path -b database -t name [-q]}
             [-p path | -y flavor_id | -x]
@@ -31,6 +32,7 @@
                     -r => Include user and roles in dump.
             -q => Turn quiet mode on. By default, displays out log of dump.
             -o dir_path => Directory path to dump directory. Required argument.
+            -i => Turn off TLS checking.
 
         -A => Run the Sync/Copy dump program. Database server being dumped must
                 also be part of a replica set.
@@ -474,7 +476,7 @@ def main():
     dir_crt_list = ["-o"]
     func_dict = {"-A": sync_cp_dump, "-M": mongo_dump, "-E": mongo_export}
     opt_arg_list = {"-l": "--oplog", "-z": "--gzip", "-b": "--db=",
-                    "-o": "--out=", "-q": "--quiet",
+                    "-o": "--out=", "-q": "--quiet", "-i": "--tlsInsecure",
                     "-r": "--dumpDbUsersAndRoles", "-t": "--collection="}
     opt_con_req_list = {"-r": ["-b"], "-t": ["-b"], "-s": ["-e"],
                         "-E": ["-b", "-t"]}
