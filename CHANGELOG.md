@@ -5,6 +5,10 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 
 
 ## [3.2.3] - 2023-05-25
+- Added -i option to turn off TLS checking if using SSL.
+
+### Fixed
+- main: Added "-i" option to the opt_arg_list list.
 
 
 ## [3.2.2] - 2022-12-01
