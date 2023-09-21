@@ -265,7 +265,6 @@ def mongo_generic(server, args_array, cmd_name, log_file, **kwargs):
 
     err_flag = False
     err_msg = None
-    subp = gen_libs.get_inst(subprocess)
     args_array = dict(args_array)
     mail = kwargs.get("mail", None)
     sup_std = args_array.get("-x", False)
@@ -273,10 +272,10 @@ def mongo_generic(server, args_array, cmd_name, log_file, **kwargs):
     e_file = open(err_file, "w")
     cmd = mongo_libs.create_cmd(
         server, args_array, cmd_name, "-p", no_pass=True, **kwargs)
-    proc2 = subp.Popen(["echo", server.japd], stdout=subp.PIPE)
+    proc2 = subprocess.Popen(["echo", server.japd], stdout=subprocess.PIPE)
 
     with open(log_file, "w") as l_file:
-        proc1 = subp.Popen(
+        proc1 = subprocess.Popen(
             cmd, stderr=l_file, stdin=proc2.stdout, stdout=e_file)
         proc1.wait()
 
@@ -470,7 +469,6 @@ def main():
 
     """
 
-    cmdline = gen_libs.get_inst(sys)
     arg_req_dict = {"auth_db": "--authenticationDatabase="}
     dir_chk_list = ["-d", "-o", "-p"]
     dir_crt_list = ["-o"]
@@ -487,8 +485,8 @@ def main():
     xor_noreq_list = {"-l": "-b"}
 
     # Process argument list from command line.
-    args_array = arg_parser.arg_parse2(cmdline.argv, opt_val_list,
-                                       multi_val=opt_multi_list)
+    args_array = arg_parser.arg_parse2(
+        sys.argv, opt_val_list, multi_val=opt_multi_list)
 
     if not gen_libs.help_func(args_array, __version__, help_message) \
        and not arg_parser.arg_require(args_array, opt_req_list) \
@@ -499,8 +497,8 @@ def main():
                                           dir_crt_list):
 
         try:
-            prog_lock = gen_class.ProgramLock(cmdline.argv,
-                                              args_array.get("-y", ""))
+            prog_lock = gen_class.ProgramLock(
+                sys.argv, args_array.get("-y", ""))
             run_program(args_array, func_dict, opt_arg=opt_arg_list,
                         arg_req_dict=arg_req_dict)
             del prog_lock
