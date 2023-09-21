@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
 
+## [3.3.0] - 2023-09-21
+
+
 ## [3.2.3] - 2023-05-25
 - Added -i option to turn off TLS checking if using SSL.
 
