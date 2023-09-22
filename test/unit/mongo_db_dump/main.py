@@ -28,6 +28,148 @@ import version
 __version__ = version.__version__
 
 
+class ArgParser(object):
+
+    """Class:  ArgParser
+
+    Description:  Class stub holder for gen_class.ArgParser class.
+
+    Methods:
+        __init__
+        arg_cond_req
+        arg_dir_chk
+        arg_dir_crt
+        arg_noreq_xor
+        arg_require
+        get_val
+        arg_xor_dict
+
+    """
+
+    def __init__(self):
+
+        """Method:  __init__
+
+        Description:  Class initialization.
+
+        Arguments:
+
+        """
+
+        self.cmdline = None
+        self.args_array = dict()
+        self.opt_req = None
+        self.opt_req2 = True
+        self.dir_perms_chk = None
+        self.dir_perms_chk2 = True
+        self.dir_chk = None
+        self.dir_crt = None
+        self.dir_crt2 = True
+        self.opt_xor_val = None
+        self.opt_xor_val2 = True
+        self.xor_noreq = None
+        self.xor_noreq2 = True
+        self.opt_con_req = None
+        self.opt_con_req2 = True
+
+    def arg_cond_req(self, opt_con_req):
+
+        """Method:  arg_cond_req
+
+        Description:  Method stub holder for gen_class.ArgParser.arg_cond_req.
+
+        Arguments:
+
+        """
+
+        self.opt_con_req = opt_con_req
+
+        return self.opt_con_req2
+
+    def arg_dir_chk(self, dir_perms_chk):
+
+        """Method:  arg_dir_chk
+
+        Description:  Method stub holder for gen_class.ArgParser.arg_dir_chk.
+
+        Arguments:
+
+        """
+
+        self.dir_perms_chk = dir_perms_chk
+
+        return self.dir_perms_chk2
+
+    def arg_dir_crt(self, dir_chk, dir_crt):
+
+        """Method:  arg_dir_crt
+
+        Description:  Method stub holder for gen_class.ArgParser.arg_dir_crt.
+
+        Arguments:
+
+        """
+
+        self.dir_chk = dir_chk
+        self.dir_crt = dir_crt
+
+        return self.dir_crt2
+
+    def arg_noreq_xor(self, xor_noreq):
+
+        """Method:  arg_noreq_xor
+
+        Description:  Method stub holder for gen_class.ArgParser.arg_noreq_xor.
+
+        Arguments:
+
+        """
+
+        self.xor_noreq = xor_noreq
+
+        return self.xor_noreq2
+
+    def arg_require(self, opt_req):
+
+        """Method:  arg_require
+
+        Description:  Method stub holder for gen_class.ArgParser.arg_require.
+
+        Arguments:
+
+        """
+
+        self.opt_req = opt_req
+
+        return self.opt_req2
+
+    def get_val(self, skey, def_val):
+
+        """Method:  get_val
+
+        Description:  Method stub holder for gen_class.ArgParser.get_val.
+
+        Arguments:
+
+        """
+
+        return self.args_array.get(skey, def_val)
+
+    def arg_xor_dict(self, opt_xor_val):
+
+        """Method:  arg_xor_dict
+
+        Description:  Method stub holder for gen_class.ArgParser.arg_xor_dict.
+
+        Arguments:
+
+        """
+
+        self.opt_xor_val = opt_xor_val
+
+        return self.opt_xor_val2
+
+
 class ProgramLock(object):
 
     """Class:  ProgramLock
@@ -65,23 +207,23 @@ class UnitTest(unittest.TestCase):
         setUp -> Initialize testing environment.
         test_help_true
         test_help_false
-        test_arg_req_true
         test_arg_req_false
+        test_arg_req_true
         test_arg_xor_dict_false
         test_arg_xor_dict_true
         test_arg_noreq_xor_false
         test_arg_noreq_xor_true
         test_arg_cond_req_false
         test_arg_cond_req_true
-        test_arg_dir_chk_crt_true
         test_arg_dir_chk_crt_false
+        test_arg_dir_chk_crt_true
         test_run_program
         test_programlock_id
         test_programlock_false
         test_programlock_true
 
     """
-
+STOPPED HERE
     def setUp(self):
 
         """Function:  setUp
@@ -92,12 +234,15 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        self.args_array = {"-c": "CfgFile", "-d": "CfgDir"}
-        self.args_array2 = {"-c": "CfgFile", "-d": "CfgDir", "-y": "Flavor"}
+        self.args = ArgParser()
+        self.args2 = ArgParser()
+        self.args.args_array = {"-c": "CfgFile", "-d": "CfgDir"}
+        self.args2.args_array = {
+            "-c": "CfgFile", "-d": "CfgDir", "-y": "Flavor"}
         self.proglock = ProgramLock(["cmdline"], "FlavorID")
 
     @mock.patch("mongo_db_dump.gen_libs.help_func")
-    @mock.patch("mongo_db_dump.arg_parser.arg_parse2")
+    @mock.patch("mongo_db_dump.gen_class.ArgParser")
     def test_help_true(self, mock_arg, mock_help):
 
         """Function:  test_help_true
@@ -108,14 +253,14 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_arg.return_value = self.args_array
+        mock_arg.return_value = self.args
         mock_help.return_value = True
 
         self.assertFalse(mongo_db_dump.main())
 
-    @mock.patch("mongo_db_dump.arg_parser.arg_require")
+    @mock.patch("mongo_db_dump.gen_class.ArgParser.arg_require")
     @mock.patch("mongo_db_dump.gen_libs.help_func")
-    @mock.patch("mongo_db_dump.arg_parser.arg_parse2")
+    @mock.patch("mongo_db_dump.gen_class.ArgParser")
     def test_help_false(self, mock_arg, mock_help, mock_req):
 
         """Function:  test_help_false
@@ -126,35 +271,16 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_arg.return_value = self.args_array
+        mock_arg.return_value = self.args
         mock_help.return_value = False
         mock_req.return_value = True
 
         self.assertFalse(mongo_db_dump.main())
 
-    @mock.patch("mongo_db_dump.arg_parser.arg_require")
+    @mock.patch("mongo_db_dump.gen_class.ArgParser.arg_xor_dict")
+    @mock.patch("mongo_db_dump.gen_class.ArgParser.arg_require")
     @mock.patch("mongo_db_dump.gen_libs.help_func")
-    @mock.patch("mongo_db_dump.arg_parser.arg_parse2")
-    def test_arg_req_true(self, mock_arg, mock_help, mock_req):
-
-        """Function:  test_arg_req_true
-
-        Description:  Test arg_require if returns true.
-
-        Arguments:
-
-        """
-
-        mock_arg.return_value = self.args_array
-        mock_help.return_value = False
-        mock_req.return_value = True
-
-        self.assertFalse(mongo_db_dump.main())
-
-    @mock.patch("mongo_db_dump.arg_parser.arg_xor_dict")
-    @mock.patch("mongo_db_dump.arg_parser.arg_require")
-    @mock.patch("mongo_db_dump.gen_libs.help_func")
-    @mock.patch("mongo_db_dump.arg_parser.arg_parse2")
+    @mock.patch("mongo_db_dump.gen_class.ArgParser")
     def test_arg_req_false(self, mock_arg, mock_help, mock_req, mock_xor):
 
         """Function:  test_arg_req_false
@@ -165,15 +291,34 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_arg.return_value = self.args_array
+        mock_arg.return_value = self.args
         mock_help.return_value = False
         mock_req.return_value = False
         mock_xor.return_value = False
 
         self.assertFalse(mongo_db_dump.main())
 
+    @mock.patch("mongo_db_dump.gen_class.ArgParser.arg_require")
     @mock.patch("mongo_db_dump.gen_libs.help_func")
-    @mock.patch("mongo_db_dump.arg_parser")
+    @mock.patch("mongo_db_dump.gen_class.ArgParser")
+    def test_arg_req_true(self, mock_arg, mock_help, mock_req):
+
+        """Function:  test_arg_req_true
+
+        Description:  Test arg_require if returns true.
+
+        Arguments:
+
+        """
+
+        mock_arg.return_value = self.args
+        mock_help.return_value = False
+        mock_req.return_value = True
+
+        self.assertFalse(mongo_db_dump.main())
+
+    @mock.patch("mongo_db_dump.gen_libs.help_func")
+    @mock.patch("mongo_db_dump.gen_class.ArgParser")
     def test_arg_xor_dict_false(self, mock_arg, mock_help):
 
         """Function:  test_arg_xor_dict_false
@@ -184,7 +329,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_arg.arg_parse2.return_value = self.args_array
+        mock_arg.return_value = self.args
         mock_help.return_value = False
         mock_arg.arg_require.return_value = False
         mock_arg.arg_xor_dict.return_value = False
@@ -192,7 +337,7 @@ class UnitTest(unittest.TestCase):
         self.assertFalse(mongo_db_dump.main())
 
     @mock.patch("mongo_db_dump.gen_libs.help_func")
-    @mock.patch("mongo_db_dump.arg_parser")
+    @mock.patch("mongo_db_dump.gen_class.ArgParser")
     def test_arg_xor_dict_true(self, mock_arg, mock_help):
 
         """Function:  test_arg_xor_dict_true
@@ -203,7 +348,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_arg.arg_parse2.return_value = self.args_array
+        mock_arg.return_value = self.args
         mock_help.return_value = False
         mock_arg.arg_require.return_value = False
         mock_arg.arg_xor_dict.return_value = True
@@ -212,7 +357,7 @@ class UnitTest(unittest.TestCase):
         self.assertFalse(mongo_db_dump.main())
 
     @mock.patch("mongo_db_dump.gen_libs.help_func")
-    @mock.patch("mongo_db_dump.arg_parser")
+    @mock.patch("mongo_db_dump.gen_class.ArgParser")
     def test_arg_noreq_xor_false(self, mock_arg, mock_help):
 
         """Function:  test_arg_noreq_xor_false
@@ -223,7 +368,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_arg.arg_parse2.return_value = self.args_array
+        mock_arg.return_value = self.args
         mock_help.return_value = False
         mock_arg.arg_require.return_value = False
         mock_arg.arg_xor_dict.return_value = True
@@ -232,7 +377,7 @@ class UnitTest(unittest.TestCase):
         self.assertFalse(mongo_db_dump.main())
 
     @mock.patch("mongo_db_dump.gen_libs.help_func")
-    @mock.patch("mongo_db_dump.arg_parser")
+    @mock.patch("mongo_db_dump.gen_class.ArgParser")
     def test_arg_noreq_xor_true(self, mock_arg, mock_help):
 
         """Function:  test_arg_noreq_xor_true
@@ -243,7 +388,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_arg.arg_parse2.return_value = self.args_array
+        mock_arg.return_value = self.args
         mock_help.return_value = False
         mock_arg.arg_require.return_value = False
         mock_arg.arg_xor_dict.return_value = True
@@ -253,7 +398,7 @@ class UnitTest(unittest.TestCase):
         self.assertFalse(mongo_db_dump.main())
 
     @mock.patch("mongo_db_dump.gen_libs.help_func")
-    @mock.patch("mongo_db_dump.arg_parser")
+    @mock.patch("mongo_db_dump.gen_class.ArgParser")
     def test_arg_cond_req_false(self, mock_arg, mock_help):
 
         """Function:  test_arg_cond_req_false
@@ -264,7 +409,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_arg.arg_parse2.return_value = self.args_array
+        mock_arg.return_value = self.args
         mock_help.return_value = False
         mock_arg.arg_require.return_value = False
         mock_arg.arg_xor_dict.return_value = True
@@ -274,7 +419,7 @@ class UnitTest(unittest.TestCase):
         self.assertFalse(mongo_db_dump.main())
 
     @mock.patch("mongo_db_dump.gen_libs.help_func")
-    @mock.patch("mongo_db_dump.arg_parser")
+    @mock.patch("mongo_db_dump.gen_class.ArgParser")
     def test_arg_cond_req_true(self, mock_arg, mock_help):
 
         """Function:  test_arg_cond_req_true
@@ -285,7 +430,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_arg.arg_parse2.return_value = self.args_array
+        mock_arg.return_value = self.args
         mock_help.return_value = False
         mock_arg.arg_require.return_value = False
         mock_arg.arg_xor_dict.return_value = True
@@ -296,7 +441,7 @@ class UnitTest(unittest.TestCase):
         self.assertFalse(mongo_db_dump.main())
 
     @mock.patch("mongo_db_dump.gen_libs.help_func")
-    @mock.patch("mongo_db_dump.arg_parser")
+    @mock.patch("mongo_db_dump.gen_class.ArgParser")
     def test_arg_dir_chk_crt_true(self, mock_arg, mock_help):
 
         """Function:  test_arg_dir_chk_crt_true
@@ -307,7 +452,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_arg.arg_parse2.return_value = self.args_array
+        mock_arg.return_value = self.args
         mock_help.return_value = False
         mock_arg.arg_require.return_value = False
         mock_arg.arg_xor_dict.return_value = True
@@ -320,7 +465,7 @@ class UnitTest(unittest.TestCase):
     @mock.patch("mongo_db_dump.gen_class.ProgramLock")
     @mock.patch("mongo_db_dump.run_program")
     @mock.patch("mongo_db_dump.gen_libs.help_func")
-    @mock.patch("mongo_db_dump.arg_parser")
+    @mock.patch("mongo_db_dump.gen_class.ArgParser")
     def test_arg_dir_chk_crt_false(self, mock_arg, mock_help, mock_run,
                                    mock_lock):
 
@@ -332,7 +477,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_arg.arg_parse2.return_value = self.args_array
+        mock_arg.return_value = self.args
         mock_help.return_value = False
         mock_arg.arg_require.return_value = False
         mock_arg.arg_xor_dict.return_value = True
@@ -347,7 +492,7 @@ class UnitTest(unittest.TestCase):
     @mock.patch("mongo_db_dump.gen_class.ProgramLock")
     @mock.patch("mongo_db_dump.run_program")
     @mock.patch("mongo_db_dump.gen_libs.help_func")
-    @mock.patch("mongo_db_dump.arg_parser")
+    @mock.patch("mongo_db_dump.gen_class.ArgParser")
     def test_run_program(self, mock_arg, mock_help, mock_run, mock_lock):
 
         """Function:  test_run_program
@@ -358,7 +503,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_arg.arg_parse2.return_value = self.args_array
+        mock_arg.return_value = self.args
         mock_help.return_value = False
         mock_arg.arg_require.return_value = False
         mock_arg.arg_xor_dict.return_value = True
@@ -373,7 +518,7 @@ class UnitTest(unittest.TestCase):
     @mock.patch("mongo_db_dump.gen_class.ProgramLock")
     @mock.patch("mongo_db_dump.run_program")
     @mock.patch("mongo_db_dump.gen_libs.help_func")
-    @mock.patch("mongo_db_dump.arg_parser")
+    @mock.patch("mongo_db_dump.gen_class.ArgParser")
     def test_programlock_true(self, mock_arg, mock_help, mock_run, mock_lock):
 
         """Function:  test_programlock_true
@@ -384,7 +529,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_arg.arg_parse2.return_value = self.args_array
+        mock_arg.return_value = self.args
         mock_help.return_value = False
         mock_arg.arg_require.return_value = False
         mock_arg.arg_xor_dict.return_value = True
@@ -399,7 +544,7 @@ class UnitTest(unittest.TestCase):
     @mock.patch("mongo_db_dump.gen_class.ProgramLock")
     @mock.patch("mongo_db_dump.run_program")
     @mock.patch("mongo_db_dump.gen_libs.help_func")
-    @mock.patch("mongo_db_dump.arg_parser")
+    @mock.patch("mongo_db_dump.gen_class.ArgParser")
     def test_programlock_false(self, mock_arg, mock_help, mock_run, mock_lock):
 
         """Function:  test_programlock_false
@@ -410,7 +555,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_arg.arg_parse2.return_value = self.args_array
+        mock_arg.return_value = self.args
         mock_help.return_value = False
         mock_arg.arg_require.return_value = False
         mock_arg.arg_xor_dict.return_value = True
@@ -427,7 +572,7 @@ class UnitTest(unittest.TestCase):
     @mock.patch("mongo_db_dump.gen_class.ProgramLock")
     @mock.patch("mongo_db_dump.run_program")
     @mock.patch("mongo_db_dump.gen_libs.help_func")
-    @mock.patch("mongo_db_dump.arg_parser")
+    @mock.patch("mongo_db_dump.gen_class.ArgParser")
     def test_programlock_id(self, mock_arg, mock_help, mock_run, mock_lock):
 
         """Function:  test_programlock_id
@@ -438,7 +583,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_arg.arg_parse2.return_value = self.args_array2
+        mock_arg.return_value = self.args2
         mock_help.return_value = False
         mock_arg.arg_require.return_value = False
         mock_arg.arg_xor_dict.return_value = True
