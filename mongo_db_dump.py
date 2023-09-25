@@ -378,7 +378,8 @@ def get_req_options(server, arg_req_dict):
 
     Arguments:
         (input) server -> Database server instance
-        (input) args_array -> Dict of command line options and values
+        (input) arg_req_dict -> Contains dictionary of config and required
+            option
         (output) arg_rep -> List of required options with values
 
     """
@@ -424,7 +425,7 @@ def run_program(args, func_dict, **kwargs):
                 "-s", def_val=[server.name, ": mongo_db_dump: ", dtg])
             mail = gen_class.setup_mail(args.get_val("-e"), subj=subj)
 
-        # Intersect args_array and func_dict to decide which functions to call.
+        # Intersect args_array and func_dict to decide which functions to call
         for item in set(args.get_args_keys()) & set(func_dict.keys()):
             err_flag, err_msg = func_dict[item](
                 server, args, mail=mail, req_arg=req_arg, **kwargs)
