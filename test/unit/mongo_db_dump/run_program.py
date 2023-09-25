@@ -72,6 +72,69 @@ def mongo_dump(server, args_array, **kwargs):
     return status, err_msg
 
 
+class ArgParser(object):
+
+    """Class:  ArgParser
+
+    Description:  Class stub holder for gen_class.ArgParser class.
+
+    Methods:
+        __init__
+        arg_exist
+        get_val
+        get_args_keys
+
+    """
+
+    def __init__(self):
+
+        """Method:  __init__
+
+        Description:  Class initialization.
+
+        Arguments:
+
+        """
+
+        self.args_array = {"-c": "mongo_cfg", "-d": "config"}
+
+    def arg_exist(self, arg):
+
+        """Method:  arg_exist
+
+        Description:  Method stub holder for gen_class.ArgParser.arg_exist.
+
+        Arguments:
+
+        """
+
+        return True if arg in self.args_array else False
+
+    def get_val(self, skey, def_val=None):
+
+        """Method:  get_val
+
+        Description:  Method stub holder for gen_class.ArgParser.get_val.
+
+        Arguments:
+
+        """
+
+        return self.args_array.get(skey, def_val)
+
+    def get_args_keys(self):
+
+        """Method:  get_args_keys
+
+        Description:  Method stub holder for gen_class.ArgParser.get_args_keys.
+
+        Arguments:
+
+        """
+
+        return list(self.args_array.keys())
+
+
 class Server(object):
 
     """Class:  Server
@@ -143,11 +206,18 @@ class UnitTest(unittest.TestCase):
         self.server = Server()
         self.func_names = {"-M": mongo_dump}
         self.func_names2 = {"-M": mongo_dump2}
-        self.args_array = {"-d": True, "-c": True, "-M": True}
-        self.args_array2 = {"-d": True, "-c": True, "-M": True, "-e": True}
-        self.args_array3 = {"-d": True, "-c": True, "-M": True, "-e": True,
-                            "-s": ["subject", "line"]}
-        self.args_array4 = {"-d": True, "-c": True, "-M": True, "-x": True}
+        self.args = ArgParser()
+        self.args2 = ArgParser()
+        self.args3 = ArgParser()
+        self.args4 = ArgParser()
+        self.args.args_array = {"-d": True, "-c": True, "-M": True}
+        self.args2.args_array = {
+            "-d": True, "-c": True, "-M": True, "-e": True}
+        self.args3.args_array = {
+            "-d": True, "-c": True, "-M": True, "-e": True,
+            "-s": ["subject", "line"]}
+        self.args4.args_array = {
+            "-d": True, "-c": True, "-M": True, "-x": True}
 
     @mock.patch("mongo_db_dump.get_req_options", mock.Mock(return_value=[]))
     @mock.patch("mongo_db_dump.mongo_libs.disconnect",
@@ -168,8 +238,8 @@ class UnitTest(unittest.TestCase):
         mock_inst.return_value = self.server
 
         with gen_libs.no_std_out():
-            self.assertFalse(mongo_db_dump.run_program(self.args_array,
-                                                       self.func_names))
+            self.assertFalse(
+                mongo_db_dump.run_program(self.args, self.func_names))
 
     @mock.patch("mongo_db_dump.get_req_options", mock.Mock(return_value=[]))
     @mock.patch("mongo_db_dump.mongo_libs.disconnect",
@@ -188,8 +258,8 @@ class UnitTest(unittest.TestCase):
         mock_inst.return_value = self.server
 
         with gen_libs.no_std_out():
-            self.assertFalse(mongo_db_dump.run_program(self.args_array4,
-                                                       self.func_names2))
+            self.assertFalse(
+                mongo_db_dump.run_program(self.args4, self.func_names2))
 
     @mock.patch("mongo_db_dump.get_req_options", mock.Mock(return_value=[]))
     @mock.patch("mongo_db_dump.mongo_libs.disconnect",
@@ -207,8 +277,8 @@ class UnitTest(unittest.TestCase):
 
         mock_inst.return_value = self.server
 
-        self.assertFalse(mongo_db_dump.run_program(self.args_array,
-                                                   self.func_names))
+        self.assertFalse(
+            mongo_db_dump.run_program(self.args, self.func_names))
 
     @mock.patch("mongo_db_dump.get_req_options", mock.Mock(return_value=[]))
     @mock.patch("mongo_db_dump.mongo_libs.disconnect",
@@ -226,8 +296,8 @@ class UnitTest(unittest.TestCase):
 
         mock_inst.return_value = self.server
 
-        self.assertFalse(mongo_db_dump.run_program(self.args_array3,
-                                                   self.func_names))
+        self.assertFalse(
+            mongo_db_dump.run_program(self.args3, self.func_names))
 
     @mock.patch("mongo_db_dump.get_req_options", mock.Mock(return_value=[]))
     @mock.patch("mongo_db_dump.mongo_libs.disconnect",
@@ -245,8 +315,8 @@ class UnitTest(unittest.TestCase):
 
         mock_inst.return_value = self.server
 
-        self.assertFalse(mongo_db_dump.run_program(self.args_array2,
-                                                   self.func_names))
+        self.assertFalse(
+            mongo_db_dump.run_program(self.args2, self.func_names))
 
     @mock.patch("mongo_db_dump.get_req_options", mock.Mock(return_value=[]))
     @mock.patch("mongo_db_dump.mongo_libs.disconnect",
@@ -264,8 +334,8 @@ class UnitTest(unittest.TestCase):
 
         mock_inst.return_value = self.server
 
-        self.assertFalse(mongo_db_dump.run_program(self.args_array2,
-                                                   self.func_names))
+        self.assertFalse(
+            mongo_db_dump.run_program(self.args2, self.func_names))
 
     @mock.patch("mongo_db_dump.get_req_options", mock.Mock(return_value=[]))
     @mock.patch("mongo_db_dump.mongo_libs.disconnect",
@@ -284,8 +354,8 @@ class UnitTest(unittest.TestCase):
         mock_inst.return_value = self.server
 
         with gen_libs.no_std_out():
-            self.assertFalse(mongo_db_dump.run_program(self.args_array,
-                                                       self.func_names2))
+            self.assertFalse(
+                mongo_db_dump.run_program(self.args, self.func_names2))
 
     @mock.patch("mongo_db_dump.get_req_options", mock.Mock(return_value=[]))
     @mock.patch("mongo_db_dump.mongo_libs.disconnect",
@@ -303,8 +373,7 @@ class UnitTest(unittest.TestCase):
 
         mock_inst.return_value = self.server
 
-        self.assertFalse(mongo_db_dump.run_program(self.args_array,
-                                                   self.func_names))
+        self.assertFalse(mongo_db_dump.run_program(self.args, self.func_names))
 
 
 if __name__ == "__main__":

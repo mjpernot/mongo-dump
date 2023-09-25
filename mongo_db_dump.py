@@ -328,7 +328,7 @@ def process_log_file(log_file, sup_std, mail):
                 mail.add_2_msg(line)
 
 
-def mongo_export(server, args_array, **kwargs):
+def mongo_export(server, args, **kwargs):
 
     """Function:  mongo_export
 
@@ -336,7 +336,7 @@ def mongo_export(server, args_array, **kwargs):
 
     Arguments:
         (input) server -> Database server instance
-        (input) args_array -> Array of command line options and values
+        (input) args -> ArgParser class instance
         (input) **kwargs:
             opt_arg -> Dictionary of additional options to add
             req_arg -> List of required options for the command line
@@ -347,22 +347,20 @@ def mongo_export(server, args_array, **kwargs):
     """
 
     log_name = "export_"
-    args_array = dict(args_array)
     err_flag = False
     err_msg = None
-    opt_name = args_array["-b"] + "_" + args_array["-t"]
+    opt_name = args.get_val("-b") + "_" + args.get_val("-t")
     dtg = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d_%H%M%S")
 
-    if "-o" in list(args_array.keys()) and args_array["-o"]:
+    if "-o" in list(args.get_args_keys()) and args.get_val("-o"):
         log_file = os.path.join(
-            args_array["-o"], log_name + opt_name + "_" + dtg + ".log")
+            args.get_val("-o"), log_name + opt_name + "_" + dtg + ".log")
         err_file = os.path.join(
-            args_array["-o"], log_name + opt_name + "_" + dtg + ".err")
-        args_array["-o"] = os.path.join(
-            args_array["-o"], log_name + opt_name + ".json")
+            args.get_val("-o"), log_name + opt_name + "_" + dtg + ".err")
+        args.update_arg("-o", os.path.join(
+            args.get_val("-o"), log_name + opt_name + ".json"))
         err_flag, err_msg = mongo_generic(
-            server, args_array, "mongoexport", log_file, err_file=err_file,
-            **kwargs)
+            server, args, "mongoexport", log_file, err_file=err_file, **kwargs)
 
     else:
         err_flag = True
@@ -394,14 +392,14 @@ def get_req_options(server, arg_req_dict):
     return arg_req
 
 
-def run_program(args_array, func_dict, **kwargs):
+def run_program(args, func_dict, **kwargs):
 
     """Function:  run_program
 
     Description:  Creates class instance(s) and controls flow of the program.
 
     Arguments:
-        (input) args_array -> Dict of command line options and values
+        (input) args -> ArgParser class instance
         (input) func_dict -> Dictionary list of functions and options
         (input) **kwargs:
             opt_arg -> Dictionary of additional options to add
@@ -409,28 +407,27 @@ def run_program(args_array, func_dict, **kwargs):
 
     """
 
-    args_array = dict(args_array)
     func_dict = dict(func_dict)
     arg_req_dict = dict(kwargs.get("arg_req_dict", {}))
     mail = None
-    server = mongo_libs.create_instance(args_array["-c"], args_array["-d"],
-                                        mongo_class.Server)
+    server = mongo_libs.create_instance(
+        args.get_val("-c"), args.get_val("-d"), mongo_class.Server)
     status = server.connect()
 
     if status[0]:
         req_arg = get_req_options(server, arg_req_dict)
 
-        if args_array.get("-e", False):
-            dtg = datetime.datetime.strftime(datetime.datetime.now(),
-                                             "%Y%m%d_%H%M%S")
-            subj = args_array.get("-s",
-                                  [server.name, ": mongo_db_dump: ", dtg])
-            mail = gen_class.setup_mail(args_array.get("-e"), subj=subj)
+        if args.arg_exist("-e"):
+            dtg = datetime.datetime.strftime(
+                datetime.datetime.now(), "%Y%m%d_%H%M%S")
+            subj = args.get_val(
+                "-s", def_val=[server.name, ": mongo_db_dump: ", dtg])
+            mail = gen_class.setup_mail(args.get_val("-e"), subj=subj)
 
         # Intersect args_array and func_dict to decide which functions to call.
-        for item in set(args_array.keys()) & set(func_dict.keys()):
-            err_flag, err_msg = func_dict[item](server, args_array, mail=mail,
-                                                req_arg=req_arg, **kwargs)
+        for item in set(args.get_args_keys()) & set(func_dict.keys()):
+            err_flag, err_msg = func_dict[item](
+                server, args, mail=mail, req_arg=req_arg, **kwargs)
 
             if err_flag:
                 print(err_msg)
@@ -469,9 +466,7 @@ def main():
 
     arg_req_dict = {"auth_db": "--authenticationDatabase="}
     dir_perms_chk = {"-d": 5, "-p": 5}
-    dir_perms_crt - {"-o": 7}
-#    dir_chk_list = ["-d", "-o", "-p"]
-#    dir_crt_list = ["-o"]
+    dir_perms_crt = {"-o": 7}
     func_dict = {"-A": sync_cp_dump, "-M": mongo_dump, "-E": mongo_export}
     opt_arg_list = {
         "-l": "--oplog", "-z": "--gzip", "-b": "--db=", "-o": "--out=",
@@ -489,8 +484,6 @@ def main():
     args = gen_class.ArgParser(
         sys.argv, opt_val=opt_val_list, multi_val=opt_multi_list,
         do_parse=True)
-#    args_array = arg_parser.arg_parse2(
-#        sys.argv, opt_val_list, multi_val=opt_multi_list)
 
     if not gen_libs.help_func(args, __version__, help_message)  \
        and args.arg_require(opt_req=opt_req_list)               \
@@ -499,13 +492,6 @@ def main():
        and args.arg_cond_req(opt_con_req=opt_con_req_list)      \
        and args.arg_dir_chk(dir_perms_chk=dir_perms_chk)        \
        and args.arg_dir_crt(dir_perms_crt=dir_perms_crt):
-#    if not gen_libs.help_func(args_array, __version__, help_message) \
-#       and not arg_parser.arg_require(args_array, opt_req_list) \
-#       and arg_parser.arg_xor_dict(args_array, opt_xor_dict) \
-#       and arg_parser.arg_noreq_xor(args_array, xor_noreq_list) \
-#       and arg_parser.arg_cond_req(args_array, opt_con_req_list) \
-#       and not arg_parser.arg_dir_chk_crt(args_array, dir_chk_list,
-#                                          dir_crt_list):
 
         try:
             prog_lock = gen_class.ProgramLock(

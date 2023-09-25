@@ -62,9 +62,8 @@ class ArgParser(object):
         self.opt_req2 = True
         self.dir_perms_chk = None
         self.dir_perms_chk2 = True
-        self.dir_chk = None
-        self.dir_crt = None
-        self.dir_crt2 = True
+        self.dir_perms_crt = None
+        self.dir_perms_crt2 = True
         self.opt_xor_val = None
         self.opt_xor_val2 = True
         self.xor_noreq = None
@@ -100,7 +99,7 @@ class ArgParser(object):
 
         return self.dir_perms_chk2
 
-    def arg_dir_crt(self, dir_chk, dir_crt):
+    def arg_dir_crt(self, dir_perms_crt):
 
         """Method:  arg_dir_crt
 
@@ -110,10 +109,9 @@ class ArgParser(object):
 
         """
 
-        self.dir_chk = dir_chk
-        self.dir_crt = dir_crt
+        self.dir_perms_crt = dir_perms_crt
 
-        return self.dir_crt2
+        return self.dir_perms_crt2
 
     def arg_noreq_xor(self, xor_noreq):
 
@@ -215,15 +213,17 @@ class UnitTest(unittest.TestCase):
         test_arg_noreq_xor_true
         test_arg_cond_req_false
         test_arg_cond_req_true
-        test_arg_dir_chk_crt_false
-        test_arg_dir_chk_crt_true
+        test_arg_dir_chk_false
+        test_arg_dir_chk_true
+        test_arg_dir_crt_false
+        test_arg_dir_crt_true
         test_run_program
         test_programlock_id
         test_programlock_false
         test_programlock_true
 
     """
-STOPPED HERE
+
     def setUp(self):
 
         """Function:  setUp
@@ -258,10 +258,9 @@ STOPPED HERE
 
         self.assertFalse(mongo_db_dump.main())
 
-    @mock.patch("mongo_db_dump.gen_class.ArgParser.arg_require")
     @mock.patch("mongo_db_dump.gen_libs.help_func")
     @mock.patch("mongo_db_dump.gen_class.ArgParser")
-    def test_help_false(self, mock_arg, mock_help, mock_req):
+    def test_help_false(self, mock_arg, mock_help):
 
         """Function:  test_help_false
 
@@ -271,17 +270,16 @@ STOPPED HERE
 
         """
 
+        self.args.opt_req2 = False
+
         mock_arg.return_value = self.args
         mock_help.return_value = False
-        mock_req.return_value = True
 
         self.assertFalse(mongo_db_dump.main())
 
-    @mock.patch("mongo_db_dump.gen_class.ArgParser.arg_xor_dict")
-    @mock.patch("mongo_db_dump.gen_class.ArgParser.arg_require")
     @mock.patch("mongo_db_dump.gen_libs.help_func")
     @mock.patch("mongo_db_dump.gen_class.ArgParser")
-    def test_arg_req_false(self, mock_arg, mock_help, mock_req, mock_xor):
+    def test_arg_req_false(self, mock_arg, mock_help):
 
         """Function:  test_arg_req_false
 
@@ -291,17 +289,16 @@ STOPPED HERE
 
         """
 
+        self.args.opt_req2 = False
+
         mock_arg.return_value = self.args
         mock_help.return_value = False
-        mock_req.return_value = False
-        mock_xor.return_value = False
 
         self.assertFalse(mongo_db_dump.main())
 
-    @mock.patch("mongo_db_dump.gen_class.ArgParser.arg_require")
     @mock.patch("mongo_db_dump.gen_libs.help_func")
     @mock.patch("mongo_db_dump.gen_class.ArgParser")
-    def test_arg_req_true(self, mock_arg, mock_help, mock_req):
+    def test_arg_req_true(self, mock_arg, mock_help):
 
         """Function:  test_arg_req_true
 
@@ -311,9 +308,10 @@ STOPPED HERE
 
         """
 
+        self.args.opt_xor_val2 = False
+
         mock_arg.return_value = self.args
         mock_help.return_value = False
-        mock_req.return_value = True
 
         self.assertFalse(mongo_db_dump.main())
 
@@ -329,10 +327,10 @@ STOPPED HERE
 
         """
 
+        self.args.opt_xor_val2 = False
+
         mock_arg.return_value = self.args
         mock_help.return_value = False
-        mock_arg.arg_require.return_value = False
-        mock_arg.arg_xor_dict.return_value = False
 
         self.assertFalse(mongo_db_dump.main())
 
@@ -348,11 +346,10 @@ STOPPED HERE
 
         """
 
+        self.args.xor_noreq2 = False
+
         mock_arg.return_value = self.args
         mock_help.return_value = False
-        mock_arg.arg_require.return_value = False
-        mock_arg.arg_xor_dict.return_value = True
-        mock_arg.arg_noreq_xor.return_value = False
 
         self.assertFalse(mongo_db_dump.main())
 
@@ -368,11 +365,10 @@ STOPPED HERE
 
         """
 
+        self.args.xor_noreq2 = False
+
         mock_arg.return_value = self.args
         mock_help.return_value = False
-        mock_arg.arg_require.return_value = False
-        mock_arg.arg_xor_dict.return_value = True
-        mock_arg.arg_noreq_xor.return_value = False
 
         self.assertFalse(mongo_db_dump.main())
 
@@ -388,12 +384,10 @@ STOPPED HERE
 
         """
 
+        self.args.opt_con_req2 = False
+
         mock_arg.return_value = self.args
         mock_help.return_value = False
-        mock_arg.arg_require.return_value = False
-        mock_arg.arg_xor_dict.return_value = True
-        mock_arg.arg_noreq_xor.return_value = True
-        mock_arg.arg_cond_req.return_value = False
 
         self.assertFalse(mongo_db_dump.main())
 
@@ -409,12 +403,10 @@ STOPPED HERE
 
         """
 
+        self.args.opt_con_req2 = False
+
         mock_arg.return_value = self.args
         mock_help.return_value = False
-        mock_arg.arg_require.return_value = False
-        mock_arg.arg_xor_dict.return_value = True
-        mock_arg.arg_noreq_xor.return_value = True
-        mock_arg.arg_cond_req.return_value = False
 
         self.assertFalse(mongo_db_dump.main())
 
@@ -430,35 +422,67 @@ STOPPED HERE
 
         """
 
+        self.args.dir_perms_chk2 = False
+
         mock_arg.return_value = self.args
         mock_help.return_value = False
-        mock_arg.arg_require.return_value = False
-        mock_arg.arg_xor_dict.return_value = True
-        mock_arg.arg_noreq_xor.return_value = True
-        mock_arg.arg_cond_req.return_value = True
-        mock_arg.arg_dir_chk_crt.return_value = True
 
         self.assertFalse(mongo_db_dump.main())
 
     @mock.patch("mongo_db_dump.gen_libs.help_func")
     @mock.patch("mongo_db_dump.gen_class.ArgParser")
-    def test_arg_dir_chk_crt_true(self, mock_arg, mock_help):
+    def test_arg_dir_chk_false(self, mock_arg, mock_help):
 
-        """Function:  test_arg_dir_chk_crt_true
+        """Function:  test_arg_dir_chk_false
 
-        Description:  Test arg_dir_chk_crt if returns true.
+        Description:  Test arg_dir_chk if returns false.
 
         Arguments:
 
         """
 
+        self.args.dir_perms_chk2 = False
+
         mock_arg.return_value = self.args
         mock_help.return_value = False
-        mock_arg.arg_require.return_value = False
-        mock_arg.arg_xor_dict.return_value = True
-        mock_arg.arg_noreq_xor.return_value = True
-        mock_arg.arg_cond_req.return_value = True
-        mock_arg.arg_dir_chk_crt.return_value = True
+
+        self.assertFalse(mongo_db_dump.main())
+
+    @mock.patch("mongo_db_dump.gen_libs.help_func")
+    @mock.patch("mongo_db_dump.gen_class.ArgParser")
+    def test_arg_dir_chk_true(self, mock_arg, mock_help):
+
+        """Function:  test_arg_dir_chk_true
+
+        Description:  Test arg_dir_chk if returns true.
+
+        Arguments:
+
+        """
+
+        self.args.dir_perms_crt2 = False
+
+        mock_arg.return_value = self.args
+        mock_help.return_value = False
+
+        self.assertFalse(mongo_db_dump.main())
+
+    @mock.patch("mongo_db_dump.gen_libs.help_func")
+    @mock.patch("mongo_db_dump.gen_class.ArgParser")
+    def test_arg_dir_crt_false(self, mock_arg, mock_help):
+
+        """Function:  test_arg_dir_crt_false
+
+        Description:  Test arg_dir_crt if returns false.
+
+        Arguments:
+
+        """
+
+        self.args.dir_perms_crt2 = False
+
+        mock_arg.return_value = self.args
+        mock_help.return_value = False
 
         self.assertFalse(mongo_db_dump.main())
 
@@ -466,12 +490,12 @@ STOPPED HERE
     @mock.patch("mongo_db_dump.run_program")
     @mock.patch("mongo_db_dump.gen_libs.help_func")
     @mock.patch("mongo_db_dump.gen_class.ArgParser")
-    def test_arg_dir_chk_crt_false(self, mock_arg, mock_help, mock_run,
+    def test_arg_dir_crt_true(self, mock_arg, mock_help, mock_run,
                                    mock_lock):
 
-        """Function:  test_arg_dir_chk_crt_false
+        """Function:  test_arg_dir_crt_true
 
-        Description:  Test arg_dir_chk_crt if returns false.
+        Description:  Test arg_dir_crt if returns true.
 
         Arguments:
 
@@ -479,11 +503,6 @@ STOPPED HERE
 
         mock_arg.return_value = self.args
         mock_help.return_value = False
-        mock_arg.arg_require.return_value = False
-        mock_arg.arg_xor_dict.return_value = True
-        mock_arg.arg_noreq_xor.return_value = True
-        mock_arg.arg_cond_req.return_value = True
-        mock_arg.arg_dir_chk_crt.return_value = False
         mock_run.return_value = True
         mock_lock.return_value = self.proglock
 
@@ -505,11 +524,6 @@ STOPPED HERE
 
         mock_arg.return_value = self.args
         mock_help.return_value = False
-        mock_arg.arg_require.return_value = False
-        mock_arg.arg_xor_dict.return_value = True
-        mock_arg.arg_noreq_xor.return_value = True
-        mock_arg.arg_cond_req.return_value = True
-        mock_arg.arg_dir_chk_crt.return_value = False
         mock_run.return_value = True
         mock_lock.return_value = self.proglock
 
@@ -531,11 +545,6 @@ STOPPED HERE
 
         mock_arg.return_value = self.args
         mock_help.return_value = False
-        mock_arg.arg_require.return_value = False
-        mock_arg.arg_xor_dict.return_value = True
-        mock_arg.arg_noreq_xor.return_value = True
-        mock_arg.arg_cond_req.return_value = True
-        mock_arg.arg_dir_chk_crt.return_value = False
         mock_run.return_value = True
         mock_lock.return_value = self.proglock
 
@@ -557,11 +566,6 @@ STOPPED HERE
 
         mock_arg.return_value = self.args
         mock_help.return_value = False
-        mock_arg.arg_require.return_value = False
-        mock_arg.arg_xor_dict.return_value = True
-        mock_arg.arg_noreq_xor.return_value = True
-        mock_arg.arg_cond_req.return_value = True
-        mock_arg.arg_dir_chk_crt.return_value = False
         mock_run.return_value = True
         mock_lock.side_effect = \
             mongo_db_dump.gen_class.SingleInstanceException
@@ -585,11 +589,6 @@ STOPPED HERE
 
         mock_arg.return_value = self.args2
         mock_help.return_value = False
-        mock_arg.arg_require.return_value = False
-        mock_arg.arg_xor_dict.return_value = True
-        mock_arg.arg_noreq_xor.return_value = True
-        mock_arg.arg_cond_req.return_value = True
-        mock_arg.arg_dir_chk_crt.return_value = False
         mock_run.return_value = True
         mock_lock.return_value = self.proglock
 
