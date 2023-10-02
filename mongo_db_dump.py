@@ -148,7 +148,7 @@ def help_message():
     print(__doc__)
 
 
-def sync_cp_dump(server, args_array, **kwargs):
+def sync_cp_dump(server, args, **kwargs):
 
     """Function:  sync_cp_dump
 
@@ -157,7 +157,7 @@ def sync_cp_dump(server, args_array, **kwargs):
 
     Arguments:
         (input) server -> Database server instance
-        (input) args_array -> Array of command line options and values
+        (input) args -> ArgParser class instance
         (output) err_flag -> True|False - If an error has occurred
         (output) err_msg -> Error message
         (input) **kwargs:
@@ -165,7 +165,6 @@ def sync_cp_dump(server, args_array, **kwargs):
 
     """
 
-    args_array = dict(args_array)
     err_flag = False
     err_msg = None
     mail = kwargs.get("mail", None)
@@ -174,7 +173,7 @@ def sync_cp_dump(server, args_array, **kwargs):
         server.lock_db(lock=True)
 
         if (server.is_locked()):
-            dmp_dir = args_array["-o"] + "/cp_dump_" \
+            dmp_dir = args.get_val("-o") + "/cp_dump_" \
                 + datetime.datetime.strftime(datetime.datetime.now(),
                                              "%Y%m%d_%H%M")
 
@@ -202,7 +201,7 @@ def sync_cp_dump(server, args_array, **kwargs):
     return err_flag, err_msg
 
 
-def mongo_dump(server, args_array, **kwargs):
+def mongo_dump(server, args, **kwargs):
 
     """Function:  mongo_dump
 
@@ -210,7 +209,7 @@ def mongo_dump(server, args_array, **kwargs):
 
     Arguments:
         (input) server -> Database server instance
-        (input) args_array -> Array of command line options and values
+        (input) args -> ArgParser class instance
         (input) **kwargs:
             opt_arg -> Dictionary of additional options to add
             mail -> Email class instance
@@ -223,15 +222,13 @@ def mongo_dump(server, args_array, **kwargs):
     log_name = "dump_"
     err_flag = False
     err_msg = None
-    args_array = dict(args_array)
     dtg = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d_%H%M%S")
 
-    if "-o" in list(args_array.keys()) and args_array["-o"]:
-        log_file = os.path.join(args_array["-o"], log_name + dtg + ".log")
-        err_file = os.path.join(args_array["-o"], log_name + dtg + ".err")
+    if args.arg_exist("-o") and args.get_val("-o"):
+        log_file = os.path.join(args.get_val("-o"), log_name + dtg + ".log")
+        err_file = os.path.join(args.get_val("-o"), log_name + dtg + ".err")
         err_flag, err_msg = mongo_generic(
-            server, args_array, "mongodump", log_file, err_file=err_file,
-            **kwargs)
+            server, args, "mongodump", log_file, err_file=err_file, **kwargs)
 
     else:
         err_flag = True
@@ -240,7 +237,7 @@ def mongo_dump(server, args_array, **kwargs):
     return err_flag, err_msg
 
 
-def mongo_generic(server, args_array, cmd_name, log_file, **kwargs):
+def mongo_generic(server, args, cmd_name, log_file, **kwargs):
 
     """Function:  mongo_generic
 
@@ -248,7 +245,7 @@ def mongo_generic(server, args_array, cmd_name, log_file, **kwargs):
 
     Arguments:
         (input) server -> Database server instance
-        (input) args_array -> Array of command line options and values
+        (input) args -> ArgParser class instance
         (input) cmd_name -> Name of Mongo binary program to execute
         (input) log_file -> Directory path and file name for log file
         (input) **kwargs:
@@ -263,13 +260,11 @@ def mongo_generic(server, args_array, cmd_name, log_file, **kwargs):
 
     err_flag = False
     err_msg = None
-    args_array = dict(args_array)
     mail = kwargs.get("mail", None)
-    sup_std = args_array.get("-x", False)
     err_file = kwargs.get("err_file", log_file + ".err")
     e_file = open(err_file, "w")
     cmd = mongo_libs.create_cmd(
-        server, args_array, cmd_name, "-p", no_pass=True, **kwargs)
+        server, args, cmd_name, "-p", no_pass=True, **kwargs)
     proc2 = subprocess.Popen(["echo", server.japd], stdout=subprocess.PIPE)
 
     with open(log_file, "w") as l_file:
@@ -278,7 +273,7 @@ def mongo_generic(server, args_array, cmd_name, log_file, **kwargs):
         proc1.wait()
 
     e_file.close()
-    process_log_file(log_file, sup_std, mail)
+    process_log_file(log_file, args.arg_exist("-x"), mail)
 
     if gen_libs.is_empty_file(err_file):
         gen_libs.rm_file(err_file)

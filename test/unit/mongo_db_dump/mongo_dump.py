@@ -27,6 +27,56 @@ import version
 __version__ = version.__version__
 
 
+class ArgParser(object):
+
+    """Class:  ArgParser
+
+    Description:  Class stub holder for gen_class.ArgParser class.
+
+    Methods:
+        __init__
+        arg_exist
+        get_val
+
+    """
+
+    def __init__(self):
+
+        """Method:  __init__
+
+        Description:  Class initialization.
+
+        Arguments:
+
+        """
+
+        self.args_array = {"-c": "mongo_cfg", "-d": "config"}
+
+    def arg_exist(self, arg):
+
+        """Method:  arg_exist
+
+        Description:  Method stub holder for gen_class.ArgParser.arg_exist.
+
+        Arguments:
+
+        """
+
+        return True if arg in self.args_array else False
+
+    def get_val(self, skey, def_val=None):
+
+        """Method:  get_val
+
+        Description:  Method stub holder for gen_class.ArgParser.get_val.
+
+        Arguments:
+
+        """
+
+        return self.args_array.get(skey, def_val)
+
+
 class Server(object):
 
     """Class:  Server
@@ -118,11 +168,14 @@ class UnitTest(unittest.TestCase):
         """
 
         self.server = Server()
-        self.args_array = {"-b": "Database_Name", "-t": "Table_Name",
-                           "-o": "/directory/path"}
-        self.args_array2 = {"-b": "Database_Name", "-t": "Table_Name"}
-        self.args_array3 = {"-b": "Database_Name", "-t": "Table_Name",
-                            "-o": None}
+        self.args = ArgParser()
+        self.args2 = ArgParser()
+        self.args3 = ArgParser()
+        self.args.args_array = {
+            "-b": "Database_Name", "-t": "Table_Name", "-o": "/directory/path"}
+        self.args2.args_array = {"-b": "Database_Name", "-t": "Table_Name"}
+        self.args3.args_array = {
+            "-b": "Database_Name", "-t": "Table_Name", "-o": None}
 
     def test_missing_value(self):
 
@@ -135,7 +188,7 @@ class UnitTest(unittest.TestCase):
         """
 
         self.assertEqual(
-            (mongo_db_dump.mongo_dump(self.server, self.args_array3)),
+            (mongo_db_dump.mongo_dump(self.server, self.args3)),
             (True, "Error:  Missing -o option or value."))
 
     def test_missing_option(self):
@@ -149,7 +202,7 @@ class UnitTest(unittest.TestCase):
         """
 
         self.assertEqual(
-            (mongo_db_dump.mongo_dump(self.server, self.args_array2)),
+            (mongo_db_dump.mongo_dump(self.server, self.args2)),
             (True, "Error:  Missing -o option or value."))
 
     @mock.patch("mongo_db_dump.mongo_generic")
@@ -165,8 +218,9 @@ class UnitTest(unittest.TestCase):
 
         mock_cmd.return_value = (True, "Error Message")
 
-        self.assertEqual((mongo_db_dump.mongo_dump(
-            self.server, self.args_array)), (True, "Error Message"))
+        self.assertEqual(
+            (mongo_db_dump.mongo_dump(self.server, self.args)),
+            (True, "Error Message"))
 
     @mock.patch("mongo_db_dump.mongo_generic")
     def test_db_dump(self, mock_cmd):
@@ -181,8 +235,8 @@ class UnitTest(unittest.TestCase):
 
         mock_cmd.return_value = (False, None)
 
-        self.assertEqual((mongo_db_dump.mongo_dump(
-            self.server, self.args_array)), (False, None))
+        self.assertEqual(
+            (mongo_db_dump.mongo_dump(self.server, self.args)), (False, None))
 
 
 if __name__ == "__main__":
