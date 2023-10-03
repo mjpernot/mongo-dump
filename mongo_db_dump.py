@@ -118,7 +118,6 @@ import subprocess
 
 # Local
 try:
-    from .lib import arg_parser
     from .lib import gen_libs
     from .lib import gen_class
     from .mongo_lib import mongo_libs
@@ -128,7 +127,6 @@ try:
 except (ValueError, ImportError) as err:
     import lib.gen_libs as gen_libs
     import lib.gen_class as gen_class
-    import lib.arg_parser as arg_parser
     import mongo_lib.mongo_libs as mongo_libs
     import mongo_lib.mongo_class as mongo_class
     import version
@@ -150,7 +148,7 @@ def help_message():
     print(__doc__)
 
 
-def sync_cp_dump(server, args_array, **kwargs):
+def sync_cp_dump(server, args, **kwargs):
 
     """Function:  sync_cp_dump
 
@@ -158,16 +156,15 @@ def sync_cp_dump(server, args_array, **kwargs):
         destination directory.
 
     Arguments:
-        (input) server -> Database server instance.
-        (input) args_array -> Array of command line options and values.
-        (output) err_flag -> True|False - If an error has occurred.
-        (output) err_msg -> Error message.
+        (input) server -> Database server instance
+        (input) args -> ArgParser class instance
+        (output) err_flag -> True|False - If an error has occurred
+        (output) err_msg -> Error message
         (input) **kwargs:
-            mail -> Email class instance.
+            mail -> Email class instance
 
     """
 
-    args_array = dict(args_array)
     err_flag = False
     err_msg = None
     mail = kwargs.get("mail", None)
@@ -176,7 +173,7 @@ def sync_cp_dump(server, args_array, **kwargs):
         server.lock_db(lock=True)
 
         if (server.is_locked()):
-            dmp_dir = args_array["-o"] + "/cp_dump_" \
+            dmp_dir = args.get_val("-o") + "/cp_dump_" \
                 + datetime.datetime.strftime(datetime.datetime.now(),
                                              "%Y%m%d_%H%M")
 
@@ -204,36 +201,34 @@ def sync_cp_dump(server, args_array, **kwargs):
     return err_flag, err_msg
 
 
-def mongo_dump(server, args_array, **kwargs):
+def mongo_dump(server, args, **kwargs):
 
     """Function:  mongo_dump
 
     Description:  Create the dump command and execute it.
 
     Arguments:
-        (input) server -> Database server instance.
-        (input) args_array -> Array of command line options and values.
+        (input) server -> Database server instance
+        (input) args -> ArgParser class instance
         (input) **kwargs:
-            opt_arg -> Dictionary of additional options to add.
-            mail -> Email class instance.
-            req_arg -> List of required options for the command line.
-        (output) err_flag -> If an error has occurred.
-        (output) err_msg -> Error message.
+            opt_arg -> Dictionary of additional options to add
+            mail -> Email class instance
+            req_arg -> List of required options for the command line
+        (output) err_flag -> If an error has occurred
+        (output) err_msg -> Error message
 
     """
 
     log_name = "dump_"
     err_flag = False
     err_msg = None
-    args_array = dict(args_array)
     dtg = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d_%H%M%S")
 
-    if "-o" in list(args_array.keys()) and args_array["-o"]:
-        log_file = os.path.join(args_array["-o"], log_name + dtg + ".log")
-        err_file = os.path.join(args_array["-o"], log_name + dtg + ".err")
+    if args.arg_exist("-o") and args.get_val("-o"):
+        log_file = os.path.join(args.get_val("-o"), log_name + dtg + ".log")
+        err_file = os.path.join(args.get_val("-o"), log_name + dtg + ".err")
         err_flag, err_msg = mongo_generic(
-            server, args_array, "mongodump", log_file, err_file=err_file,
-            **kwargs)
+            server, args, "mongodump", log_file, err_file=err_file, **kwargs)
 
     else:
         err_flag = True
@@ -242,7 +237,7 @@ def mongo_dump(server, args_array, **kwargs):
     return err_flag, err_msg
 
 
-def mongo_generic(server, args_array, cmd_name, log_file, **kwargs):
+def mongo_generic(server, args, cmd_name, log_file, **kwargs):
 
     """Function:  mongo_generic
 
@@ -250,7 +245,7 @@ def mongo_generic(server, args_array, cmd_name, log_file, **kwargs):
 
     Arguments:
         (input) server -> Database server instance
-        (input) args_array -> Array of command line options and values
+        (input) args -> ArgParser class instance
         (input) cmd_name -> Name of Mongo binary program to execute
         (input) log_file -> Directory path and file name for log file
         (input) **kwargs:
@@ -265,23 +260,20 @@ def mongo_generic(server, args_array, cmd_name, log_file, **kwargs):
 
     err_flag = False
     err_msg = None
-    subp = gen_libs.get_inst(subprocess)
-    args_array = dict(args_array)
     mail = kwargs.get("mail", None)
-    sup_std = args_array.get("-x", False)
     err_file = kwargs.get("err_file", log_file + ".err")
     e_file = open(err_file, "w")
     cmd = mongo_libs.create_cmd(
-        server, args_array, cmd_name, "-p", no_pass=True, **kwargs)
-    proc2 = subp.Popen(["echo", server.japd], stdout=subp.PIPE)
+        server, args, cmd_name, "-p", no_pass=True, **kwargs)
+    proc2 = subprocess.Popen(["echo", server.japd], stdout=subprocess.PIPE)
 
     with open(log_file, "w") as l_file:
-        proc1 = subp.Popen(
+        proc1 = subprocess.Popen(
             cmd, stderr=l_file, stdin=proc2.stdout, stdout=e_file)
         proc1.wait()
 
     e_file.close()
-    process_log_file(log_file, sup_std, mail)
+    process_log_file(log_file, args.arg_exist("-x"), mail)
 
     if gen_libs.is_empty_file(err_file):
         gen_libs.rm_file(err_file)
@@ -331,41 +323,39 @@ def process_log_file(log_file, sup_std, mail):
                 mail.add_2_msg(line)
 
 
-def mongo_export(server, args_array, **kwargs):
+def mongo_export(server, args, **kwargs):
 
     """Function:  mongo_export
 
     Description:  Setup Mongo Export call.
 
     Arguments:
-        (input) server -> Database server instance.
-        (input) args_array -> Array of command line options and values.
+        (input) server -> Database server instance
+        (input) args -> ArgParser class instance
         (input) **kwargs:
-            opt_arg -> Dictionary of additional options to add.
-            req_arg -> List of required options for the command line.
-            mail -> Email class instance.
-        (output) err_flag -> If an error has occurred.
-        (output) err_msg -> Error message.
+            opt_arg -> Dictionary of additional options to add
+            req_arg -> List of required options for the command line
+            mail -> Email class instance
+        (output) err_flag -> If an error has occurred
+        (output) err_msg -> Error message
 
     """
 
     log_name = "export_"
-    args_array = dict(args_array)
     err_flag = False
     err_msg = None
-    opt_name = args_array["-b"] + "_" + args_array["-t"]
+    opt_name = args.get_val("-b") + "_" + args.get_val("-t")
     dtg = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d_%H%M%S")
 
-    if "-o" in list(args_array.keys()) and args_array["-o"]:
+    if "-o" in list(args.get_args_keys()) and args.get_val("-o"):
         log_file = os.path.join(
-            args_array["-o"], log_name + opt_name + "_" + dtg + ".log")
+            args.get_val("-o"), log_name + opt_name + "_" + dtg + ".log")
         err_file = os.path.join(
-            args_array["-o"], log_name + opt_name + "_" + dtg + ".err")
-        args_array["-o"] = os.path.join(
-            args_array["-o"], log_name + opt_name + ".json")
+            args.get_val("-o"), log_name + opt_name + "_" + dtg + ".err")
+        args.update_arg("-o", os.path.join(
+            args.get_val("-o"), log_name + opt_name + ".json"))
         err_flag, err_msg = mongo_generic(
-            server, args_array, "mongoexport", log_file, err_file=err_file,
-            **kwargs)
+            server, args, "mongoexport", log_file, err_file=err_file, **kwargs)
 
     else:
         err_flag = True
@@ -382,9 +372,10 @@ def get_req_options(server, arg_req_dict):
         the entry is not set (e.g. None), then the option is skipped.
 
     Arguments:
-        (input) server -> Database server instance.
-        (input) args_array -> Dict of command line options and values.
-        (output) arg_rep -> List of required options with values.
+        (input) server -> Database server instance
+        (input) arg_req_dict -> Contains dictionary of config and required
+            option
+        (output) arg_rep -> List of required options with values
 
     """
 
@@ -397,43 +388,42 @@ def get_req_options(server, arg_req_dict):
     return arg_req
 
 
-def run_program(args_array, func_dict, **kwargs):
+def run_program(args, func_dict, **kwargs):
 
     """Function:  run_program
 
     Description:  Creates class instance(s) and controls flow of the program.
 
     Arguments:
-        (input) args_array -> Dict of command line options and values.
-        (input) func_dict -> Dictionary list of functions and options.
+        (input) args -> ArgParser class instance
+        (input) func_dict -> Dictionary list of functions and options
         (input) **kwargs:
-            opt_arg -> Dictionary of additional options to add.
-            arg_req_dict -> contains link between config and required option.
+            opt_arg -> Dictionary of additional options to add
+            arg_req_dict -> contains link between config and required option
 
     """
 
-    args_array = dict(args_array)
     func_dict = dict(func_dict)
     arg_req_dict = dict(kwargs.get("arg_req_dict", {}))
     mail = None
-    server = mongo_libs.create_instance(args_array["-c"], args_array["-d"],
-                                        mongo_class.Server)
+    server = mongo_libs.create_instance(
+        args.get_val("-c"), args.get_val("-d"), mongo_class.Server)
     status = server.connect()
 
     if status[0]:
         req_arg = get_req_options(server, arg_req_dict)
 
-        if args_array.get("-e", False):
-            dtg = datetime.datetime.strftime(datetime.datetime.now(),
-                                             "%Y%m%d_%H%M%S")
-            subj = args_array.get("-s",
-                                  [server.name, ": mongo_db_dump: ", dtg])
-            mail = gen_class.setup_mail(args_array.get("-e"), subj=subj)
+        if args.arg_exist("-e"):
+            dtg = datetime.datetime.strftime(
+                datetime.datetime.now(), "%Y%m%d_%H%M%S")
+            subj = args.get_val(
+                "-s", def_val=[server.name, ": mongo_db_dump: ", dtg])
+            mail = gen_class.setup_mail(args.get_val("-e"), subj=subj)
 
-        # Intersect args_array and func_dict to decide which functions to call.
-        for item in set(args_array.keys()) & set(func_dict.keys()):
-            err_flag, err_msg = func_dict[item](server, args_array, mail=mail,
-                                                req_arg=req_arg, **kwargs)
+        # Intersect args_array and func_dict to decide which functions to call
+        for item in set(args.get_args_keys()) & set(func_dict.keys()):
+            err_flag, err_msg = func_dict[item](
+                server, args, mail=mail, req_arg=req_arg, **kwargs)
 
             if err_flag:
                 print(err_msg)
@@ -453,33 +443,33 @@ def main():
         line arguments and values.
 
     Variables:
-        arg_req_dict -> contains link between config entry and required option.
-        dir_chk_list -> contains options which will be directories.
-        dir_crt_list -> contain options that require directory to be created.
-        func_dict -> dictionary list for the function calls or other options.
-        opt_arg_list -> contains optional arguments for the command line.
-        opt_con_req_list -> contains the options that require other options.
-        opt_multi_list -> contains the options that will have multiple values.
-        opt_req_list -> contains the options that are required for the program.
-        opt_val_list -> contains options which require values.
-        opt_xor_dict -> contains dict with key that is xor with it's values.
-        xor_noreq_list -> contains options that are XOR, but are not required.
+        arg_req_dict -> contains link between config entry and required option
+        dir_perms_chk -> contains directories and their octal permissions
+        dir_perms_crt -> contains directories to be created and their perms
+        func_dict -> dictionary list for the function calls or other options
+        opt_arg_list -> contains optional arguments for the command line
+        opt_con_req_list -> contains the options that require other options
+        opt_multi_list -> contains the options that will have multiple values
+        opt_req_list -> contains the options that are required for the program
+        opt_val_list -> contains options which require values
+        opt_xor_dict -> contains dict with key that is xor with it's values
+        xor_noreq_list -> contains options that are XOR, but are not required
 
     Arguments:
-        (input) argv -> Arguments from the command line.
+        (input) argv -> Arguments from the command line
 
     """
 
-    cmdline = gen_libs.get_inst(sys)
     arg_req_dict = {"auth_db": "--authenticationDatabase="}
-    dir_chk_list = ["-d", "-o", "-p"]
-    dir_crt_list = ["-o"]
+    dir_perms_chk = {"-d": 5, "-p": 5}
+    dir_perms_crt = {"-o": 7}
     func_dict = {"-A": sync_cp_dump, "-M": mongo_dump, "-E": mongo_export}
-    opt_arg_list = {"-l": "--oplog", "-z": "--gzip", "-b": "--db=",
-                    "-o": "--out=", "-q": "--quiet", "-i": "--tlsInsecure",
-                    "-r": "--dumpDbUsersAndRoles", "-t": "--collection="}
-    opt_con_req_list = {"-r": ["-b"], "-t": ["-b"], "-s": ["-e"],
-                        "-E": ["-b", "-t"]}
+    opt_arg_list = {
+        "-l": "--oplog", "-z": "--gzip", "-b": "--db=", "-o": "--out=",
+        "-q": "--quiet", "-i": "--tlsInsecure", "-r": "--dumpDbUsersAndRoles",
+        "-t": "--collection="}
+    opt_con_req_list = {
+        "-r": ["-b"], "-t": ["-b"], "-s": ["-e"], "-E": ["-b", "-t"]}
     opt_multi_list = ["-e", "-s"]
     opt_req_list = ["-c", "-d", "-o"]
     opt_val_list = ["-b", "-c", "-d", "-o", "-p", "-t", "-e", "-s", "-y"]
@@ -487,27 +477,28 @@ def main():
     xor_noreq_list = {"-l": "-b"}
 
     # Process argument list from command line.
-    args_array = arg_parser.arg_parse2(cmdline.argv, opt_val_list,
-                                       multi_val=opt_multi_list)
+    args = gen_class.ArgParser(
+        sys.argv, opt_val=opt_val_list, multi_val=opt_multi_list,
+        do_parse=True)
 
-    if not gen_libs.help_func(args_array, __version__, help_message) \
-       and not arg_parser.arg_require(args_array, opt_req_list) \
-       and arg_parser.arg_xor_dict(args_array, opt_xor_dict) \
-       and arg_parser.arg_noreq_xor(args_array, xor_noreq_list) \
-       and arg_parser.arg_cond_req(args_array, opt_con_req_list) \
-       and not arg_parser.arg_dir_chk_crt(args_array, dir_chk_list,
-                                          dir_crt_list):
+    if not gen_libs.help_func(args, __version__, help_message)  \
+       and args.arg_require(opt_req=opt_req_list)               \
+       and args.arg_xor_dict(opt_xor_val=opt_xor_dict)          \
+       and args.arg_noreq_xor(xor_noreq=xor_noreq_list)         \
+       and args.arg_cond_req(opt_con_req=opt_con_req_list)      \
+       and args.arg_dir_chk(dir_perms_chk=dir_perms_chk)        \
+       and args.arg_dir_crt(dir_perms_crt=dir_perms_crt):
 
         try:
-            prog_lock = gen_class.ProgramLock(cmdline.argv,
-                                              args_array.get("-y", ""))
-            run_program(args_array, func_dict, opt_arg=opt_arg_list,
+            prog_lock = gen_class.ProgramLock(
+                sys.argv, args.get_val("-y", def_val=""))
+            run_program(args, func_dict, opt_arg=opt_arg_list,
                         arg_req_dict=arg_req_dict)
             del prog_lock
 
         except gen_class.SingleInstanceException:
             print("WARNING:  Lock in place for mongo_db_dump with id: %s"
-                  % (args_array.get("-y", "")))
+                  % (args.get_val("-y", def_val="")))
 
 
 if __name__ == "__main__":

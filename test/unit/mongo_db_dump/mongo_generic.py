@@ -28,6 +28,43 @@ import version
 __version__ = version.__version__
 
 
+class ArgParser(object):
+
+    """Class:  ArgParser
+
+    Description:  Class stub holder for gen_class.ArgParser class.
+
+    Methods:
+        __init__
+        arg_exist
+
+    """
+
+    def __init__(self):
+
+        """Method:  __init__
+
+        Description:  Class initialization.
+
+        Arguments:
+
+        """
+
+        self.args_array = {"-c": "mongo_cfg", "-d": "config"}
+
+    def arg_exist(self, arg):
+
+        """Method:  arg_exist
+
+        Description:  Method stub holder for gen_class.ArgParser.arg_exist.
+
+        Arguments:
+
+        """
+
+        return True if arg in self.args_array else False
+
+
 class Mail(object):
 
     """Class:  Mail
@@ -250,8 +287,10 @@ class UnitTest(unittest.TestCase):
         self.cmd_name2 = "mongoexport"
         self.dir_path = "./test/unit/mongo_db_dump/tmp"
         self.log_file = self.dir_path + "/log_file"
-        self.args_array = {"-p": "DirectoryPath2"}
-        self.args_array2 = {"-p": "DirectoryPath2", "-x": True}
+        self.args = ArgParser()
+        self.args2 = ArgParser()
+        self.args.args_array = {"-p": "DirectoryPath2"}
+        self.args2.args_array = {"-p": "DirectoryPath2", "-x": True}
         self.file_list = ["2020-08-14T14:31:12 writing sysmon.mysql_perf to",
                           "2020-08-14T14:31:12 writing sysmon.mongo_rep to"]
         self.file_list2 = ["Error detected in dump"]
@@ -279,7 +318,7 @@ class UnitTest(unittest.TestCase):
 
         with gen_libs.no_std_out():
             mongo_db_dump.mongo_generic(
-                self.server, self.args_array2, self.cmd_name, self.log_file,
+                self.server, self.args2, self.cmd_name, self.log_file,
                 mail=self.mail)
 
         self.assertEqual(self.mail.msg, self.file_list2[0])
@@ -306,7 +345,7 @@ class UnitTest(unittest.TestCase):
         with gen_libs.no_std_out():
             self.assertEqual(
                 mongo_db_dump.mongo_generic(
-                    self.server, self.args_array2, self.cmd_name,
+                    self.server, self.args2, self.cmd_name,
                     self.log_file, mail=self.mail), (True, self.msg))
 
     @mock.patch("mongo_db_dump.gen_libs.is_empty_file",
@@ -331,7 +370,7 @@ class UnitTest(unittest.TestCase):
         with gen_libs.no_std_out():
             self.assertEqual(
                 mongo_db_dump.mongo_generic(
-                    self.server, self.args_array2, self.cmd_name,
+                    self.server, self.args2, self.cmd_name,
                     self.log_file), (True, self.msg))
 
     @mock.patch("mongo_db_dump.subprocess.Popen")
@@ -351,7 +390,7 @@ class UnitTest(unittest.TestCase):
 
         self.assertEqual(
             mongo_db_dump.mongo_generic(
-                self.server, self.args_array, self.cmd_name2, self.log_file),
+                self.server, self.args, self.cmd_name2, self.log_file),
             (False, None))
 
     @mock.patch("mongo_db_dump.gen_libs.is_empty_file",
@@ -376,7 +415,7 @@ class UnitTest(unittest.TestCase):
         with gen_libs.no_std_out():
             self.assertEqual(
                 mongo_db_dump.mongo_generic(
-                    self.server, self.args_array2, self.cmd_name,
+                    self.server, self.args2, self.cmd_name,
                     self.log_file, mail=self.mail), (False, None))
 
         self.assertEqual(self.mail.msg, self.file_list[1])
@@ -402,7 +441,7 @@ class UnitTest(unittest.TestCase):
 
         self.assertEqual(
             mongo_db_dump.mongo_generic(
-                self.server, self.args_array2, self.cmd_name, self.log_file),
+                self.server, self.args2, self.cmd_name, self.log_file),
             (False, None))
 
     @mock.patch("mongo_db_dump.subprocess.Popen")
@@ -422,7 +461,7 @@ class UnitTest(unittest.TestCase):
 
         self.assertEqual(
             mongo_db_dump.mongo_generic(
-                self.server, self.args_array, self.cmd_name, self.log_file,
+                self.server, self.args, self.cmd_name, self.log_file,
                 mail=self.mail), (False, None))
 
         self.assertEqual(self.mail.msg, "")
@@ -449,7 +488,7 @@ class UnitTest(unittest.TestCase):
         with gen_libs.no_std_out():
             self.assertEqual(
                 mongo_db_dump.mongo_generic(
-                    self.server, self.args_array, self.cmd_name, self.log_file,
+                    self.server, self.args, self.cmd_name, self.log_file,
                     mail=self.mail), (False, None))
 
         self.assertEqual(self.mail.msg, self.file_list[1])
@@ -476,7 +515,7 @@ class UnitTest(unittest.TestCase):
         with gen_libs.no_std_out():
             self.assertEqual(
                 mongo_db_dump.mongo_generic(
-                    self.server, self.args_array, self.cmd_name,
+                    self.server, self.args, self.cmd_name,
                     self.log_file), (False, None))
 
     @mock.patch("mongo_db_dump.subprocess.Popen")
@@ -496,7 +535,7 @@ class UnitTest(unittest.TestCase):
 
         self.assertEqual(
             mongo_db_dump.mongo_generic(
-                self.server, self.args_array, self.cmd_name, self.log_file),
+                self.server, self.args, self.cmd_name, self.log_file),
             (False, None))
 
     @mock.patch("mongo_db_dump.subprocess.Popen")
@@ -516,7 +555,7 @@ class UnitTest(unittest.TestCase):
 
         self.assertEqual(
             mongo_db_dump.mongo_generic(
-                self.server, self.args_array, self.cmd_name2, self.log_file),
+                self.server, self.args, self.cmd_name2, self.log_file),
             (False, None))
 
     @mock.patch("mongo_db_dump.subprocess.Popen")
@@ -536,7 +575,7 @@ class UnitTest(unittest.TestCase):
 
         self.assertEqual(
             (mongo_db_dump.mongo_generic(
-                self.server, self.args_array, self.cmd_name, self.log_file)),
+                self.server, self.args, self.cmd_name, self.log_file)),
             (False, None))
 
     def tearDown(self):
