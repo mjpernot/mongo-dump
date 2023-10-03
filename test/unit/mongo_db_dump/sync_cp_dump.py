@@ -27,6 +27,43 @@ import version
 __version__ = version.__version__
 
 
+class ArgParser(object):
+
+    """Class:  ArgParser
+
+    Description:  Class stub holder for gen_class.ArgParser class.
+
+    Methods:
+        __init__
+        get_val
+
+    """
+
+    def __init__(self):
+
+        """Method:  __init__
+
+        Description:  Class initialization.
+
+        Arguments:
+
+        """
+
+        self.args_array = {"-c": "mongo_cfg", "-d": "config"}
+
+    def get_val(self, skey, def_val=None):
+
+        """Method:  get_val
+
+        Description:  Method stub holder for gen_class.ArgParser.get_val.
+
+        Arguments:
+
+        """
+
+        return self.args_array.get(skey, def_val)
+
+
 class Mail(object):
 
     """Class:  Mail
@@ -311,7 +348,8 @@ class UnitTest(unittest.TestCase):
         self.server = Server()
         self.server2 = Server2()
         self.server3 = Server3()
-        self.args_array = {"-o": "DirectoryPath"}
+        self.args = ArgParser()
+        self.args.args_array = {"-o": "DirectoryPath"}
         self.msg1 = "Error:  Database previously locked, unable to dump."
         self.msg2 = "Error:  Unable to lock the database for dump to occur."
         self.msg3 = "Warning:  Database still locked after dump."
@@ -329,7 +367,7 @@ class UnitTest(unittest.TestCase):
         self.server.locked = True
 
         self.assertEqual((mongo_db_dump.sync_cp_dump(
-            self.server, self.args_array, mail=self.mail)), (True, self.msg1))
+            self.server, self.args, mail=self.mail)), (True, self.msg1))
         self.assertEqual(self.mail.data, self.msg1)
 
     def test_unable_to_lock_mail(self):
@@ -345,7 +383,7 @@ class UnitTest(unittest.TestCase):
         self.server.locked = False
 
         self.assertEqual((mongo_db_dump.sync_cp_dump(
-            self.server2, self.args_array, mail=self.mail)), (True, self.msg2))
+            self.server2, self.args, mail=self.mail)), (True, self.msg2))
         self.assertEqual(self.mail.data, self.msg2)
 
     @mock.patch("mongo_db_dump.shutil.copytree")
@@ -362,7 +400,7 @@ class UnitTest(unittest.TestCase):
         mock_copy.return_value = True
 
         self.assertEqual((mongo_db_dump.sync_cp_dump(
-            self.server, self.args_array, mail=self.mail)), (True, self.msg3))
+            self.server, self.args, mail=self.mail)), (True, self.msg3))
         self.assertEqual(self.mail.data, self.msg3)
 
     @mock.patch("mongo_db_dump.shutil.copytree")
@@ -379,7 +417,7 @@ class UnitTest(unittest.TestCase):
         mock_copy.return_value = True
 
         self.assertEqual((mongo_db_dump.sync_cp_dump(
-            self.server3, self.args_array, mail=self.mail)), (False, None))
+            self.server3, self.args, mail=self.mail)), (False, None))
         self.assertEqual(self.mail.data, None)
 
     @mock.patch("mongo_db_dump.shutil.copytree")
@@ -395,8 +433,9 @@ class UnitTest(unittest.TestCase):
 
         mock_copy.return_value = True
 
-        self.assertEqual((mongo_db_dump.sync_cp_dump(
-            self.server3, self.args_array)), (False, None))
+        self.assertEqual(
+            (mongo_db_dump.sync_cp_dump(self.server3, self.args)),
+            (False, None))
 
     @mock.patch("mongo_db_dump.shutil.copytree")
     def test_db_dump_locked(self, mock_copy):
@@ -411,8 +450,9 @@ class UnitTest(unittest.TestCase):
 
         mock_copy.return_value = True
 
-        self.assertEqual((mongo_db_dump.sync_cp_dump(
-            self.server, self.args_array)), (True, self.msg3))
+        self.assertEqual(
+            (mongo_db_dump.sync_cp_dump(self.server, self.args)),
+            (True, self.msg3))
 
     def test_unable_to_lock(self):
 
@@ -426,8 +466,9 @@ class UnitTest(unittest.TestCase):
 
         self.server.locked = False
 
-        self.assertEqual((mongo_db_dump.sync_cp_dump(
-            self.server2, self.args_array)), (True, self.msg2))
+        self.assertEqual(
+            (mongo_db_dump.sync_cp_dump(self.server2, self.args)),
+            (True, self.msg2))
 
     def test_db_locked(self):
 
@@ -441,8 +482,9 @@ class UnitTest(unittest.TestCase):
 
         self.server.locked = True
 
-        self.assertEqual((mongo_db_dump.sync_cp_dump(
-            self.server, self.args_array)), (True, self.msg1))
+        self.assertEqual(
+            (mongo_db_dump.sync_cp_dump(self.server, self.args)),
+            (True, self.msg1))
 
 
 if __name__ == "__main__":
