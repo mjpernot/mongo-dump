@@ -490,8 +490,7 @@ class UnitTest(unittest.TestCase):
     @mock.patch("mongo_db_dump.run_program")
     @mock.patch("mongo_db_dump.gen_libs.help_func")
     @mock.patch("mongo_db_dump.gen_class.ArgParser")
-    def test_arg_dir_crt_true(self, mock_arg, mock_help, mock_run,
-                                   mock_lock):
+    def test_arg_dir_crt_true(self, mock_arg, mock_help, mock_run, mock_lock):
 
         """Function:  test_arg_dir_crt_true
 
