@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
 
+## [3.3.3] - 2024-04-17
+- Added TLS capability.
+
+### Changed
+- config/mongo.py.TEMPLATE: Added TLS connection entries and type of connection entry.
+- Documentation changes.
+
+
 ## [3.3.2] - 2024-02-26
 - Updated to work in Red Hat 8
 - Updated mongo-lib to v4.2.9
