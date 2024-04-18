@@ -5,9 +5,11 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 
 
 ## [3.3.3] - 2024-04-17
-- Added TLS capability.
+- Added TLS capability
+- Updated mongo-lib to v4.3.0
 
 ### Changed
+- Set pymongo to 3.12.3 for Python 2 and Python 3.
 - config/mongo.py.TEMPLATE: Added TLS connection entries and type of connection entry.
 - Documentation changes.
 
