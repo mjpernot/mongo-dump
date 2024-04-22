@@ -74,16 +74,23 @@
             auth_db = "admin"
             auth_mech = "SCRAM-SHA-1"
 
-        If using SSL connections then set one or more of the following entries.
-            This will automatically enable SSL connections.
+        If Mongo is set to use TLS or SSL connections, then one or more of the
+            following entries will need to be completed to connect using TLS or
+            SSL protocols.
+            Note:  Read the configuration file to determine which entries will
+                need to be set.
 
-            Configuration settings for SSL connections.  See configuration file
-                for details on each entry:
-
-            ssl_client_ca = None
-            ssl_client_key = None
-            ssl_client_cert = None
-            ssl_client_phrase = None
+            SSL:
+                auth_type = None
+                ssl_client_ca = None
+                ssl_client_key = None
+                ssl_client_cert = None
+                ssl_client_phrase = None
+            TLS:
+                auth_type = None
+                tls_ca_certs = None
+                tls_certkey = None
+                tls_certkey_phrase = None
 
         Configuration modules -> Name is runtime dependent as it can be used to
             connect to different databases with different names.
