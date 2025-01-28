@@ -21,14 +21,14 @@ import mock
 
 # Local
 sys.path.append(os.getcwd())
-import mongo_db_dump
-import lib.gen_libs as gen_libs
-import version
+import mongo_db_dump                            # pylint:disable=E0401,C0413
+import lib.gen_libs as gen_libs             # pylint:disable=E0401,C0413,R0402
+import version                                  # pylint:disable=E0401,C0413
 
 __version__ = version.__version__
 
 
-class ArgParser(object):
+class ArgParser():                                      # pylint:disable=R0903
 
     """Class:  ArgParser
 
@@ -62,10 +62,10 @@ class ArgParser(object):
 
         """
 
-        return True if arg in self.args_array else False
+        return arg in self.args_array
 
 
-class Mail(object):
+class Mail():
 
     """Class:  Mail
 
@@ -118,7 +118,7 @@ class Mail(object):
         return True
 
 
-class SubProcess(object):
+class SubProcess():
 
     """Class:  SubProcess
 
@@ -142,8 +142,6 @@ class SubProcess(object):
 
         """
 
-        pass
-
     def wait(self):
 
         """Method:  wait
@@ -154,9 +152,7 @@ class SubProcess(object):
 
         """
 
-        pass
-
-    def PIPE(self):
+    def PIPE(self):                                     # pylint:disable=C0103
 
         """Method:  PIPE
 
@@ -165,8 +161,6 @@ class SubProcess(object):
         Arguments:
 
         """
-
-        pass
 
     def stdout(self):
 
@@ -178,10 +172,8 @@ class SubProcess(object):
 
         """
 
-        pass
 
-
-class Server(object):
+class Server():
 
     """Class:  Server
 
@@ -244,8 +236,6 @@ class Server(object):
 
         """
 
-        pass
-
 
 class UnitTest(unittest.TestCase):
 
@@ -295,7 +285,7 @@ class UnitTest(unittest.TestCase):
                           "2020-08-14T14:31:12 writing sysmon.mongo_rep to"]
         self.file_list2 = ["Error detected in dump"]
         e_file = self.dir_path + "/log_file.err"
-        self.msg = "Error detected in error file: %s" % e_file
+        self.msg = f"Error detected in error file: {e_file}"
 
     @mock.patch("mongo_db_dump.gen_libs.is_empty_file",
                 mock.Mock(side_effect=[False, False]))

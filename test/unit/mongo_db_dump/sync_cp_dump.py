@@ -21,13 +21,13 @@ import mock
 
 # Local
 sys.path.append(os.getcwd())
-import mongo_db_dump
-import version
+import mongo_db_dump                            # pylint:disable=E0401,C0413
+import version                                  # pylint:disable=E0401,C0413
 
 __version__ = version.__version__
 
 
-class ArgParser(object):
+class ArgParser():                                      # pylint:disable=R0903
 
     """Class:  ArgParser
 
@@ -64,7 +64,7 @@ class ArgParser(object):
         return self.args_array.get(skey, def_val)
 
 
-class Mail(object):
+class Mail():
 
     """Class:  Mail
 
@@ -117,7 +117,7 @@ class Mail(object):
         return True
 
 
-class Server3(object):
+class Server3():
 
     """Class:  Server3
 
@@ -184,7 +184,7 @@ class Server3(object):
         self.locked = False
 
 
-class Server2(object):
+class Server2():
 
     """Class:  Server2
 
@@ -250,7 +250,7 @@ class Server2(object):
         self.locked = False
 
 
-class Server(object):
+class Server():
 
     """Class:  Server
 
@@ -311,8 +311,6 @@ class Server(object):
         Arguments:
 
         """
-
-        pass
 
 
 class UnitTest(unittest.TestCase):
@@ -418,7 +416,7 @@ class UnitTest(unittest.TestCase):
 
         self.assertEqual((mongo_db_dump.sync_cp_dump(
             self.server3, self.args, mail=self.mail)), (False, None))
-        self.assertEqual(self.mail.data, None)
+        self.assertIsNone(self.mail.data)
 
     @mock.patch("mongo_db_dump.shutil.copytree")
     def test_db_dump(self, mock_copy):

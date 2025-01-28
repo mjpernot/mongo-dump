@@ -21,14 +21,14 @@ import mock
 
 # Local
 sys.path.append(os.getcwd())
-import mongo_db_dump
-import lib.gen_libs as gen_libs
-import version
+import mongo_db_dump                            # pylint:disable=E0401,C0413
+import lib.gen_libs as gen_libs             # pylint:disable=E0401,C0413,R0402
+import version                                  # pylint:disable=E0401,C0413
 
 __version__ = version.__version__
 
 
-class Mail(object):
+class Mail():                                           # pylint:disable=R0903
 
     """Class:  Mail
 
@@ -37,7 +37,6 @@ class Mail(object):
     Methods:
         __init__
         add_2_msg
-        send_mail
 
     """
 
