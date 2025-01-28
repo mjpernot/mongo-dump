@@ -1,7 +1,26 @@
 #!/usr/bin/python
 # Classification (U)
 
-"""Program:  mongo_db_dump.py
+# Shell commands follow
+# Next line is bilingual: it starts a comment in Python & is a no-op in shell
+""":"
+
+# Find a suitable python interpreter (can adapt for specific needs)
+# NOTE: Ignore this section if passing the -h option to the program.
+#   This code must be included in the program's initial docstring.
+for cmd in python3.12 python3.9 ; do
+   command -v > /dev/null $cmd && exec $cmd $0 "$@"
+done
+
+echo "OMG Python not found, exiting...."
+
+exit 2
+
+# Previous line is bilingual: it ends a comment in Python & is a no-op in shell
+# Shell commands end here
+
+
+   Program:  mongo_db_dump.py
 
     Description:  The mongo_db_dump program runs dumps against a Mongo database
         and depending on which type of dump is selected can dump individual
@@ -110,11 +129,11 @@
     Example 2: Send log entries to file, but have nothing displayed to stdout.
         mongo_db_dump.py c mongo -d config -o /db_dump -z -M -l 1>/dev/null
 
-"""
+":"""
+# Python program follows
+
 
 # Libraries and Global Variables
-from __future__ import print_function
-from __future__ import absolute_import
 
 # Standard
 import sys
@@ -132,10 +151,10 @@ try:
     from . import version
 
 except (ValueError, ImportError) as err:
-    import lib.gen_libs as gen_libs
-    import lib.gen_class as gen_class
-    import mongo_lib.mongo_libs as mongo_libs
-    import mongo_lib.mongo_class as mongo_class
+    import lib.gen_libs as gen_libs                     # pylint:disable=R0402
+    import lib.gen_class as gen_class                   # pylint:disable=R0402
+    import mongo_lib.mongo_libs as mongo_libs           # pylint:disable=R0402
+    import mongo_lib.mongo_class as mongo_class         # pylint:disable=R0402
     import version
 
 __version__ = version.__version__
@@ -176,19 +195,19 @@ def sync_cp_dump(server, args, **kwargs):
     err_msg = None
     mail = kwargs.get("mail", None)
 
-    if not (server.is_locked()):
+    if not server.is_locked():
         server.lock_db(lock=True)
 
-        if (server.is_locked()):
+        if server.is_locked():
             dmp_dir = args.get_val("-o") + "/cp_dump_" \
-                + datetime.datetime.strftime(datetime.datetime.now(),
-                                             "%Y%m%d_%H%M")
+                + datetime.datetime.strftime(
+                    datetime.datetime.now(), "%Y%m%d_%H%M")
 
             # Backup database.
             shutil.copytree(server.db_path, dmp_dir)
             server.unlock_db()
 
-            if (server.is_locked()):
+            if server.is_locked():
                 err_flag = True
                 err_msg = "Warning:  Database still locked after dump."
 
@@ -244,7 +263,8 @@ def mongo_dump(server, args, **kwargs):
     return err_flag, err_msg
 
 
-def mongo_generic(server, args, cmd_name, log_file, **kwargs):
+def mongo_generic(                                      # pylint:disable=R0914
+        server, args, cmd_name, log_file, **kwargs):
 
     """Function:  mongo_generic
 
@@ -269,13 +289,15 @@ def mongo_generic(server, args, cmd_name, log_file, **kwargs):
     err_msg = None
     mail = kwargs.get("mail", None)
     err_file = kwargs.get("err_file", log_file + ".err")
-    e_file = open(err_file, "w")
+    e_file = open(                                      # pylint:disable=R1732
+        err_file, mode="w", encoding="UTF-8")
     cmd = mongo_libs.create_cmd(
         server, args, cmd_name, "-p", no_pass=True, **kwargs)
-    proc2 = subprocess.Popen(["echo", server.japd], stdout=subprocess.PIPE)
+    proc2 = subprocess.Popen(                           # pylint:disable=R1732
+        ["echo", server.japd], stdout=subprocess.PIPE)
 
-    with open(log_file, "w") as l_file:
-        proc1 = subprocess.Popen(
+    with open(log_file, mode="w", encoding="UTF-8") as l_file:
+        proc1 = subprocess.Popen(                       # pylint:disable=R1732
             cmd, stderr=l_file, stdin=proc2.stdout, stdout=e_file)
         proc1.wait()
 
@@ -288,7 +310,7 @@ def mongo_generic(server, args, cmd_name, log_file, **kwargs):
     else:
         err_list = gen_libs.file_2_list(err_file)
         err_flag = True
-        err_msg = "Error detected in error file: %s" % err_file
+        err_msg = f"Error detected in error file: {err_file}"
 
         if mail:
             mail.add_2_msg("Error messages detected during dump:")
@@ -439,7 +461,7 @@ def run_program(args, func_dict, **kwargs):
         mongo_libs.disconnect([server])
 
     else:
-        print("Connection failure:  %s" % (status[1]))
+        print(f"Connection failure:  {status[1]}")
 
 
 def main():
@@ -504,8 +526,8 @@ def main():
             del prog_lock
 
         except gen_class.SingleInstanceException:
-            print("WARNING:  Lock in place for mongo_db_dump with id: %s"
-                  % (args.get_val("-y", def_val="")))
+            print(f'WARNING:  Lock in place for mongo_db_dump with id:'
+                  f' {args.get_val("-y", def_val="")}')
 
 
 if __name__ == "__main__":

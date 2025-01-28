@@ -21,14 +21,14 @@ import mock
 
 # Local
 sys.path.append(os.getcwd())
-import mongo_db_dump
-import lib.gen_class as gen_class
-import version
+import mongo_db_dump                            # pylint:disable=E0401,C0413
+import lib.gen_class as gen_class           # pylint:disable=E0401,C0413,R0402
+import version                                  # pylint:disable=E0401,C0413
 
 __version__ = version.__version__
 
 
-class ArgParser(object):
+class ArgParser():                                      # pylint:disable=R0903
 
     """Class:  ArgParser
 
@@ -65,7 +65,7 @@ class ArgParser(object):
         return self.args_array.get(skey, def_val)
 
 
-class Server3(object):
+class Server3():
 
     """Class:  Server3
 
@@ -132,7 +132,7 @@ class Server3(object):
         self.locked = False
 
 
-class Server2(object):
+class Server2():
 
     """Class:  Server2
 
@@ -198,7 +198,7 @@ class Server2(object):
         self.locked = False
 
 
-class Server(object):
+class Server():
 
     """Class:  Server
 
@@ -259,8 +259,6 @@ class Server(object):
         Arguments:
 
         """
-
-        pass
 
 
 class UnitTest(unittest.TestCase):
