@@ -19,6 +19,9 @@ Breaking Changes
 - mongo_generic: Added encoding argument to open calls.
 - Documentation changes.
 
+### Deprecated
+- Support for Mongo 3.4
+
 
 ## [3.3.7] - 2024-11-20
 - Updated distro==1.9.0 for Python 3

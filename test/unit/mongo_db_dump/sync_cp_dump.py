@@ -416,7 +416,7 @@ class UnitTest(unittest.TestCase):
 
         self.assertEqual((mongo_db_dump.sync_cp_dump(
             self.server3, self.args, mail=self.mail)), (False, None))
-        self.assertEqual(self.mail.data, None)
+        self.assertIsNone(self.mail.data)
 
     @mock.patch("mongo_db_dump.shutil.copytree")
     def test_db_dump(self, mock_copy):
